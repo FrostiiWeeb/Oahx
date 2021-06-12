@@ -123,7 +123,6 @@ repackage==0.7.3
 requests==2.25.1
 requests-toolbelt==0.9.1
 rfc3986==1.4.0
-sample==0.0.0
 scrapeasy==0.12
 SecretStorage==3.3.1
 six==1.15.0
