@@ -30,21 +30,11 @@ cryptography==3.4.7
 Cython==0.29.23
 dateparser==1.0.0
 decorator==4.4.2
-diacord-paginated-help==0.0.6a0
-discord-better-help==0.2.6
-discord-custom-help==0.0.4
-discord-ext-bot==0.0.7
-discord-ext-bottomify==0.2.7
 discord-ext-cli==0.1.1
 discord-ext-ipc==2.0.0
 discord-ext-menus @ git+https://github.com/Rapptz/discord-ext-menus@6f2b873bf0d28903eb752aa1166b3aac26dc9007
 discord-ext-owoify==0.0.6a0
-discord-ext-paginator==0.4.6
 discord-flags==2.1.1
-discord-pagination==0.0.6rc1
-discord-paginator @ file:///storage/emulated/0/discord-paginator/discord_paginator-0.1.6rc1-py3-none-any.whl
-discord-paginator-help==0.0.6rc1
-discord.js==1.0.1
 discord.py @ git+https://github.com/Rapptz/discord.py@59aa1a0e5f785116f2d21204e755071c38daccca
 discord.wrapper==0.2.8
 disputils==0.1.3
