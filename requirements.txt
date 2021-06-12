@@ -77,7 +77,6 @@ makeapi @ git+https://github.com/FrostiiWeeb/makeapi@66cc19020b46297da080e36f6fa
 Mako==1.1.4
 Markdown==3.3.4
 MarkupSafe==1.1.1
-meme-api==0.0.6rc16
 mkdocs==1.1.2
 motor==2.3.1
 MouseInfo==0.1.3
