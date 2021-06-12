@@ -41,7 +41,7 @@ async def get_prefix(bot, message):
 class Oahx(commands.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(allowed_mentions=discord.AllowedMentions(roles=False, users=False, replied_user=False), case_insensitive=True, *args, **kwargs)
-        self.__extensions = [f"extensions.{item[:-3]}" for item in os.listdir("/storage/emulated/0/Oahx/extensions") if item != "__pycache__"] + ["jishaku"]
+        self.__extensions = [f"extensions.{item[:-3]}" for item in os.listdir("./extensions") if item != "__pycache__"] + ["jishaku"]
         [self.load_extension(cog) for cog in self.__extensions if cog != "__pycache__"]
         self.colour = discord.Colour.from_rgb(100, 53, 255)
         self.embed = CustomEmbed
