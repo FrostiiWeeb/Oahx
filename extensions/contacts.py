@@ -13,12 +13,12 @@ class Contacts(commands.Cog):
         channel_data = self.bot.get_channel(channel)
         if channel_data is None:
             channel_data = await self.bot.fetch_channel(channel)
-        return channel_data
-        
-    @commands.group(name="phone", brief="A dummy command for the commands.", invoke_without_command=True)
+        return channel_data 
+               
+    @commands.group(name="phone",brief="A dummy command for the commands.", invoke_without_command=True)
     async def phone(self, ctx):
         me = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE name = '%s'" % ctx.author.name)  
-        async with self.bot.embed(title="Phone", description="Your phone number is `%s`" % me["number"]) as embed:
+        async with self.bot.embed(title="Phone ", description="Your phone number is `%s`" % me["number"]) as embed:
             await embed.send(ctx.channel)      
         
     @phone.command(name="call", brief="Call soemone by their phone number!")   
@@ -54,7 +54,7 @@ class Contacts(commands.Cog):
             me_channel_data = await self.try_channel(me['channel_id'])
             async with self.bot.embed(title="Calling..", description="Calling phone number `%s`" % phone_data['number']) as embed:
                 await embed.send(ctx.channel)
-            async with self.bot.embed(title="Soemone is calling..",description=f"`{me['name']}` is calling with the phone number `{me['number']}`, do you want to pick up? [yes - no]") as embed:               
+            async with self.bot.embed(title="Soemone is calling..",description=f"`{me['name']} ({me['number']}` is calling `{phone_data['name']}`, do you want to pick up? [yes - no]") as embed:               
                 await embed.send(channel_data)      
             def check(m):
                 return m.author.name == phone_data['name']  
@@ -81,7 +81,12 @@ class Contacts(commands.Cog):
                     await ctx.send("Did not answer")                                             
             except asyncio.TimeoutError:
                 async with self.bot.embed(title="Call ended..", description="The call ended because no one responded..") as embed:
-                    await embed.send(ctx.channel)                                                        
+                    await embed.send(ctx.channel)       
+
+    @phone.command(name="channel", brief="Change the channel where you receive calls")   
+    async def channel(self, ctx, change : str):
+        if change == "change":
+            await self.bot.db.execute("UPDATE numbers SET channel_id = $1 WHERE name = $2", ctx.channel.id, ctx.author.name)                                                                                  
     @phone.command(name="create", brief="Create a phone number!")
     async def create(self, ctx):
         full_number = "0487"
