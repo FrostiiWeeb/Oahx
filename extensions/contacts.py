@@ -78,15 +78,18 @@ class Contacts(commands.Cog):
                         elif message.author.name == me["name"]:
                                 await channel_data.send(f"{me['name']}: {message.content}") 
                 else:
-                    await ctx.send("Did not answer")                                             
+                    await ctx.send("Did not answer") 
+                    await channel_data.send("Call canceled.")                                            
             except asyncio.TimeoutError:
                 async with self.bot.embed(title="Call ended..", description="The call ended because no one responded..") as embed:
-                    await embed.send(ctx.channel)       
+                    await embed.send(ctx.channel)
+                    await embed.send(channel_data)       
 
     @phone.command(name="channel", brief="Change the channel where you receive calls")   
     async def channel(self, ctx, change : str):
         if change == "change":
-            await self.bot.db.execute("UPDATE numbers SET channel_id = $1 WHERE name = $2", ctx.channel.id, ctx.author.name)                                                                                  
+            await self.bot.db.execute("UPDATE numbers SET channel_id = $1 WHERE name = $2", ctx.channel.id, ctx.author.name)
+            await ctx.send("Channel changed to current channel!")                                                                                  
     @phone.command(name="create", brief="Create a phone number!")
     async def create(self, ctx):
         full_number = "0487"
