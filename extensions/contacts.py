@@ -8,6 +8,7 @@ import asyncio
 class Contacts(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.mute = False
         
     async def try_channel(self, channel):
         channel_data = self.bot.get_channel(channel)
@@ -21,14 +22,14 @@ class Contacts(commands.Cog):
         async with self.bot.embed(title="Phone ", description="Your phone number is `%s`" % me["number"]) as embed:
             await embed.send(ctx.channel)      
         
-    @phone.command(name="call", brief="Call soemone by their phone number!")   
+    @phone.command(name="call", brief="Call Someone by their phone number!")   
     async def call(self, ctx, number : str):
         if number == "991":
             channel = await self.try_channel(817471364302110731)
             def check(m):
                 roles = [r.name for r in m.author.roles]
                 return m.author.name == ctx.author.name or m.channel.id == 817471364302110731
-            await channel.send("Soemone is asking for help, please respond.")
+            await channel.send("Someone is asking for help, please respond.")
             await ctx.send("Please tell us your question, problem.")
             while True:                                        
                 message = await self.bot.wait_for("message", check=check)  
@@ -54,7 +55,7 @@ class Contacts(commands.Cog):
             me_channel_data = await self.try_channel(me['channel_id'])
             async with self.bot.embed(title="Calling..", description="Calling phone number `%s`" % phone_data['number']) as embed:
                 await embed.send(ctx.channel)
-            async with self.bot.embed(title="Soemone is calling..",description=f"`{me['name']} ({me['number']}` is calling `{phone_data['name']}`, do you want to pick up? [yes - no]") as embed:               
+            async with self.bot.embed(title="Someone is calling..",description=f"`{me['name']} ({me['number']}` is calling `{phone_data['name']}`, do you want to pick up? [yes - no]") as embed:               
                 await embed.send(channel_data)      
             def check(m):
                 return m.author.name == phone_data['name']  
@@ -72,10 +73,27 @@ class Contacts(commands.Cog):
                             await me_channel_data.send("Call ended")
                             await channel_data.send("Call ended")
                             break
-                            return                        
+                            return    
+                                                                                          
                         elif message.author.name == phone_data["name"]:
-                            await me_channel_data.send(f"{phone_data['name']}: {message.content}")
+                            if self.mute == True:
+                                pass
+                            elif self.mute == False:
+                                await me_channel_data.send(f"{phone_data['name']}: {message.content}")
+                            elif message.content == "mute":
+                                self.mute = True                        
+                            elif message.content == "unmute":
+                                self.mute = False                       
+                                await me_channel_data.send(f"{phone_data['name']}: {message.content}")
                         elif message.author.name == me["name"]:
+                            if self.mute == True:
+                                pass
+                            elif self.mute == False:
+                                await channel_data.send(f"{me['name']}: {message.content}")
+                            elif message.content == "mute":
+                                self.mute = True                        
+                            elif message.content == "unmute":
+                                self.mute = False                                 
                                 await channel_data.send(f"{me['name']}: {message.content}") 
                 else:
                     await ctx.send("Did not answer") 
@@ -89,7 +107,17 @@ class Contacts(commands.Cog):
     async def channel(self, ctx, change : str):
         if change == "change":
             await self.bot.db.execute("UPDATE numbers SET channel_id = $1 WHERE name = $2", ctx.channel.id, ctx.author.name)
-            await ctx.send("Channel changed to current channel!")                                                                                  
+            await ctx.send("Channel changed to current channel!")
+            
+    @phone.command(name="delete", brief="Delete your phone number!")
+    async def delete(self, ctx):
+        try:
+            await self.bot.db.execute("DELETE FROM numbers WHERE name = $1", ctx.author.name)
+            async with self.bot.embed(title="Success!", description="The operation was a success!") as embed:
+                await embed.send(ctx.channel)            
+        except:
+            async with self.bot.embed(title="Error", description="You do not have a phone number.") as embed:
+                await embed.send(ctx.channel)                                                                                                                                                                                  
     @phone.command(name="create", brief="Create a phone number!")
     async def create(self, ctx):
         full_number = "0487"
