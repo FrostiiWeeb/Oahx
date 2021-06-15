@@ -4,6 +4,8 @@ from difflib import get_close_matches
 import random
 import traceback
 import asyncio
+from discord.ext.commands.cooldowns import BucketType
+
 
 class Contacts(commands.Cog):
     def __init__(self, bot):
@@ -22,7 +24,8 @@ class Contacts(commands.Cog):
         async with self.bot.embed(title="Phone ", description="Your phone number is `%s`" % me["number"]) as embed:
             await embed.send(ctx.channel)      
         
-    @phone.command(name="call", brief="Call Someone by their phone number!")   
+    @phone.command(name="call", brief="Call Someone by their phone number!") 
+    @commands.max_concurrency(1, per=BucketType.channel, *, wait=False)  
     async def call(self, ctx, number : str):
         if number == "991":
             channel = await self.try_channel(817471364302110731)
