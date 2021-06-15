@@ -25,7 +25,7 @@ class Contacts(commands.Cog):
             await embed.send(ctx.channel)      
         
     @phone.command(name="call", brief="Call Someone by their phone number!") 
-    @commands.max_concurrency(1, per=BucketType.channel, *, wait=False)  
+    @commands.max_concurrency(1, per=BucketType.channel, wait=False)  
     async def call(self, ctx, number : str):
         if number == "991":
             channel = await self.try_channel(817471364302110731)
