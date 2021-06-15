@@ -30,7 +30,7 @@ class Contacts(commands.Cog):
     async def call(self, ctx, number : str):
         if number == "911":
             if self.using_support:
-                await ctx.send("Support already being used.")
+                return await ctx.send("Support already being used.")
             self.using_support = True
             channel = await self.try_channel(817471364302110731)
             def check(m):
