@@ -41,7 +41,6 @@ class Contacts(commands.Cog):
             self.using_support = True
             channel = await self.try_channel(817471364302110731)
             def check(m):
-                roles = [r.name for r in m.author.roles]
                 return m.author.name == ctx.author.name or m.channel.id == 817471364302110731
             await channel.send("Someone is asking for help, please respond.")
             await ctx.send("Please tell us your question, problem.")
