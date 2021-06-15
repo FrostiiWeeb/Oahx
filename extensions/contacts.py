@@ -6,6 +6,13 @@ import traceback
 import asyncio
 from discord.ext.commands.cooldowns import BucketType
 
+class NumberNotFound(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+        
+class InDB(Exception):
+    def __init__(self, message):
+        super().__init__(message)        
 
 class Contacts(commands.Cog):
     def __init__(self, bot):
@@ -55,9 +62,7 @@ class Contacts(commands.Cog):
             phone_data = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE number = '%s'" % number)
             me = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE name = '%s'" % ctx.author.name)
         except:
-            traceback.print_exc()
-            async with self.bot.embed(title="Number Not Found", description="The phone number that was provided is not correct or you do not have one.") as embed:
-                return await embed.send(ctx.channel)
+            raise NumberNotFound('The number you provided was not found or you dont have a number. create a number using "oahx phone create"')
         else:
             channel_data = await self.try_channel(phone_data['channel_id'])
             me_channel_data = await self.try_channel(me['channel_id'])
@@ -118,8 +123,7 @@ class Contacts(commands.Cog):
                 await self.bot.db.execute("UPDATE numbers SET channel_id = $1 WHERE name = $2", ctx.channel.id, ctx.author.name)
                 await ctx.send("Channel changed to current channel!")
             except:
-                async with self.bot.embed(title="Number Not Found", description="You do not have a number.") as embed:
-                    return await embed.send(ctx.channel)                
+                raise NumberNotFound("You dont have a phone number.")              
             
     @phone.command(name="delete", brief="Delete your phone number!")
     async def delete(self, ctx):
@@ -128,19 +132,19 @@ class Contacts(commands.Cog):
             async with self.bot.embed(title="Success!", description="The operation was a success!") as embed:
                 await embed.send(ctx.channel)            
         except:
-            async with self.bot.embed(title="Error", description="You do not have a phone number.") as embed:
-                await embed.send(ctx.channel)                                                                                                                                                                                  
+            raise NumberNotFound("You dont have a phone number.")                                                                                                                                                                                        
     @phone.command(name="create", brief="Create a phone number!")
     async def create(self, ctx):
         full_number = "0487"
         num_ber = 123456789087681083919371037197
         for i in range(7):
             full_number += random.choice(str(num_ber)) 
-        try:
-            await self.bot.db.execute("INSERT INTO numbers(number, channel_id, name) VALUES ($1, $2, $3)", full_number, ctx.channel.id, ctx.author.name)
-        except:
-            async with self.bot.embed(title="Error", description="You already have a phone number.") as embed:
-                return await embed.send(ctx.channel)                          
+        data = await self.bot.db.fetch("SELECT * FROM numbers") 
+        for record in data:
+            if record["name"] == ctx.author.name:
+                async with self.bot.embed(title="Error", description="You already have a phone number.") as embed:
+                    return await embed.send(ctx.channel) 
+        await self.bot.db.execute("INSERT INTO numbers(number, channel_id, name) VALUES ($1, $2, $3)", full_number, ctx.channel.id, ctx.author.name)                       
         async with self.bot.embed(title="Success!", description="The operation was a success, your phone number is `%s`" % full_number) as embed:
             return await embed.send(ctx)
             
