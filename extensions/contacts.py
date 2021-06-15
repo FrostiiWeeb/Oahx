@@ -11,6 +11,7 @@ class Contacts(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.mute = False
+        self.using_support = False
         
     async def try_channel(self, channel):
         channel_data = self.bot.get_channel(channel)
@@ -27,7 +28,10 @@ class Contacts(commands.Cog):
     @phone.command(name="call", brief="Call Someone by their phone number!") 
     @commands.max_concurrency(1, per=BucketType.channel, wait=False)  
     async def call(self, ctx, number : str):
-        if number == "991":
+        if number == "911":
+            if self.using_support:
+                await me_channel_data.send("Support already being used.")
+            self.using_support = True
             channel = await self.try_channel(817471364302110731)
             def check(m):
                 roles = [r.name for r in m.author.roles]
@@ -39,6 +43,7 @@ class Contacts(commands.Cog):
             
                 roles = [r.name for r in message.author.roles]            
                 if message.content == "cancel":
+                    self.using_support = False
                     await ctx.send("Call ended")    
                     await channel.send("Call ended") 
                     return
@@ -49,7 +54,7 @@ class Contacts(commands.Cog):
         try:
             phone_data = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE number = '%s'" % number)
             me = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE name = '%s'" % ctx.author.name)
-        except Exception:
+        except:
             traceback.print_exc()
             async with self.bot.embed(title="Number Not Found", description="The phone number that was provided is not correct or you do not have one.") as embed:
                 return await embed.send(ctx.channel)
@@ -104,13 +109,17 @@ class Contacts(commands.Cog):
             except asyncio.TimeoutError:
                 async with self.bot.embed(title="Call ended..", description="The call ended because no one responded..") as embed:
                     await embed.send(ctx.channel)
-                    await embed.send(channel_data)       
+                    return await embed.send(channel_data)       
 
     @phone.command(name="channel", brief="Change the channel where you receive calls")   
     async def channel(self, ctx, change : str):
         if change == "change":
-            await self.bot.db.execute("UPDATE numbers SET channel_id = $1 WHERE name = $2", ctx.channel.id, ctx.author.name)
-            await ctx.send("Channel changed to current channel!")
+            try:
+                await self.bot.db.execute("UPDATE numbers SET channel_id = $1 WHERE name = $2", ctx.channel.id, ctx.author.name)
+                await ctx.send("Channel changed to current channel!")
+            except:
+                async with self.bot.embed(title="Number Not Found", description="You do not have a number.") as embed:
+                    return await embed.send(ctx.channel)                
             
     @phone.command(name="delete", brief="Delete your phone number!")
     async def delete(self, ctx):
@@ -126,8 +135,12 @@ class Contacts(commands.Cog):
         full_number = "0487"
         num_ber = 123456789087681083919371037197
         for i in range(7):
-            full_number += random.choice(str(num_ber))       
-        await self.bot.db.execute("INSERT INTO numbers(number, channel_id, name) VALUES ($1, $2, $3)", full_number, ctx.channel.id, ctx.author.name)
+            full_number += random.choice(str(num_ber)) 
+        try:
+            await self.bot.db.execute("INSERT INTO numbers(number, channel_id, name) VALUES ($1, $2, $3)", full_number, ctx.channel.id, ctx.author.name)
+        except:
+            async with self.bot.embed(title="Error", description="You already have a phone number.") as embed:
+                return await embed.send(ctx.channel)                          
         async with self.bot.embed(title="Success!", description="The operation was a success, your phone number is `%s`" % full_number) as embed:
             return await embed.send(ctx)
             
