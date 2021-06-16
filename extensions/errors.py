@@ -36,7 +36,7 @@ class Error(Cog):
             commands.ExtensionNotFound: "The extension you provided is invalid.",
             commands.ExtensionNotLoaded: "The extension you provided has not been loaded.",
             commands.BadArgument: "Bad argument, cannot convert to int, str, discord member..",  
-            NumberNotFound: "{error}"
+            NumberNotFound: "{error}",
             discord.HTTPException: None,
             commands.CommandOnCooldown: None,
         }      
