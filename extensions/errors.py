@@ -6,6 +6,7 @@ import humanize
 from discord.ext import commands
 from discord.ext.commands import command
 from discord.ext.commands import Cog
+from extensions.contacts import NumberNotFound
 
 class ErrorEmbed(discord.Embed):
     def __init__(self, description, **kwargs):
@@ -35,6 +36,7 @@ class Error(Cog):
             commands.ExtensionNotFound: "The extension you provided is invalid.",
             commands.ExtensionNotLoaded: "The extension you provided has not been loaded.",
             commands.BadArgument: "Bad argument, cannot convert to int, str, discord member..",  
+            NumberNotFound: "{error}"
             discord.HTTPException: None,
             commands.CommandOnCooldown: None,
         }      
