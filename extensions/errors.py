@@ -9,7 +9,7 @@ from discord.ext.commands import Cog
 
 class ErrorEmbed(discord.Embed):
     def __init__(self, description, **kwargs):
-        super().__init__(color=0x2F3136,
+        super().__init__(color=discord.Color.from_rgb(100, 53, 255),
                          title="An error occurred!",
                          description=description,
                          timestamp=datetime.datetime.utcnow())

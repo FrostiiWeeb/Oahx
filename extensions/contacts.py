@@ -41,21 +41,19 @@ class Contacts(commands.Cog):
             self.using_support = True
             channel = await self.try_channel(817471364302110731)
             def check(m):
-                return m.author.name == ctx.author.name or m.channel.id == 817471364302110731
+                return m.author.name == ctx.author.name or m.channel.id == 854670283457429524
             await channel.send("Someone is asking for help, please respond.")
             await ctx.send("Please tell us your question, problem.")
             while True:                                        
-                message = await self.bot.wait_for("message", check=check)  
-            
-                roles = [r.name for r in message.author.roles]            
+                message = await self.bot.wait_for("message", check=check)                      
                 if message.content == "cancel":
                     self.using_support = False
                     await ctx.send("Call ended")    
                     await channel.send("Call ended") 
                     return
-                elif message.author.name == ctx.author.name and message.channel.id != 817471364302110731:
+                elif message.author.name == ctx.author.name and message.channel.id != 854670283457429524:
                     await channel.send(f"{ctx.author.name}: {message.content}")
-                elif message.channel.id == 817471364302110731:
+                elif message.channel.id == 854670283457429524:
                     await ctx.send(f"Support Team: {message.content}")
         try:
             phone_data = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE number = '%s'" % number)
