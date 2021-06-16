@@ -39,7 +39,7 @@ class Contacts(commands.Cog):
             if self.using_support:
                 return await ctx.send("Support already being used.")
             self.using_support = True
-            channel = await self.try_channel(817471364302110731)
+            channel = await self.try_channel(854670283457429524)
             def check(m):
                 return m.author.name == ctx.author.name or m.channel.id == 854670283457429524
             await channel.send("Someone is asking for help, please respond.")
