@@ -25,7 +25,7 @@ class MyHelpCommand(commands.HelpCommand):
         hi = []
         cmds = []
         for cmd in mapping:
-            hi.append(self.context.bot.get_command(str(cmd)))
+            hi.append(str(cmd))
         for cmd in hi:
             cmds.append(self.get_command_signature(cmd))  
         embed.add_field(name="Commands", value="\n".join(command for command in cmds))
