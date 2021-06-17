@@ -22,7 +22,7 @@ class MyHelpCommand(commands.HelpCommand):
         embed = discord.Embed(title=cog.qualified_name, colour=self.context.bot.colour)
         embed.add_field(name="Help", value=cog.description or "A cog, yeah")
         cmds = cog.get_commands()
-        embed.add_field(name="Commands", value="\n".join(self.get_command_signature(self.context.bot.get_command(cmd)) for cmd in cmds))
+        embed.add_field(name="Commands", value="\n".join(self.context.bot.get_command(cmd).signature for cmd in cmds))
         channel = self.get_destination()
         await channel.send(embed=embed)                      
 
