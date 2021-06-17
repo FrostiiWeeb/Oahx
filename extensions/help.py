@@ -22,14 +22,15 @@ class MyHelpCommand(commands.HelpCommand):
         embed = discord.Embed(title=cog.qualified_name, colour=self.context.bot.colour)
         embed.add_field(name="Help", value=cog.description)
         mapping = cog.get_commands()
-        commads = []
-        for commands in mapping:
-           print(commands)
-#           filtered = await self.filter_commands(commands, sort=True)
-#           commands.append([self.get_command_signature(c) for c in filtered])
-#        embed.add_field(name="Commands", value="\n".join([command for command in commads]))
-#        channel = self.get_destination()
-#        await channel.send(embed=embed)                      
+        hi = []
+        cmds = []
+        for cmd in mapping:
+            hi.append(self.context.bot.get_command(str(cmd)))
+        for cmd in hi:
+            cmds.append(self.get_command_signature(cmd))  
+        embed.add_field(name="Commands", value="\n".join([command for command in commads]))
+        channel = self.get_destination()
+        await channel.send(embed=embed)                      
 
    async def send_command_help(self, command):
         embed = discord.Embed(title=self.get_command_signature(command), colour=self.context.bot.colour)
