@@ -18,7 +18,7 @@ class Contacts(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.mute = False
-        self.using_support = False
+        self.using_support = False        
         
     async def try_channel(self, channel):
         channel_data = self.bot.get_channel(channel)
