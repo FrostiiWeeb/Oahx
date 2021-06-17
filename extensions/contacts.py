@@ -5,6 +5,7 @@ import random
 import traceback
 import asyncio
 from discord.ext.commands.cooldowns import BucketType
+from typing import Union
 
 class NumberNotFound(Exception):
     def __init__(self, message):
@@ -27,9 +28,10 @@ class Contacts(commands.Cog):
         return channel_data 
                
     @commands.group(name="phone",brief="A dummy command for the commands.", invoke_without_command=True)
-    async def phone(self, ctx):
-        me = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE name = '%s'" % ctx.author.name)  
-        async with self.bot.embed(title="Phone ", description="Your phone number is `%s`" % me["number"]) as embed:
+    async def phone(self, ctx, user : Union[discord.Member, int]):
+        user = user or ctx.author
+        me = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE name = '%s'" % user.name)  
+        async with self.bot.embed(title="Phone ", description=f"{me['name']}'s number is `%s`" % me["number"]) as embed:
             await embed.send(ctx.channel)      
         
     @phone.command(name="call", brief="Call Someone by their phone number!") 
