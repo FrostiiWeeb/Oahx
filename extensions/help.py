@@ -28,7 +28,7 @@ class MyHelpCommand(commands.HelpCommand):
             hi.append(self.context.bot.get_command(str(cmd)))
         for cmd in hi:
             cmds.append(self.get_command_signature(cmd))  
-        embed.add_field(name="Commands", value="\n".join(command for command in cmds))
+        embed.add_field(name="Commands", value=cmds)
         channel = self.get_destination()
         await channel.send(embed=embed)                      
 
