@@ -21,12 +21,8 @@ class MyHelpCommand(commands.HelpCommand):
    async def send_cog_help(self, cog):
         embed = discord.Embed(title=cog.qualified_name, colour=self.context.bot.colour)
         embed.add_field(name="Help", value=cog.description)
-        mapping = cog.get_commands()
-        hi = []
-        cmds = []
-        for cmd in mapping:
-            cmds.append(self.get_command_signature(self.context.bot.get_command(str(cmd))))
-        embed.add_field(name="Commands", value=cmds[0])
+        cmds = [cmd for cmd in bot.commands if cmd.cog == str(cog)]
+        embed.add_field(name="Commands", value="\n".join([self.get_command_signature(c) for c in cmds]))
         channel = self.get_destination()
         await channel.send(embed=embed)                      
 
