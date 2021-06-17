@@ -16,7 +16,17 @@ class MyHelpCommand(commands.HelpCommand):
 
         channel = self.get_destination()
         await channel.send(embed=embed)
-
+        
+   
+   async def send_cog_help(self, cog):
+        embed = discord.Embed(title=self.context.bot.get_cog(cog).qualified_name, colour=self.context.bot.colour)
+        embed.add_field(name="Help", value=cog.help)
+        cmds = self.context.bot.get_cog(cog).get_commands()
+        filtered = await self.filter_commands(commands, sort=True)
+        command_signatures = [self.get_command_signature(c) for c in filtered]      
+        embed.add_field(name="Commands", value="\n".join([command for command in command_signatures]))
+        channel = self.get_destination()
+        await channel.send(embed=embed)                      
 
    async def send_command_help(self, command):
         embed = discord.Embed(title=self.get_command_signature(command), colour=self.context.bot.colour)
