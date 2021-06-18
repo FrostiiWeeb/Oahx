@@ -63,7 +63,7 @@ async def run(bot):
     await bot.db.execute("CREATE TABLE IF NOT EXISTS prefixes(guild_id bigint PRIMARY KEY, prefix TEXT)")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS numbers(number TEXT PRIMARY KEY, channel_id bigint, name TEXT)")
 
-bot = Oahx(command_prefix=get_prefix)
+bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all())
 loop = asyncio.get_event_loop()
 loop.run_until_complete(run(bot=bot))
 bot.run("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.zlx8JnZ3D8sftVBTXk8YwG88--I")            
