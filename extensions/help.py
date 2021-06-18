@@ -5,7 +5,9 @@ class MyHelpCommand(commands.HelpCommand):
    def get_command_signature(self, command):
         return '%s%s %s' % (self.clean_prefix, command.qualified_name, command.signature)
     
-   async def send_bot_help(self, mapping):
+   async def send_bot_help(self, mapping, used=None):
+        if used:
+            self.mapping = mapping
         embed = discord.Embed(title="Help", colour=self.context.bot.colour)
         for cog, commands in mapping.items():
            filtered = await self.filter_commands(commands, sort=True)
@@ -22,7 +24,7 @@ class MyHelpCommand(commands.HelpCommand):
         embed = discord.Embed(title=cog.qualified_name, colour=self.context.bot.colour)
         embed.add_field(name="Help", value=cog.description or "A cog, yeah")
         cmds = cog.get_commands()
-        embed.add_field(name="Commands", value="\n".join(self.context.bot.get_command(cmd).signature for cmd in cmds))
+        embed.add_field(name="Commands", value="\n".join(cmd.signature for cmd in cmds))
         channel = self.get_destination()
         await channel.send(embed=embed)                      
 

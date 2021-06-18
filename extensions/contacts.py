@@ -28,7 +28,7 @@ class Contacts(commands.Cog):
         return channel_data 
                
     @commands.group(name="phone",brief="A dummy command for the commands.", invoke_without_command=True)
-    async def phone(self, ctx, user : Union[discord.Member, int]):
+    async def phone(self, ctx, user : Union[discord.Member, int] = None):
         user = user or ctx.author
         me = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE name = '%s'" % user.name)  
         async with self.bot.embed(title="Phone ", description=f"{me['name']}'s number is `%s`" % me["number"]) as embed:
