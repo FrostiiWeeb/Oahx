@@ -105,7 +105,7 @@ class Contacts(commands.Cog):
                             elif self.phone_mute == False:
                                 await me_channel_data.send(f"{phone_data['name']}: {message.content}")
                         elif message.author.name == me["name"]:
-                            elif message.content == "mute":
+                            if message.content == "mute":
                                 self.me_mute = True                        
                             elif message.content == "unmute":
                                 self.me_mute = False                                 
