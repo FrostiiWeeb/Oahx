@@ -88,12 +88,6 @@ class Contacts(commands.Cog):
                         def check(m):
                             return m.author.name == phone_data["name"] or m.author.name == me["name"] and m.channel.id == phone_data["channel_id"] or m.channel.id == me["channel_id"]
                         message = await self.bot.wait_for("message",check=check)
-                        c, u, w = await self.bot.wait_for("typing")
-                        new_message = None
-                        if u.name == phone_data['name']:
-                            new_message = await channel_data.send(f"{u.name} started typing at {w.strftime('%H:%M')}")
-                        if u.name == me['name']:
-                            new_message = await channel_data.send(f"{u.name} started typing at {w.strftime('%H:%M')}")
                         if message.content == "cancel":
                             
                             await me_channel_data.send("Call ended")
