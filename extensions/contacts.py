@@ -79,7 +79,7 @@ class Contacts(commands.Cog):
             def check(m):
                 return m.author.name == phone_data['name']  
             try:
-                message = await self.bot.wait_for("message", timeout=30.0, check=check)
+                message = await self.bot.wait_for("message", timeout=60.0, check=check)
                 message = message.content.lower()
                 if message == "yes":
                     await channel_data.send("You are now talking with `{}`".format(me["name"]))
@@ -95,25 +95,25 @@ class Contacts(commands.Cog):
                             return    
                                                                                           
                         elif message.author.name == phone_data["name"]:
-                            if self.phone_mute == True:
-                                pass
-                            elif self.phone_mute == False:
-                                await me_channel_data.send(f"{phone_data['name']}: {message.content}")
-                            elif message.content == "mute":
+                            if message.content == "mute":
                                 self.phone_mute = True                        
                             elif message.content == "unmute":
                                 self.phone_mute = False                       
+                                await me_channel_data.send(f"{phone_data['name']}: {message.content}")                            
+                            elif self.phone_mute == True:
+                                pass
+                            elif self.phone_mute == False:
                                 await me_channel_data.send(f"{phone_data['name']}: {message.content}")
                         elif message.author.name == me["name"]:
-                            if self.me_mute == True:
-                                pass
-                            elif self.me_mute == False:
-                                await channel_data.send(f"{me['name']}: {message.content}")
                             elif message.content == "mute":
                                 self.me_mute = True                        
                             elif message.content == "unmute":
                                 self.me_mute = False                                 
-                                await channel_data.send(f"{me['name']}: {message.content}") 
+                                await channel_data.send(f"{me['name']}: {message.content}")                             
+                            elif self.me_mute == True:
+                                pass
+                            elif self.me_mute == False:
+                                await channel_data.send(f"{me['name']}: {message.content}")
                 else:
                     await ctx.send("Did not answer") 
                     await channel_data.send("Call canceled.")                                            
