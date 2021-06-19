@@ -18,7 +18,8 @@ class InDB(Exception):
 class Contacts(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.mute = False
+        self.phone_mute = False
+        self.me_mute = False
         self.using_support = False        
         
     async def try_channel(self, channel):
@@ -94,24 +95,24 @@ class Contacts(commands.Cog):
                             return    
                                                                                           
                         elif message.author.name == phone_data["name"]:
-                            if self.mute == True:
+                            if self.phone_mute == True:
                                 pass
-                            elif self.mute == False:
+                            elif self.phone_mute == False:
                                 await me_channel_data.send(f"{phone_data['name']}: {message.content}")
                             elif message.content == "mute":
-                                self.mute = True                        
+                                self.phone_mute = True                        
                             elif message.content == "unmute":
-                                self.mute = False                       
+                                self.phone_mute = False                       
                                 await me_channel_data.send(f"{phone_data['name']}: {message.content}")
                         elif message.author.name == me["name"]:
-                            if self.mute == True:
+                            if self.me_mute == True:
                                 pass
-                            elif self.mute == False:
+                            elif self.me_mute == False:
                                 await channel_data.send(f"{me['name']}: {message.content}")
                             elif message.content == "mute":
-                                self.mute = True                        
+                                self.me_mute = True                        
                             elif message.content == "unmute":
-                                self.mute = False                                 
+                                self.me_mute = False                                 
                                 await channel_data.send(f"{me['name']}: {message.content}") 
                 else:
                     await ctx.send("Did not answer") 
