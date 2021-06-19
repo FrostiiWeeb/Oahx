@@ -45,7 +45,7 @@ class Oahx(commands.Bot):
         [self.load_extension(cog) for cog in self.__extensions if cog != "__pycache__"]
         self.colour = discord.Colour.from_rgb(100, 53, 255)
         self.embed = CustomEmbed
-        self.languages = {"french": {"someone": "quelque-un"}}
+        self.languages = {"french": {"someone": "quelque-un", "hi": "bonjour", "how are you": "tu vas bien", "?": "?", ",": ","}}
                           
     async def on_ready(self):
 		    
@@ -66,4 +66,4 @@ async def run(bot):
 bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all())
 loop = asyncio.get_event_loop()
 loop.run_until_complete(run(bot=bot))
-bot.run("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.zlx8JnZ3D8sftVBTXk8YwG88--I")            
+bot.run("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.3ve4a3aC8H7l_2F5FgIndydGcr4")            

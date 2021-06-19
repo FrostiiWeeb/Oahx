@@ -30,7 +30,10 @@ class Contacts(commands.Cog):
     @commands.group(name="phone",brief="A dummy command for the commands.", invoke_without_command=True)
     async def phone(self, ctx, user : Union[discord.Member, int] = None):
         user = user or ctx.author
-        me = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE name = '%s'" % user.name)  
+        try:
+            me = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE name = '%s'" % user.name)  
+        except Exception:
+            raise NumberNotFound(f"{user} does not have a phone number")
         async with self.bot.embed(title="Phone ", description=f"{me['name']}'s number is `%s`" % me["number"]) as embed:
             await embed.send(ctx.channel)      
         
