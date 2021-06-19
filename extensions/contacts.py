@@ -90,10 +90,10 @@ class Contacts(commands.Cog):
                         message = await self.bot.wait_for("message",check=check)
                         c, u, w = await self.bot.wait_for("typing")
                         new_message = None
-                        if u.author.name == phone_data['name']:
-                            new_message = await channel_data.send(f"{u.author.name} started typing at {w.strftime('%H:%M')}")
-                        if u.author.name == me['name']:
-                            new_message = await channel_data.send(f"{u.author.name} started typing at {w.strftime('%H:%M')}")
+                        if u.name == phone_data['name']:
+                            new_message = await channel_data.send(f"{u.name} started typing at {w.strftime('%H:%M')}")
+                        if u.name == me['name']:
+                            new_message = await channel_data.send(f"{u.name} started typing at {w.strftime('%H:%M')}")
                         if message.content == "cancel":
                             await new_message.delete()
                             await me_channel_data.send("Call ended")
