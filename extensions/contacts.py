@@ -77,7 +77,7 @@ class Contacts(commands.Cog):
             async with self.bot.embed(title="Someone is calling..",description=f"`{me['name']} ({me['number']})` is calling `{phone_data['name']}`, do you want to pick up? [yes - no]") as embed:               
                 await embed.send(channel_data)      
             def check(m):
-                return m.author.name == phone_data['name']
+                return m.author.name == phone_data['name']  
             try:
                 message = await self.bot.wait_for("message", timeout=60.0, check=check)
                 message = message.content.lower()
@@ -108,23 +108,45 @@ class Contacts(commands.Cog):
                             elif self.phone_mute == True:
                                 pass
                             elif self.phone_mute == False:
-                                    
+                                if message.content == "reply":
+                                    def check(m):
+                                        return m.author.name == phone_data['name']   
+                                    await channel_data.send("Send the message id you want to reply to.")
+                                    replied_message = await self.bot.wait_for("message", check=check)
+                                    replied_message = int(replied_message.content)
+                                    text_message = await self.bot.wait_for("message", check=check)
+                                    text_message = text_message.content
+                                    my_data = await self.bot.fetch_message(replied_message)
+                                    await me_channel_data.send(f"> {my_data.content}\n\n\n{text_message}")
+                                      
+                                                                 
                                 await me_channel_data.send(f"{phone_data['name']}: {message.content}")
-                                                        
                        
                         elif message.author.name == me["name"]:
                                     if message.content == "mute":
                                         
                                         await channel_data.send("The other user have muted themselves.")                                    
-                                        self.me_mute = True
-                                    elif message.content == "unmute":
-                                        await channel_data.send("The other user have unmuted themselves.")                                     
-                                        self.me_mute = False
-                                        await channel_data.send(f"{me['name']}: {message.content}")                                      
-                                    elif self.me_mute == True:
-                                        pass
-                                    elif self.me_mute == False:
-                                        await channel_data.send(f"{me['name']}: {message.content}")                                                  
+                                        self.me_mute = True                        
+                        elif message.content == "unmute":
+                                    
+                                    await channel_data.send("The other user have unmuted themselves.")                                     
+                                    self.me_mute = False                                 
+                                    await channel_data.send(f"{me['name']}: {message.content}")                             
+                        elif self.me_mute == True:
+                            pass
+                        elif self.me_mute == False:
+                                if message.content == "reply":
+                                    def check(m):
+                                        return m.author.name == me['name']   
+                                    await channel_data.send("Send the message id you want to reply to.")
+                                    replied_message = await self.bot.wait_for("message", check=check)
+                                    replied_message = int(replied_message.content)
+                                    text_message = await self.bot.wait_for("message", check=check)
+                                    text_message = text_message.content
+                                    my_data = await self.bot.fetch_message(replied_message)
+                                    await channel_data.send(f"> {my_data.content}\n\n\n{text_message}")                                    
+                                    
+                                    await channel_data.send(f"{me['name']}: {message.content}")
                 else:
                     await ctx.send("Did not answer") 
                     await channel_data.send("Call canceled.")                                            
