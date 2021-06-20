@@ -76,10 +76,10 @@ class Contacts(commands.Cog):
                 await embed.send(ctx.channel)
             async with self.bot.embed(title="Someone is calling..",description=f"`{me['name']} ({me['number']})` is calling `{phone_data['name']}`, do you want to pick up? [yes - no]") as embed:               
                 await embed.send(channel_data)      
-            def check(m):
+            def s_check(m):
                 return m.author.name == phone_data['name']  
             try:
-                message = await self.bot.wait_for("message", timeout=60.0, check=check)
+                message = await self.bot.wait_for("message", timeout=60.0, check=s_check)
                 message = message.content.lower()
                 if message == "yes":
                     await channel_data.send("You are now talking with `{}`".format(me["name"]))
