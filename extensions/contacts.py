@@ -141,13 +141,13 @@ class Contacts(commands.Cog):
                                     await channel_data.send(f"> {my_data['content']}\n\n\n{text_message}")
                                 else:
                                     await channel_data.send(f"{me['name']}: {message.content}")                                   
-                             elif message.content == "mute":
-                                 await channel_data.send("The other user have muted themselves.")                                    
-                                 self.me_mute = True
-                             elif message.content == "unmute":
-                                 await channel_data.send("The other user have unmuted themselves.")                                    
-                                 self.me_mute = False
-                                 await channel_data.send(f"{me['name']}: {message.content}")                                                                                                                                  
+                            elif message.content == "mute":
+                                await channel_data.send("The other user have muted themselves.")                                    
+                                self.me_mute = True
+                            elif message.content == "unmute":
+                                await channel_data.send("The other user have unmuted themselves.")                                    
+                                self.me_mute = False
+                                await channel_data.send(f"{me['name']}: {message.content}")                                                                                                                                  
                 else:
                     await ctx.send("Did not answer") 
                     await channel_data.send("Call canceled.")  
