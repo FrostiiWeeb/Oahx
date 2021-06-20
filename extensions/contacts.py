@@ -121,7 +121,8 @@ class Contacts(commands.Cog):
                                     await me_channel_data.send(f"> {my_data['content']}\n\n\n{text_message}")
                                       
                                                                  
-                                await me_channel_data.send(f"{phone_data['name']}: {message.content}")
+                                else:
+                                    await me_channel_data.send(f"{phone_data['name']}: {message.content}")
                        
                         elif message.author.name == me["name"]:
                                     if message.content == "mute":
@@ -148,7 +149,8 @@ class Contacts(commands.Cog):
                                     my_data = await self.bot.http.get_message(me['channel_id'], replied_message)
                                     await channel_data.send(f"> {my_data['content']}\n\n\n{text_message}")                                    
                                     
-                                await channel_data.send(f"{me['name']}: {message.content}")
+                                else:
+                                    await channel_data.send(f"{me['name']}: {message.content}")
                 else:
                     await ctx.send("Did not answer") 
                     await channel_data.send("Call canceled.")                                            
