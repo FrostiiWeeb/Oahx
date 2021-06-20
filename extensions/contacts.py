@@ -86,7 +86,7 @@ class Contacts(commands.Cog):
                     await me_channel_data.send("You are now talking with `{}`".format(phone_data["name"]))
                     while True:
                         def check(m):
-                            return m.author.name == phone_data["name"] or m.author.name == me["name"] and m.channel.id == phone_data["channel_id"] or m.channel.id == me["channel_id"]
+                            return m.author.name == phone_data["name"] and m.channel.id == phone_data["channel_id"] or m.author.name == me["name"] and m.channel.id == me["channel_id"]
                         message = await self.bot.wait_for("message",check=check)
                         if message.content == "cancel":
                             
