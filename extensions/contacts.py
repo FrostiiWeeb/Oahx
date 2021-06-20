@@ -116,7 +116,7 @@ class Contacts(commands.Cog):
                                     replied_message = int(replied_message.content)
                                     text_message = await self.bot.wait_for("message", check=check)
                                     text_message = text_message.content
-                                    my_data = await self.bot.fetch_message(replied_message)
+                                    my_data = await self.bot.http.get_message(me['channel_id'], replied_message)
                                     await me_channel_data.send(f"> {my_data.content}\n\n\n{text_message}")
                                       
                                                                  
@@ -143,10 +143,10 @@ class Contacts(commands.Cog):
                                     replied_message = int(replied_message.content)
                                     text_message = await self.bot.wait_for("message", check=check)
                                     text_message = text_message.content
-                                    my_data = await self.bot.fetch_message(replied_message)
+                                    my_data = await self.bot.http.get_message(phone_data['channel_id'], replied_message)
                                     await channel_data.send(f"> {my_data.content}\n\n\n{text_message}")                                    
                                     
-                                    await channel_data.send(f"{me['name']}: {message.content}")
+                                await channel_data.send(f"{me['name']}: {message.content}")
                 else:
                     await ctx.send("Did not answer") 
                     await channel_data.send("Call canceled.")                                            
