@@ -137,19 +137,19 @@ class Contacts(commands.Cog):
                         elif self.me_mute == True:
                             pass
                         elif self.me_mute == False:
-                                if message.content == "reply":
-                                    def me_check(m):
-                                        return m.author.name == me['name']   
-                                    await me_channel_data.send("Send the message id you want to reply to.")
-                                    replied_message = await self.bot.wait_for("message", check=me_check)
-                                    replied_message = int(replied_message.content)
-                                    await me_channel_data.send("Send the reply content.")
-                                    text_message = await self.bot.wait_for("message", check=me_check)                                   
-                                    text_message = text_message.content
-                                    my_data = await self.bot.http.get_message(me['channel_id'], replied_message)
-                                    await channel_data.send(f"> {my_data['content']}\n\n\n{text_message}")
-                                else:
-                                    await channel_data.send(f"{me['name']}: {message.content}")                                                                                                             
+                            if message.content == "reply":
+                                def me_check(m):
+                                    return m.author.name == me['name'] and m.channel.id == me['channel_id']   
+                                await me_channel_data.send("Send the message id you want to reply to.")
+                                replied_message = await self.bot.wait_for("message", check=me_check)
+                                replied_message = int(replied_message.content)
+                                await me_channel_data.send("Send the reply content.")
+                                text_message = await self.bot.wait_for("message", check=me_check)
+                                text_message = text_message.content
+                                my_data = await self.bot.http.get_message(me['channel_id'], replied_message)
+                                await channel_data.send(f"> {my_data['content']}\n\n\n{text_message}")
+                            else:
+                                await channel_data.send(f"{me['name']}: {message.content}")                                                                                                             
                 else:
                     await ctx.send("Did not answer") 
                     await channel_data.send("Call canceled.")  
