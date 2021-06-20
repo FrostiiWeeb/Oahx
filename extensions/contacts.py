@@ -125,7 +125,7 @@ class Contacts(commands.Cog):
                                     await me_channel_data.send(f"{phone_data['name']}: {message.content}")
                        
                         elif message.author.name == me["name"]:
-                            elif self.me_mute == True:
+                            if self.me_mute == True:
                                 pass
                             elif self.me_mute == False:
                                 if message.content == "reply":
