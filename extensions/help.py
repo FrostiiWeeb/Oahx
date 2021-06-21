@@ -2,8 +2,9 @@ import discord
 from discord.ext import commands
 
 class MyHelpCommand(commands.HelpCommand):
-   def get_command_signature(self, command):
-        return '%s%s %s' % (self.clean_prefix, command.qualified_name, command.signature)
+   def get_command_signature(self, command, group_main=None):
+        if group_name != None:
+            return '%s%s %s %s' % (self.clean_prefix, group_name, command.qualified_name, command.signature)
     
    async def send_bot_help(self, mapping, used=None):
         if used:
@@ -17,20 +18,19 @@ class MyHelpCommand(commands.HelpCommand):
                 embed.add_field(name=cog_name, value="\n".join(command_signatures), inline=False)
 
         channel = self.get_destination()
-        await channel.send(embed=embed)
-        
+        await channel.send(embed=embed)       
    
    async def send_cog_help(self, cog):
         embed = discord.Embed(title=cog.qualified_name, colour=self.context.bot.colour)
         embed.add_field(name="Help", value=cog.description or "A cog, yeah")
         cmds = cog.get_commands()
-        embed.add_field(name="Commands", value="\n".join(cmd.signature for cmd in cmds))
+        embed.add_field(name="Commands", value="\n".join([c.name if c.parent else "\n".join(self.get_command_signature(g, group_main=g.full_parent_name) for g in c.commands) for c in cog.get_commands()]))
         channel = self.get_destination()
         await channel.send(embed=embed)                      
 
    async def send_command_help(self, command):
         embed = discord.Embed(title=self.get_command_signature(command), colour=self.context.bot.colour)
-        embed.add_field(name="Help", value=command.help)
+        embed.add_field(name="Help", value=command.brief)
         alias = command.aliases
         if alias:
             embed.add_field(name="Aliases", value=", ".join(alias), inline=False)
