@@ -32,7 +32,7 @@ class MyHelpCommand(commands.HelpCommand):
         
    async def send_group_help(self, group):
         embed = discord.Embed(title=group.qualified_name, colour=self.context.bot.colour)
-        embed.add_field(name="Help", value=group.shot_doc or "A command, yeah")
+        embed.add_field(name="Help", value="A command, yeah")
         embed.add_field(name="Sub-commands", value="\n".join([self.get_command_signature(g, group_main=g.full_parent_name) for g in group.commands]))
         channel = self.get_destination()
         await channel.send(embed=embed)                                                  
