@@ -28,7 +28,14 @@ class MyHelpCommand(commands.HelpCommand):
         cmds = cog.get_commands()
         embed.add_field(name="Commands", value="\n".join([c.name if c.parent else "\n".join(self.get_command_signature(g, group_main=g.full_parent_name) for g in c.commands) for c in cog.get_commands()]))
         channel = self.get_destination()
-        await channel.send(embed=embed)                      
+        await channel.send(embed=embed)     
+        
+   async def send_group_help(self, group):
+        embed = discord.Embed(title=cog.qualified_name, colour=self.context.bot.colour)
+        embed.add_field(name="Help", value=cog.description or "A command, yeah")
+        embed.add_field(name="Sub-commands", value="\n".join(["\n".join(self.get_command_signature(g, group_main=g.full_parent_name) for g in c.commands) for c in group()]))
+        channel = self.get_destination()
+        await channel.send(embed=embed)                                                  
 
    async def send_command_help(self, command):
         embed = discord.Embed(title=self.get_command_signature(command), colour=self.context.bot.colour)
