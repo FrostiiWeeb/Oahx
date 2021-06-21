@@ -5,6 +5,8 @@ class MyHelpCommand(commands.HelpCommand):
    def get_command_signature(self, command, group_main=None):
         if group_main != None:
             return '%s%s %s %s' % (self.clean_prefix, group_name, command.qualified_name, command.signature)
+        else:
+            return '%s%s %s' % (self.clean_prefix, command.qualified_name, command.signature)
     
    async def send_bot_help(self, mapping, used=None):
         if used:
