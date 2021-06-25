@@ -13,7 +13,11 @@ class NumberNotFound(Exception):
         
 class InDB(Exception):
     def __init__(self, message):
-        super().__init__(message)        
+        super().__init__(message) 
+        
+class ConnectionError(Exception):
+    def __init__(self, message):
+        super().__init__(message)                        
 
 class Contacts(commands.Cog):
     def __init__(self, bot):
@@ -73,7 +77,7 @@ class Contacts(commands.Cog):
             channel = await self.try_channel(854670283457429524)
             def check(m):
                 return m.author.name == ctx.author.name or m.channel.id == 854670283457429524
-            await channel.send("<@746807014658801704> and <@393972755479003136>, Someone is asking for help, please respond.")
+            await channel.send("Hello, Someone is asking for help, please respond.")
             await ctx.send("Hello! Welcome to 911 phone support, how may we help you? If you did not realize, this is an automated message. The support team will get back to you shortly, so please wait, thanks!")
             while True:                                        
                 message = await self.bot.wait_for("message", check=check)                      
@@ -92,11 +96,16 @@ class Contacts(commands.Cog):
         except:
             raise NumberNotFound('The number you provided was not found or you dont have a number. create a number using "oahx phone create"')
         else:
+            if me['channel_id'] == phone_data['channel_id']:
+                raise ConnectionError(f"{me['name']}'s current channel id is the same as {phone_data['name']}'s current channel id.")
             try:
                 channel_data = await self.try_channel(phone_data['channel_id'])
             except:
                 raise NumberNotFound('The number you provided was not found or you dont have a number. create a number using "oahx phone create"')
-            me_channel_data = await self.try_channel(me['channel_id'])
+            try:
+                me_channel_data = await self.try_channel(me['channel_id'])
+             except:
+                raise NumberNotFound('The number you provided was not found or you dont have a number. create a number using "oahx phone create"')               
             async with self.bot.embed(title="Calling..", description="Calling phone number `%s`" % phone_data['number']) as embed:
                 await embed.send(ctx.channel)
             async with self.bot.embed(title="Someone is calling..",description=f"`{me['name']} ({me['number']})` is calling `{phone_data['name']}`, do you want to pick up? [yes - no]") as embed:               
