@@ -73,8 +73,8 @@ class Contacts(commands.Cog):
             channel = await self.try_channel(854670283457429524)
             def check(m):
                 return m.author.name == ctx.author.name or m.channel.id == 854670283457429524
-            await channel.send("Someone is asking for help, please respond.")
-            await ctx.send("Please tell us your question, problem.")
+            await channel.send("@FrostiiWeeb#0001 and @Natiepoo#6969, Someone is asking for help, please respond.")
+            await ctx.send("Hello! Welcome to 911 phone support, how may we help you? If you did not realize, this is an automated message. The support team will get back to you shortly, so please wait, thanks!")
             while True:                                        
                 message = await self.bot.wait_for("message", check=check)                      
                 if message.content == "cancel":
@@ -207,10 +207,7 @@ class Contacts(commands.Cog):
         for i in range(7):
             full_number += random.choice(str(num_ber)) 
         data = await self.bot.db.fetch("SELECT * FROM numbers") 
-        for record in data:
-            if record["channel_id"] == ctx.channel.id:
-                async with self.bot.embed(title="Error", description="There is already a phone number made in this channel.") as embed:
-                    return await embed.send(ctx.channel)                
+        for record in data:              
             if record["name"] == ctx.author.name:
                 async with self.bot.embed(title="Error", description="You already have a phone number.") as embed:
                     return await embed.send(ctx.channel) 
