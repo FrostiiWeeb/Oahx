@@ -20,14 +20,36 @@ class Contacts(commands.Cog):
         self.bot = bot
         self.phone_mute = False
         self.me_mute = False
-        self.using_support = False        
-        
+        self.using_support = False  
+ 
     async def try_channel(self, channel):
         channel_data = self.bot.get_channel(channel)
         if channel_data is None:
             channel_data = await self.bot.fetch_channel(channel)
-        return channel_data 
-               
+        return channel_data        
+                      
+    async def get_users(self, ctx, other_number):
+        phone_number = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE number = '%s'" % other_number)
+        me = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE name = '%s'" % ctx.author.name)   
+        return {"me": me, "user": phone_number}
+        
+    async def get_channels(self, ctx, other_number):
+        data = await self.get_users(ctx, other_number)
+        me  = data["me"] 
+        user = data["user"]    
+        me_channel = await self.try_channel(me['channel_id'])  
+        user_channel = await self.try_channel(user['channel_id'])     
+        return {"me": me_channel, "user": user_channel}
+        
+    async def respond(self, ctx, other_mumber, content, user="me"):
+        data = await self.get_channels(ctx, other_number)
+        me = data["me"]
+        target = data["user"]
+        if user == "me":
+            await me.send(content)
+        elif user == "target":
+            await target.send(content)                        
+                                                                                 
     @commands.group(name="phone",brief="A dummy command for the commands.", invoke_without_command=True)
     async def phone(self, ctx, user : Union[discord.Member, int] = None):
         user = user or ctx.author
@@ -35,8 +57,11 @@ class Contacts(commands.Cog):
             me = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE name = '%s'" % user.name)  
         except Exception:
             raise NumberNotFound(f"{user} does not have a phone number")
-        async with self.bot.embed(title="Phone ", description=f"{me['name']}'s number is `%s`" % me["number"]) as embed:
-            await embed.send(ctx.channel)      
+        try:
+            async with self.bot.embed(title="Phone ", description=f"{me['name']}'s number is `%s`" % me["number"]) as embed:
+                await embed.send(ctx.channel)
+        except:
+            raise NumberNotFound(f"{user} does not have a phone number")              
         
     @phone.command(name="call", brief="Call Someone by their phone number!") 
     @commands.max_concurrency(1, per=BucketType.channel, wait=False)  
@@ -128,14 +153,15 @@ class Contacts(commands.Cog):
                             if self.me_mute == True:
                                 pass
                             elif self.me_mute == False:
+                               
                                 if message.content == "reply":
-                                    def me_check(m):
-                                        return m.author.name == me['name'] and m.channel.id == me['channel_id']
+                                    def m_check(m):
+                                        return m.author.name == me['name']   
                                     await me_channel_data.send("Send the message id you want to reply to.")
-                                    replied_message = await self.bot.wait_for("message", check=me_check)
+                                    replied_message = await self.bot.wait_for("message", check=m_check)
                                     replied_message = int(replied_message.content)
                                     await me_channel_data.send("Send the reply content.")
-                                    text_message = await self.bot.wait_for("message", check=me_check)
+                                    text_message = await self.bot.wait_for("message", check=p_check)
                                     text_message = text_message.content
                                     my_data = await self.bot.http.get_message(me['channel_id'], replied_message)
                                     await channel_data.send(f"> {my_data['content']}\n\n\n{text_message}")
@@ -164,7 +190,7 @@ class Contacts(commands.Cog):
                 await self.bot.db.execute("UPDATE numbers SET channel_id = $1 WHERE name = $2", ctx.channel.id, ctx.author.name)
                 await ctx.send("Channel changed to current channel!")
             except:
-                raise NumberNotFound("You dont have a phone number.")              
+                raise NumberNotFound("You dont have a phone number.")                                                     
             
     @phone.command(name="delete", brief="Delete your phone number!")
     async def delete(self, ctx):
@@ -182,6 +208,9 @@ class Contacts(commands.Cog):
             full_number += random.choice(str(num_ber)) 
         data = await self.bot.db.fetch("SELECT * FROM numbers") 
         for record in data:
+            if record["channel_id"] == ctx.channel.id:
+                async with self.bot.embed(title="Error", description="There is already a phone number made in this channel.") as embed:
+                    return await embed.send(ctx.channel)                
             if record["name"] == ctx.author.name:
                 async with self.bot.embed(title="Error", description="You already have a phone number.") as embed:
                     return await embed.send(ctx.channel) 
