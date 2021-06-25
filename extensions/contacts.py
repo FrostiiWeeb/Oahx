@@ -106,9 +106,9 @@ class Contacts(commands.Cog):
                 me_channel_data = await self.try_channel(me['channel_id'])
             except:
                 raise NumberNotFound('The number you provided was not found or you dont have a number. create a number using "oahx phone create"')               
-            async with self.bot.embed(title="Calling..", description="Calling phone number `%s`" % phone_data['number']) as embed:
+            async with self.bot.embed(title="Calling..", description="<:phone:857956883464978432> Calling phone number `%s`" % phone_data['number']) as embed:
                 await embed.send(ctx.channel)
-            async with self.bot.embed(title="Someone is calling..",description=f"`{me['name']} ({me['number']})` is calling `{phone_data['name']}`, do you want to pick up? [yes - no]") as embed:               
+            async with self.bot.embed(title="Someone is calling..",description=f"<:phone:857956883464978432> `{me['name']} ({me['number']})` is calling `{phone_data['name']}`, do you want to pick up? [yes - no]") as embed:               
                 await embed.send(channel_data)      
             def s_check(m):
                 return m.author.name == phone_data['name']  
