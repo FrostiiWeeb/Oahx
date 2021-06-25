@@ -104,7 +104,7 @@ class Contacts(commands.Cog):
                 raise NumberNotFound('The number you provided was not found or you dont have a number. create a number using "oahx phone create"')
             try:
                 me_channel_data = await self.try_channel(me['channel_id'])
-             except:
+            except:
                 raise NumberNotFound('The number you provided was not found or you dont have a number. create a number using "oahx phone create"')               
             async with self.bot.embed(title="Calling..", description="Calling phone number `%s`" % phone_data['number']) as embed:
                 await embed.send(ctx.channel)
