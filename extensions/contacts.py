@@ -73,7 +73,7 @@ class Contacts(commands.Cog):
             channel = await self.try_channel(854670283457429524)
             def check(m):
                 return m.author.name == ctx.author.name or m.channel.id == 854670283457429524
-            await channel.send("@FrostiiWeeb#0001 and @Natiepoo#6969, Someone is asking for help, please respond.")
+            await channel.send("<@746807014658801704> and <@393972755479003136>, Someone is asking for help, please respond.")
             await ctx.send("Hello! Welcome to 911 phone support, how may we help you? If you did not realize, this is an automated message. The support team will get back to you shortly, so please wait, thanks!")
             while True:                                        
                 message = await self.bot.wait_for("message", check=check)                      
