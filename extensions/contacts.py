@@ -74,11 +74,10 @@ class Contacts(commands.Cog):
     @commands.max_concurrency(1, per=BucketType.channel, wait=False)  
     async def call(self, ctx, number : str = None, name : str = None):
         if not number:
-            if name:
-                data = self.contact_book[ctx.author.name]
-                for _name, _number in data:
-                    if _name == name:
-                        number = _number                       
+            data = self.contact_book[ctx.author.name]
+            for _name, _number in data:
+                if _name == name:
+                    number = _number                       
         if number == "911":
             if self.using_support:
                 return await ctx.send("Support already being used.")
@@ -284,7 +283,7 @@ class Contacts(commands.Cog):
                 self.contact_book[ctx.author.name] = []  
             data = self.contact_book[ctx.author.name]
             data.append((name, number))
-            async with self.bot.embed(title="Saved!", description="Saved number!"):
+            async with self.bot.embed(title="Saved!", description="Saved number!") as embed:
                 await embed.send(ctx.channel) 
 def setup(bot):
     bot.add_cog(Contacts(bot))       
