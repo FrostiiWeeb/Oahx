@@ -72,8 +72,8 @@ class Contacts(commands.Cog):
        
     @phone.command(name="call", brief="Call Someone by their phone number!") 
     @commands.max_concurrency(1, per=BucketType.channel, wait=False)  
-    async def call(self, ctx, number : str = None, name : str = None):
-        if not number:
+    async def call(self, ctx, number : str, name : str):
+        if number == "person":
             data = self.contact_book[ctx.author.name]
             for _name, _number in data:
                 if _name == name:
@@ -274,8 +274,8 @@ class Contacts(commands.Cog):
         else:
             raise NumberNotFound("You do not have any numbers saved.")
       
-    @contacts.command(name="save", brief="Save/remove a phone number")
-    async def save(self, ctx, option : str, name : str, number : str):
+    @contacts.command(name="do", brief="Save/remove a phone number")
+    async def do(self, ctx, option : str, name : str, number : str):
         if option == "save":
             try:
                 self.contact_book[ctx.author.name]
