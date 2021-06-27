@@ -281,11 +281,10 @@ class Contacts(commands.Cog):
             try:
                 self.contact_book[ctx.author.name]
             except KeyError:
-                data = self.contact_book[ctx.author.name] = []  
-            else:
-                data = self.contact_book[ctx.author.name]
-                await data.append((name, number))
-                async with self.bot.embed(title="Saved!", description="Saved number!"):
-                    await embed.send(ctx.channel) 
+                self.contact_book[ctx.author.name] = []  
+            data = self.contact_book[ctx.author.name]
+            data.append((name, number))
+            async with self.bot.embed(title="Saved!", description="Saved number!"):
+                await embed.send(ctx.channel) 
 def setup(bot):
     bot.add_cog(Contacts(bot))       
