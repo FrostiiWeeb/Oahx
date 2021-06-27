@@ -25,6 +25,7 @@ class Contacts(commands.Cog):
         self.phone_mute = False
         self.me_mute = False
         self.using_support = False  
+        self.contact_book = {}
  
     async def try_channel(self, channel):
         channel_data = self.bot.get_channel(channel)
@@ -71,7 +72,13 @@ class Contacts(commands.Cog):
        
     @phone.command(name="call", brief="Call Someone by their phone number!") 
     @commands.max_concurrency(1, per=BucketType.channel, wait=False)  
-    async def call(self, ctx, number : str):
+    async def call(self, ctx, number : str = None, name : str = None):
+        if not number:
+            if name:
+                data = self.contact_book[ctx.author.name]
+                for _name, _number in data:
+                    if _name == name:
+                        number = _number                       
         if number == "911":
             if self.using_support:
                 return await ctx.send("Support already being used.")
@@ -258,7 +265,27 @@ class Contacts(commands.Cog):
                         return await embed.send(ctx.channel) 
             await self.bot.db.execute("INSERT INTO numbers(number, channel_id, name) VALUES ($1, $2, $3)", full_number, ctx.channel.id, ctx.author.name)                       
             async with self.bot.embed(title="Success!", description="The operation was a success, your phone number is `%s`" % full_number) as embed:
-                return await embed.send(ctx)
-            
+                return await embed.send(ctx.channel)
+
+    @phone.group(name="contacts", invoke_without_command=True, brief="View, save, remove a contact in your contact book.")
+    async def contacts(self, ctx):
+        if ctx.author.name in self.contact_book:
+            async with self.bot.embed(title="Contacts", description=", ".join(self.contact_book[ctx.author.name])) as embed:
+                await embed.send(ctx.channel)
+        else:
+            raise NumberNotFound("You do not have any numbers saved.")
+      
+    @contacts.command(name="save", brief="Save/remove a phone number")
+    async def save(self, ctx, option : str, name : str, number : str):
+        if option == "save":
+            try:
+                self.contact_book[ctx.author.name]
+            except KeyError:
+                data = self.contact_book[ctx.author.name] = []  
+            else:
+                data = self.contact_book[ctx.author.name]
+                await data.append((name, number))
+                async with self.bot.embed(title="Saved!", description="Saved number!"):
+                    await embed.send(ctx.channel) 
 def setup(bot):
     bot.add_cog(Contacts(bot))       
