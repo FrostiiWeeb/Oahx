@@ -274,16 +274,25 @@ class Contacts(commands.Cog):
         else:
             raise NumberNotFound("You do not have any numbers saved.")
       
-    @contacts.command(name="do", brief="Save/remove a phone number")
-    async def do(self, ctx, option : str, name : str, number : str):
-        if option == "save":
+    @contacts.command(name="do", brief="Save/delete a phone number")
+    async def do(self, ctx, option : str, name : str, number : str=None):
+        if option == "save" and number != None:  
             try:
-                self.contact_book[ctx.author.name]
+                data = self.contact_book[ctx.author.name]
             except KeyError:
-                self.contact_book[ctx.author.name] = []  
-            data = self.contact_book[ctx.author.name]
+                self.contact_book[ctx.author.name] = []
+                data = self.contact_book[ctx.author.name]                
             data.append((name, number))
             async with self.bot.embed(title="Saved!", description="Saved number!") as embed:
-                await embed.send(ctx.channel) 
+                await embed.send(ctx.channel)           
+        elif option == "delete" and number == None:
+            try:
+                data = self.contact_book
+                del data[ctx.author.name]
+                async with self.bot.embed(title="Deleted!", description="Deleted that person from your contacts.") as embed:
+                    await embed.send(ctx)
+            except KeyError:
+                self.contact_book[ctx.author.name] = []
+                raise RuntimeError("You do not have that person saved in your contacts.")     
 def setup(bot):
     bot.add_cog(Contacts(bot))       
