@@ -1,4 +1,4 @@
-import discord
+import discord, io
 from discord.ext import commands
 from difflib import get_close_matches
 import random
@@ -25,6 +25,7 @@ class Contacts(commands.Cog):
         self.phone_mute = False
         self.me_mute = False
         self.using_support = False  
+        self.contact_book = {}
  
     async def try_channel(self, channel):
         channel_data = self.bot.get_channel(channel)
@@ -57,28 +58,35 @@ class Contacts(commands.Cog):
     @commands.group(name="phone",brief="A dummy command for the commands.", invoke_without_command=True)
     async def phone(self, ctx, user : Union[discord.Member, int] = None):
         user = user or ctx.author
-        try:
-            me = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE name = '%s'" % user.name)  
-        except Exception:
-            raise NumberNotFound(f"{user} does not have a phone number")
-        try:
-            async with self.bot.embed(title="Phone ", description=f"{me['name']}'s number is `%s`" % me["number"]) as embed:
-                await embed.send(ctx.channel)
-        except:
-            raise NumberNotFound(f"{user} does not have a phone number")              
-        
+        async with self.bot.processing(ctx):
+            await asyncio.sleep(3)
+            try:
+                me = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE name = '%s'" % user.name)
+            except:
+                raise NumberNotFound(f"{user} does not have a phone number")
+            try:
+                async with self.bot.embed(title="Phone ", description=f"{me['name']}'s number is `%s`" % me["number"]) as embed:
+                    await embed.send(ctx.channel)
+            except:
+                raise NumberNotFound(f"{user} does not have a phone number")                                                                                                                                                                    
+       
     @phone.command(name="call", brief="Call Someone by their phone number!") 
     @commands.max_concurrency(1, per=BucketType.channel, wait=False)  
-    async def call(self, ctx, number : str):
+    async def call(self, ctx, number : str, name : str):
+        if number == "person":
+            data = self.contact_book[ctx.author.name]
+            for _name, _number in data:
+                if _name == name:
+                    number = _number                       
         if number == "911":
             if self.using_support:
                 return await ctx.send("Support already being used.")
             self.using_support = True
             channel = await self.try_channel(854670283457429524)
-            def check(m):
-                return m.author.name == ctx.author.name or m.channel.id == 854670283457429524
             await channel.send("Hello, Someone is asking for help, please respond.")
             await ctx.send("Hello! Welcome to 911 phone support, how may we help you? If you did not realize, this is an automated message. The support team will get back to you shortly, so please wait, thanks!")
+            def check(m):
+                return m.author.name == ctx.author.name or m.channel.id == 854670283457429524 and m.author.name != ctx.author.name                       
             while True:                                        
                 message = await self.bot.wait_for("message", check=check)                      
                 if message.content == "cancel":
@@ -96,8 +104,13 @@ class Contacts(commands.Cog):
         except:
             raise NumberNotFound('The number you provided was not found or you dont have a number. create a number using "oahx phone create"')
         else:
-            if me['channel_id'] == phone_data['channel_id']:
-                raise ConnectionError(f"{me['name']}'s current channel id is the same as {phone_data['name']}'s current channel id.")
+            try:
+                if me['channel_id'] == phone_data['channel_id']:
+                    raise ConnectionError(f"{me['name']}'s current channel id is the same as {phone_data['name']}'s current channel id.")
+            except TypeError:
+                raise NumberNotFound(f"You or the other user does not have a phone number.")
+            except:
+                raise ConnectionError(f"{me['name']}'s current channel id is the same as {phone_data['name']}'s current channel id or you do not have a phone number.")
             try:
                 channel_data = await self.try_channel(phone_data['channel_id'])
             except:
@@ -105,9 +118,11 @@ class Contacts(commands.Cog):
             try:
                 me_channel_data = await self.try_channel(me['channel_id'])
             except:
-                raise NumberNotFound('The number you provided was not found or you dont have a number. create a number using "oahx phone create"')               
-            async with self.bot.embed(title="Calling..", description="<:phone:857956883464978432> Calling phone number `%s`" % phone_data['number']) as embed:
-                await embed.send(ctx.channel)
+                raise NumberNotFound('The number you provided was not found or you dont have a number. create a number using "oahx phone create"')
+            async with self.bot.processing(ctx):
+                await asyncio.sleep(3)                            
+                async with self.bot.embed(title="Calling..", description="<:phone:857956883464978432> Calling phone number `%s`" % phone_data['number']) as embed:
+                    await embed.send(ctx.channel)
             async with self.bot.embed(title="Someone is calling..",description=f"<:phone:857956883464978432> `{me['name']} ({me['number']})` is calling `{phone_data['name']}`, do you want to pick up? [yes - no]") as embed:               
                 await embed.send(channel_data)      
             def s_check(m):
@@ -142,6 +157,17 @@ class Contacts(commands.Cog):
                             elif self.phone_mute == True:
                                 pass
                             elif self.phone_mute == False:
+                                if message.attachments:
+                                    attachment = message.attachments[0]
+                                    if attachment.content_type == "image/png" or attachment.content_type == "image/jpg" or attachment.content_type == "image/jpeg":
+                                        my_io = io.BytesIO(await attachment.read())
+                                        file = discord.File(my_io, "attachment.png")
+                                        await me_channel_data.send(file=file, content=message.content or None)
+                                    else:
+                                        my_io = io.BytesIO()
+                                        my_content = await attachment.save(my_io)
+                                        file = discord.File(my_io, "attachment.txt") 
+                                        await me_channel_data.send(file=file, content=message.content or None)                                 
                                 if message.content == "reply":
                                     def p_check(m):
                                         return m.author.name == phone_data['name']   
@@ -162,8 +188,18 @@ class Contacts(commands.Cog):
                             if self.me_mute == True:
                                 pass
                             elif self.me_mute == False:
-                               
-                                if message.content == "reply":
+                                if message.attachments:
+                                    attachment = message.attachments[0]
+                                    if attachment.content_type == "image/png" or attachment.content_type == "image/jpg" or attachment.content_type == "image/jpeg":
+                                        my_io = io.BytesIO(await attachment.read())
+                                        file = discord.File(my_io, "attachment.png")
+                                        await channel_data.send(file=file, content=message.content or None)
+                                    else:
+                                        my_io = io.BytesIO()
+                                        my_content = await attachment.save(my_io)
+                                        file = discord.File(my_io, "attachment.txt") 
+                                        await channel_data.send(file=file, content=message.content or None)                                   
+                            if message.content == "reply":
                                     def m_check(m):
                                         return m.author.name == me['name']   
                                     await me_channel_data.send("Send the message id you want to reply to.")
@@ -174,9 +210,9 @@ class Contacts(commands.Cog):
                                     text_message = text_message.content
                                     my_data = await self.bot.http.get_message(me['channel_id'], replied_message)
                                     await channel_data.send(f"> {my_data['content']}\n\n\n{text_message}")
-                                else:
+                            else:
                                     await channel_data.send(f"{me['name']}: {message.content}")                                   
-                            elif message.content == "mute":
+                            if message.content == "mute":
                                 await channel_data.send("The other user have muted themselves.")                                    
                                 self.me_mute = True
                             elif message.content == "unmute":
@@ -196,17 +232,21 @@ class Contacts(commands.Cog):
     async def channel(self, ctx, change : str):
         if change == "change":
             try:
-                await self.bot.db.execute("UPDATE numbers SET channel_id = $1 WHERE name = $2", ctx.channel.id, ctx.author.name)
-                await ctx.send("Channel changed to current channel!")
+                async with self.bot.processing(ctx):
+                    await asyncio.sleep(5)
+                    await self.bot.db.execute("UPDATE numbers SET channel_id = $1 WHERE name = $2", ctx.channel.id, ctx.author.name)
+                    await ctx.send("Channel changed to current channel!")
             except:
                 raise NumberNotFound("You dont have a phone number.")                                                     
             
     @phone.command(name="delete", brief="Delete your phone number!")
     async def delete(self, ctx):
         try:
-            await self.bot.db.execute("DELETE FROM numbers WHERE name = $1", ctx.author.name)
-            async with self.bot.embed(title="Success!", description="The operation was a success!") as embed:
-                await embed.send(ctx.channel)            
+            async with self.bot.processing(ctx):
+                await asyncio.sleep(5)
+                await self.bot.db.execute("DELETE FROM numbers WHERE name = $1", ctx.author.name)
+                async with self.bot.embed(title="Success!", description="The operation was a success!") as embed:
+                    await embed.send(ctx.channel)            
         except:
             raise NumberNotFound("You dont have a phone number.")                                                                                                                                                                                        
     @phone.command(name="create", brief="Create a phone number!")
@@ -215,14 +255,44 @@ class Contacts(commands.Cog):
         num_ber = 123456789087681083919371037197
         for i in range(7):
             full_number += random.choice(str(num_ber)) 
-        data = await self.bot.db.fetch("SELECT * FROM numbers") 
-        for record in data:              
-            if record["name"] == ctx.author.name:
-                async with self.bot.embed(title="Error", description="You already have a phone number.") as embed:
-                    return await embed.send(ctx.channel) 
-        await self.bot.db.execute("INSERT INTO numbers(number, channel_id, name) VALUES ($1, $2, $3)", full_number, ctx.channel.id, ctx.author.name)                       
-        async with self.bot.embed(title="Success!", description="The operation was a success, your phone number is `%s`" % full_number) as embed:
-            return await embed.send(ctx)
-            
+        async with self.bot.processing(ctx):
+            await asyncio.sleep(10)
+            data = await self.bot.db.fetch("SELECT * FROM numbers") 
+            for record in data:
+                if record["name"] == ctx.author.name:
+                    async with self.bot.embed(title="Error", description="You already have a phone number.") as embed:
+                        return await embed.send(ctx.channel) 
+            await self.bot.db.execute("INSERT INTO numbers(number, channel_id, name) VALUES ($1, $2, $3)", full_number, ctx.channel.id, ctx.author.name)                       
+            async with self.bot.embed(title="Success!", description="The operation was a success, your phone number is `%s`" % full_number) as embed:
+                return await embed.send(ctx.channel)
+
+    @phone.group(name="contacts", invoke_without_command=True, brief="View, save, remove a contact in your contact book.")
+    async def contacts(self, ctx):
+        if ctx.author.name in self.contact_book:
+            async with self.bot.embed(title="Contacts", description=", ".join(self.contact_book[ctx.author.name])) as embed:
+                await embed.send(ctx.channel)
+        else:
+            raise NumberNotFound("You do not have any numbers saved.")
+      
+    @contacts.command(name="do", brief="Save/delete a phone number")
+    async def do(self, ctx, option : str, name : str, number : str=None):
+        if option == "save" and number != None:  
+            try:
+                data = self.contact_book[ctx.author.name]
+            except KeyError:
+                self.contact_book[ctx.author.name] = []
+                data = self.contact_book[ctx.author.name]                
+            data.append((name, number))
+            async with self.bot.embed(title="Saved!", description="Saved number!") as embed:
+                await embed.send(ctx.channel)           
+        elif option == "delete" and number == None:
+            try:
+                data = self.contact_book
+                del data[ctx.author.name]
+                async with self.bot.embed(title="Deleted!", description="Deleted that person from your contacts.") as embed:
+                    await embed.send(ctx)
+            except KeyError:
+                self.contact_book[ctx.author.name] = []
+                raise RuntimeError("You do not have that person saved in your contacts.")     
 def setup(bot):
     bot.add_cog(Contacts(bot))       

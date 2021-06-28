@@ -5,10 +5,25 @@ import discord
 from discord.ext import commands
 import datetime
 import asyncio
-import os
+from utils.CustomContext import CoolContext
+import os, time
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
 os.environ["JISHAKU_HIDE"] = "True"
+
+class Processing:
+    def __init__(self, ctx):
+        self._start = None
+        self._end = None
+        self.ctx = ctx      
+        
+    async def __aenter__(self):
+        self.message = await self.ctx.send(embed=discord.Embed(title="Processing...", description="<a:loading:747680523459231834> Processing command, please wait...", colour=self.ctx.bot.colour))
+        return self
+        
+    async def __aexit__(self, *args, **kwargs):
+        await self.message.delete()
+        return self                                       
 
 class CustomEmbed:
     def __init__(self, *args, **kwargs):
@@ -17,7 +32,7 @@ class CustomEmbed:
         self.description = kwargs.pop("description")
         self.footer = kwargs.pop("footer",None)  
         self.colour = discord.Colour.from_rgb(100, 53, 255)
-        embed = discord.Embed()
+        embed = discord.Embed()    
         self.embed = embed.from_dict({"color": 6567423, "type": "rich", "title": self.title, "description": self.description, "footer": self.footer})
  
     async def __aexit__(self, *args, **kwargs):
@@ -32,7 +47,7 @@ async def get_prefix(bot, message):
     if not message.guild:
         return commands.when_mentioned_or("oahx ")(bot, message)
     try:
-        prefix = await bot.db.fetch("SELECT prefix FROM prefixes WHERE guild_id = $1", message.guild.id)   
+        prefix = await bot.db.fetchrow("SELECT prefix FROM prefixes WHERE guild_id = $1", message.guild.id)   
         prefix = prefix['prefix']
         return commands.when_mentioned_or(prefix)(bot, message)
     except Exception:
@@ -41,12 +56,18 @@ async def get_prefix(bot, message):
 class Oahx(commands.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(allowed_mentions=discord.AllowedMentions(roles=False, users=False, replied_user=False), case_insensitive=True, *args, **kwargs)
-        self.__extensions = [f"extensions.{item[:-3]}" for item in os.listdir("./extensions") if item != "__pycache__"] + ["jishaku"]
+        self.__extensions = [f"extensions.{item[:-3]}" for item in os.listdir("./Alex/Oahx/extensions") if item != "__pycache__"] + ["jishaku"]
         [self.load_extension(cog) for cog in self.__extensions if cog != "__pycache__"]
         self.colour = discord.Colour.from_rgb(100, 53, 255)
+        self.maintenance = False
+        self.owner_maintenance = False
         self.embed = CustomEmbed
+        self.owner_ids = {797044260196319282, 746807014658801704}
+        self.processing = Processing
         self.languages = {"french": {"someone": "quelque-un", "hi": "bonjour", "how are you": "tu vas bien", "?": "?", ",": ","}}
-                          
+        
+    async def get_context(self, message, *, cls=None):
+        return await super().get_context(message, cls=cls or CoolContext)                                         
     async def on_ready(self):
 		    
 		    print(
