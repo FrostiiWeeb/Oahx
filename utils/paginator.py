@@ -23,7 +23,7 @@ class OahxPaginator:
     def __init__(self, pages=None, text=None):
         self.pages = pages
         self.text = text
-        self.buttons = [("<:oahx_left:859143802005356615>"), ("<:oahx_right:859143734921527316>"), ("<:oahx_stop:859143862089023528>")]
+        self.buttons = ["<:oahx_left:859143802005356615>","<:oahx_right:859143734921527316>","<:oahx_stop:859143862089023528>"]
         
     async def paginate(self, ctx):
         if self.pages and self.text:
@@ -35,7 +35,7 @@ class OahxPaginator:
             for reaction in self.buttons:
                 await self.message.add_reaction(reaction)
                 while True:
-                    reaction, user = await ctx.bot.wait_for("reaction_add", check=lambda r,u: u == ctx.author and u != bot.user and not u.bot)
+                    reaction, user = await ctx.bot.wait_for("reaction_add", check=lambda r,u: u == ctx.author and u != ctx.bot.user and not u.bot)
                     if str(reaction.emoji.name) == "oahx_stop":
                         async with ctx.bot.processing(ctx):
                             await asyncio.sleep(3)
