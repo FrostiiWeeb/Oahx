@@ -23,7 +23,7 @@ class OahxPaginator:
     def __init__(self, pages=None, text=None):
         self.pages = pages
         self.text = text
-        self.buttons = ["<:oahx_left:859143802005356615>","<:oahx_right:859143734921527316>","<:oahx_stop:859143862089023528>"]
+        self.buttons = {"<:oahx_left:859143802005356615>","<:oahx_right:859143734921527316>","<:oahx_stop:859143862089023528>"}
         
     async def paginate(self, ctx):
         if self.pages and self.text:
