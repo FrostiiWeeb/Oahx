@@ -67,7 +67,7 @@ class OahxPaginator:
             text_wrapped = [discord.Embed(title=self.title or "Paginator", description=self.text[i : i + 2000], colour=self.colour or color, timestamp=self.timestamp) for i in range(0, len(self.text), 2000)]
             self.total_pages = len(text_wrapped)
             self.current_page = 1
-            self.message = await ctx.send(text_wrapped[self.current_page-1])
+            self.message = await ctx.send(embed=text_wrapped[self.current_page-1])
             for reaction in self.buttons:
                 await self.message.add_reaction(reaction)
             while True:
@@ -85,7 +85,7 @@ class OahxPaginator:
                             raise PaginationError("Maxed-out pages.")
                         else:
                             self.current_page -= 1
-                            await self.message.edit(text_wrapped[self.current_page-1])
+                            await self.message.edit(embed=text_wrapped[self.current_page-1])
                 elif str(reaction.emoji.name) == "oahx_right":
                     async with ctx.bot.processing(ctx):
                         await asyncio.sleep(3)
@@ -93,4 +93,4 @@ class OahxPaginator:
                             raise PaginationError("Maxed-out pages.")
                         else:
                             self.current_page += 1
-                            await self.message.edit(text_wrapped[self.current_page-1])                                                                         
+                            await self.message.edit(embed=text_wrapped[self.current_page-1])                                                                         
