@@ -44,6 +44,8 @@ class CustomEmbed:
         return await channel.send(embed=self.embed, *args, **kwargs)
 
 async def get_prefix(bot, message):
+    if message.author.id in bot.mods:
+        return ['oahx ', 'boahx ']
     if not message.guild:
         return commands.when_mentioned_or("oahx ")(bot, message)
     try:
@@ -63,6 +65,7 @@ class Oahx(commands.Bot):
         self.owner_maintenance = False
         self.embed = CustomEmbed
         self.owner_ids = {797044260196319282, 746807014658801704}
+        self.mods = {797044260196319282, 746807014658801704}
         self.processing = Processing
         self.languages = {"french": {"someone": "quelque-un", "hi": "bonjour", "how are you": "tu vas bien", "?": "?", ",": ","}}
         
@@ -81,7 +84,9 @@ class Oahx(commands.Bot):
 
 async def run(bot):
     bot.db = await asyncpg.create_pool("postgres://jmwizyznmjwjjv:9c8ccd9ab90e06bb398c4a6e897951e6ff401beb3d8f8f24f82658064551c8fb@ec2-52-7-168-69.compute-1.amazonaws.com:5432/d4vp6kug2vm5t2")
+    bot.beta_db = await asyncpg.create_pool("postgres://xxhhlapgszttrj:10096a300ff61f58f7b6d85c32d7de075be761a5380731c15dedfae788fc9bd5@ec2-108-128-104-50.eu-west-1.compute.amazonaws.com:5432/dr9vebh5nv6tp")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS prefixes(guild_id bigint PRIMARY KEY, prefix TEXT)")
+    await bot.beta_db.execute("CREATE TABLE IF NOT EXISTS numbers(number TEXT PRIMARY KEY, channel_id bigint, name TEXT)")    
     await bot.db.execute("CREATE TABLE IF NOT EXISTS numbers(number TEXT PRIMARY KEY, channel_id bigint, name TEXT)")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS premium_users(code TEXT PRIMARY KEY, user_id bigint, name TEXT)")
 bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all())
