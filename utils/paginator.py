@@ -19,13 +19,12 @@ class OahxPaginatorEmbed:
         self.author = embed.author  
         self.icon_url = embed.icon_url                                     
 class OahxPaginator:
-    __slosts__ = ('pages', 'text', 'buttons', 'message', 'total_pages', 'current_page', 'use_custom_embed', 'use_default_embed', 'page_embed', 'message','title', 'description', 'footer', 'timestamp', 'colour', 'color')
-    def __init__(self, pages=None, text=None, title=None, description=None, footer=None, timestamp=None, colour=discord.Colour.blurple(), color=discord.Colour.blurple()):
+    __slosts__ = ('pages', 'text', 'buttons', 'message', 'total_pages', 'current_page', 'use_custom_embed', 'use_default_embed', 'page_embed', 'message','title', 'description', 'timestamp', 'colour', 'color')
+    def __init__(self, pages=None, text=None, title=None, description=None, timestamp=None, colour=discord.Colour.blurple(), color=discord.Colour.blurple()):
         self.pages = pages
         self.text = text
         self.title = title
         self.description = description
-        self.footer = footer
         self.timestamp = timestamp
         self.colour = colour
         self.color = color
@@ -65,7 +64,7 @@ class OahxPaginator:
                             self.current_page += 1
                             await self.message.edit(embed=self.pages[self.current_page-1])   
         elif self.text and self.pages == None:
-            text_wrapped = [discord.Embed(title=self.title or "Paginator", description=self.text[i : i + 2000], colour=self.colour or color, footer=self.footer or ctx.author.name, timestamp=self.timestamp) for i in range(0, len(self.text), 2000)]
+            text_wrapped = [discord.Embed(title=self.title or "Paginator", description=self.text[i : i + 2000], colour=self.colour or color, timestamp=self.timestamp) for i in range(0, len(self.text), 2000)]
             self.total_pages = len(text_wrapped)
             self.current_page = 1
             self.message = await ctx.send(text_wrapped[self.current_page-1])
