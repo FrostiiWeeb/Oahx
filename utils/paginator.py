@@ -29,7 +29,7 @@ class OahxPaginator:
         if self.pages and self.text:
             raise RuntimeError("Connot have pages and text set at the same time.")
         if self.pages and self.text == None:
-            self.total_pages = len(self.pages)-1
+            self.total_pages = len(self.pages)
             self.current_page = 1
             self.message = await ctx.send(embed=self.pages[self.current_page-1])
             for reaction in self.buttons:
@@ -53,7 +53,7 @@ class OahxPaginator:
                 elif str(reaction.emoji.name) == "oahx_right":
                     async with ctx.bot.processing(ctx):
                         await asyncio.sleep(3)
-                        if self.current_page-1 == len(self.total_pages):
+                        if self.current_page-1 == self.total_pages-1:
                             raise PaginationError("Maxed-out pages.")
                         else:
                             self.current_page += 1
