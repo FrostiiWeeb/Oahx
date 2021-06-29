@@ -19,10 +19,16 @@ class OahxPaginatorEmbed:
         self.author = embed.author  
         self.icon_url = embed.icon_url                                     
 class OahxPaginator:
-    __slosts__ = ('pages', 'text', 'buttons', 'message', 'total_pages', 'current_page', 'use_custom_embed', 'use_default_embed', 'page_embed', 'message')
-    def __init__(self, pages=None, text=None):
+    __slosts__ = ('pages', 'text', 'buttons', 'message', 'total_pages', 'current_page', 'use_custom_embed', 'use_default_embed', 'page_embed', 'message','title', 'description', 'footer', 'timestamp', 'colour', 'color')
+    def __init__(self, pages=None, text=None, title=None, description=None, footer=None, timestamp=None, colour=discord.Colour.blurple(), color=discord.Colour.blurple()):
         self.pages = pages
         self.text = text
+        self.title = title
+        self.description = description
+        self.footer = footer
+        self.timestamp = timestamp
+        self.colour = colour
+        self.color = color
         self.buttons = ["<:oahx_left:859143802005356615>", "<:oahx_right:859143734921527316>", "<:oahx_stop:859143862089023528>"]
         
     async def paginate(self, ctx):
@@ -57,8 +63,9 @@ class OahxPaginator:
                             raise PaginationError("Maxed-out pages.")
                         else:
                             self.current_page += 1
-                            await self.message.edit(embed=self.pages[self.current_page-1])            elif self.text and self.pages == None:
-            text_wrapped = [self.text[i : i + 2000] for i in range(0, len(text), 2000)]
+                            await self.message.edit(embed=self.pages[self.current_page-1])   
+        elif self.text and self.pages == None:
+            text_wrapped = [discord.Embed(title=self.title or "Paginator", description=self.text[i : i + 2000], colour=self.colour or color, footer=self.footer or ctx.author.name, timestamp=self.timestamp) for i in range(0, len(self.text), 2000)]
             self.total_pages = len(text_wrapped)
             self.current_page = 1
             self.message = await ctx.send(text_wrapped[self.current_page-1])
