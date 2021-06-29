@@ -19,7 +19,7 @@ class OahxPaginatorEmbed:
         self.author = embed.author  
         self.icon_url = embed.icon_url                                     
 class OahxPaginator:
-    __slosts__ = ('pages', 'text', 'buttons', 'message', 'total_pages', 'current_page', 'use_custom_embed', 'use_default_embed', 'page_embed', 'message')
+    __slosts__ = ('pages', 'text', 'buttons', 'message', 'total_pages', 'current_page', 'use_custom_embed', 'use_default_embed', 'page_embed', 'message', 'paginate')
     def __init__(self, pages=None, text=None):
         self.pages = pages
         self.text = text
