@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import asyncio
 
-# [result[i : i + 2000] for i in range(0, len(result), 2000)]
+# 
 
 class PaginationError(Exception):
     def __init__(self, message):
@@ -57,5 +57,34 @@ class OahxPaginator:
                             raise PaginationError("Maxed-out pages.")
                         else:
                             self.current_page += 1
-                            await self.message.edit(embed=self.pages[self.current_page-1])                                                                
-                                                                                                                    
+                            await self.message.edit(embed=self.pages[self.current_page-1])            elif self.text and self.pages == None:
+            text_wrapped = [self.text[i : i + 2000] for i in range(0, len(text), 2000)]
+            self.total_pages = len(text_wrapped)
+            self.current_page = 1
+            self.message = await ctx.send(text_wrapped[self.current_page-1])
+            for reaction in self.buttons:
+                await self.message.add_reaction(reaction)
+            while True:
+                reaction, user = await ctx.bot.wait_for("reaction_add", check=lambda r,u: u == ctx.author and u != ctx.bot.user and not u.bot)
+                if str(reaction.emoji.name) == "oahx_stop":
+                    async with ctx.bot.processing(ctx):
+                        await asyncio.sleep(3)
+                        await self.message.delete()
+                        break
+                        return
+                elif str(reaction.emoji.name) == "oahx_left":
+                    async with ctx.bot.processing(ctx):
+                        await asyncio.sleep(3)
+                        if self.current_page-1 == 0:
+                            raise PaginationError("Maxed-out pages.")
+                        else:
+                            self.current_page -= 1
+                            await self.message.edit(text_wrapped[self.current_page-1])
+                elif str(reaction.emoji.name) == "oahx_right":
+                    async with ctx.bot.processing(ctx):
+                        await asyncio.sleep(3)
+                        if self.current_page-1 == self.total_pages-1:
+                            raise PaginationError("Maxed-out pages.")
+                        else:
+                            self.current_page += 1
+                            await self.message.edit(text_wrapped[self.current_page-1])                                                                         
