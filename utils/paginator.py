@@ -42,7 +42,7 @@ class OahxPaginator:
                         await self.message.delete()
                         break
                         return
-                if str(reaction.emoji.name) == "oahx_left":
+                elif str(reaction.emoji.name) == "oahx_left":
                     async with ctx.bot.processing(ctx):
                         await asyncio.sleep(3)
                         if self.current_page-1 == 0:
@@ -50,7 +50,7 @@ class OahxPaginator:
                         else:
                             self.current_page -= 1
                             await self.message.edit(embed=self.pages[self.current_page-1])
-                if str(reaction.emoji.name) == "oahx_right":
+                elif str(reaction.emoji.name) == "oahx_right":
                     async with ctx.bot.processing(ctx):
                         await asyncio.sleep(3)
                         if self.current_page-1 == len(self.total_pages):
