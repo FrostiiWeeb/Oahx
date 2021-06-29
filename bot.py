@@ -66,8 +66,18 @@ class Oahx(commands.Bot):
         self.embed = CustomEmbed
         self.owner_ids = {797044260196319282, 746807014658801704}
         self.mods = {797044260196319282, 746807014658801704}
+        self.beta_commands = ["help"]
         self.processing = Processing
         self.languages = {"french": {"someone": "quelque-un", "hi": "bonjour", "how are you": "tu vas bien", "?": "?", ",": ","}}
+        
+    async def beta_command_activated(self, ctx):
+        if ctx.author.id in ctx.bot.mods:
+            return True
+        elif ctx.command.name in ctx.bot.beta_commands:
+            async with ctx.bot.embed(title="Sorry.", description="This command is in the beta version of Oahx, please wait until its fully released.") as embed:
+                await embed.send(ctx.channel)
+                return False
+        return False
         
     async def get_context(self, message, *, cls=None):
         return await super().get_context(message, cls=cls or CoolContext)                                         
