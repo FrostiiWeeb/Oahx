@@ -57,5 +57,5 @@ class OahxPaginator:
                             raise PaginationError("Maxed-out pages.")
                         else:
                             self.current_page += 1
-                            await self.message.edit(embed=self.pages[self.current_page])                                                                
+                            await self.message.edit(embed=self.pages[self.current_page-1])                                                                
                                                                                                                     
