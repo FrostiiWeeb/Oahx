@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+import asyncio
 
 # [result[i : i + 2000] for i in range(0, len(result), 2000)]
 
