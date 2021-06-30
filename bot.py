@@ -65,8 +65,8 @@ class Oahx(commands.Bot):
         self.owner_maintenance = False
         self.embed = CustomEmbed
         self.owner_ids = {797044260196319282, 746807014658801704}
-        self.mods = {797044260196319282, 746807014658801704}
-        self.beta_commands = ["help"]
+        self.mods = {797044260196319282, 746807014658801704, 699839134709317642}
+        self.beta_commands = ["help", "phone call"]
         self.processing = Processing
         self.languages = {"french": {"someone": "quelque-un", "hi": "bonjour", "how are you": "tu vas bien", "?": "?", ",": ","}}
         self.add_check(self.beta_command_activated)

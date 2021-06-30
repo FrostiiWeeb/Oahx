@@ -72,7 +72,7 @@ class Contacts(commands.Cog):
        
     @phone.command(name="call", brief="Call Someone by their phone number!") 
     @commands.max_concurrency(1, per=BucketType.channel, wait=False)  
-    async def call(self, ctx, number : str, name : str):
+    async def call(self, ctx, number : str, name : str = None):
         if number == "person":
             data = self.contact_book[ctx.author.name]
             for _name, _number in data:
