@@ -69,6 +69,7 @@ class Oahx(commands.Bot):
         self.beta_commands = ["help"]
         self.processing = Processing
         self.languages = {"french": {"someone": "quelque-un", "hi": "bonjour", "how are you": "tu vas bien", "?": "?", ",": ","}}
+        self.add_check(self.beta_command_activated)
         
     async def beta_command_activated(self, ctx):
         if ctx.author.id in ctx.bot.mods:

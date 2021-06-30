@@ -14,7 +14,7 @@ class Owner(commands.Cog):
         		self.bot.owner_maintenance = True
         	else:
         	    embed = discord.Embed(description="Sorry, but maintenence mode is active.",colour=discord.Colour(0xffff00))
-        	    embed.set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
+        	    embed.set_author(name=ctx.author, icon_url=str(ctx.author.avatar.url))
         	    await ctx.send(embed=embed, delete_after=60)        		
         	    
         	    return False
