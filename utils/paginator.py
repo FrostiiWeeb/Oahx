@@ -40,29 +40,27 @@ class OahxPaginator:
             for reaction in self.buttons:
                 await self.message.add_reaction(reaction)
             while True:
-                reaction, user = await ctx.bot.wait_for("reaction_add", check=lambda r,u: u == ctx.author and u != ctx.bot.user and not u.bot)
+                try:
+                    reaction, user = await ctx.bot.wait_for("reaction_add", check=lambda r,u: u == ctx.author and u != ctx.bot.user and not u.bot, timeout=30.0)
+                except asyncio.TimeoutError:
+                    break
+                    return await ctx.send("You took too long to respond.")
                 if str(reaction.emoji.name) == "oahx_stop":
-                    async with ctx.bot.processing(ctx):
-                        await asyncio.sleep(3)
-                        await self.message.delete()
-                        break
-                        return
+                    await self.message.delete()
+                    break
+                    return
                 elif str(reaction.emoji.name) == "oahx_left":
-                    async with ctx.bot.processing(ctx):
-                        await asyncio.sleep(3)
-                        if self.current_page-1 == 0:
-                            raise PaginationError("Maxed-out pages.")
-                        else:
-                            self.current_page -= 1
-                            await self.message.edit(embed=self.pages[self.current_page-1])
+                    if self.current_page-1 == 0:
+                        pass
+                    else:
+                        self.current_page -= 1
+                        await self.message.edit(embed=self.pages[self.current_page-1])
                 elif str(reaction.emoji.name) == "oahx_right":
-                    async with ctx.bot.processing(ctx):
-                        await asyncio.sleep(3)
-                        if self.current_page-1 == self.total_pages-1:
-                            raise PaginationError("Maxed-out pages.")
-                        else:
-                            self.current_page += 1
-                            await self.message.edit(embed=self.pages[self.current_page-1])   
+                    if self.current_page-1 == self.total_pages-1:
+                        pass
+                    else:
+                        self.current_page += 1
+                        await self.message.edit(embed=self.pages[self.current_page-1])   
         elif self.text and self.pages == None:
             text_wrapped = [discord.Embed(title=self.title or "Paginator", description=self.text[i : i + 2000], colour=self.colour or color, timestamp=self.timestamp) for i in range(0, len(self.text), 2000)]
             self.total_pages = len(text_wrapped)
@@ -71,26 +69,25 @@ class OahxPaginator:
             for reaction in self.buttons:
                 await self.message.add_reaction(reaction)
             while True:
-                reaction, user = await ctx.bot.wait_for("reaction_add", check=lambda r,u: u == ctx.author and u != ctx.bot.user and not u.bot)
+                try:
+                    reaction, user = await ctx.bot.wait_for("reaction_add", check=lambda r,u: u == ctx.author and u != ctx.bot.user and not u.bot, timeout=30.0)
+                except asyncio.TimeoutError:
+                    break
+                    async with ctx.bot.embed(title="Error", description="You took too long to respond.") as emb:
+                        return await emb.send(ctx.channel)
                 if str(reaction.emoji.name) == "oahx_stop":
-                    async with ctx.bot.processing(ctx):
-                        await asyncio.sleep(3)
-                        await self.message.delete()
-                        break
-                        return
+                    await self.message.delete()
+                    break
+                    return
                 elif str(reaction.emoji.name) == "oahx_left":
-                    async with ctx.bot.processing(ctx):
-                        await asyncio.sleep(3)
-                        if self.current_page-1 == 0:
-                            raise PaginationError("Maxed-out pages.")
-                        else:
-                            self.current_page -= 1
-                            await self.message.edit(embed=text_wrapped[self.current_page-1])
+                    if self.current_page-1 == 0:
+                        pass
+                    else:
+                        self.current_page -= 1
+                        await self.message.edit(embed=text_wrapped[self.current_page-1])
                 elif str(reaction.emoji.name) == "oahx_right":
-                    async with ctx.bot.processing(ctx):
-                        await asyncio.sleep(3)
-                        if self.current_page-1 == self.total_pages-1:
-                            raise PaginationError("Maxed-out pages.")
-                        else:
-                            self.current_page += 1
-                            await self.message.edit(embed=text_wrapped[self.current_page-1])                                                                         
+                    if self.current_page-1 == self.total_pages-1:
+                        pass
+                    else:
+                        self.current_page += 1
+                        await self.message.edit(embed=text_wrapped[self.current_page-1])                                                                         

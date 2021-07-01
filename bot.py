@@ -58,7 +58,7 @@ async def get_prefix(bot, message):
 class Oahx(commands.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(allowed_mentions=discord.AllowedMentions(roles=False, users=False, replied_user=False), case_insensitive=True, *args, **kwargs)
-        self.__extensions = [f"extensions.{item[:-3]}" for item in os.listdir("./Alex/Oahx/extensions") if item != "__pycache__"] + ["jishaku"]
+        self.__extensions = [f"extensions.{item[:-3]}" for item in os.listdir("./Alex/Oahx/extensions") if item != "__pycache__"]
         [self.load_extension(cog) for cog in self.__extensions if cog != "__pycache__"]
         self.colour = discord.Colour.from_rgb(100, 53, 255)
         self.maintenance = False
@@ -66,7 +66,7 @@ class Oahx(commands.Bot):
         self.embed = CustomEmbed
         self.owner_ids = {797044260196319282, 746807014658801704}
         self.mods = {797044260196319282, 746807014658801704, 699839134709317642}
-        self.beta_commands = ["help", "phone call"]
+        self.beta_commands = []
         self.processing = Processing
         self.languages = {"french": {"someone": "quelque-un", "hi": "bonjour", "how are you": "tu vas bien", "?": "?", ",": ","}}
         self.add_check(self.beta_command_activated)
@@ -78,7 +78,8 @@ class Oahx(commands.Bot):
             async with ctx.bot.embed(title="Sorry.", description="This command is in the beta version of Oahx, please wait until its fully released.") as embed:
                 await embed.send(ctx.channel)
                 return False
-        return False
+        else:
+            return True
         
     async def get_context(self, message, *, cls=None):
         return await super().get_context(message, cls=cls or CoolContext)                                         
