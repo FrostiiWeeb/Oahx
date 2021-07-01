@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord.ext import buttons
 import tabulate, os
+from utils.paginator import OahxPaginator
 
 class Owner(commands.Cog):
     def __init__(self, bot):
@@ -19,12 +20,22 @@ class Owner(commands.Cog):
         	    
         	    return False
         	
-        return True        
+        return True                               
         
     @commands.group(hidden=True, invoke_without_command=True, brief="Some developer commands!")
     @commands.is_owner()
     async def dev(self, ctx):
-        await ctx.send("Hey! These are the dev commands:\n`oahx dev maintenance (m)`")       
+        await ctx.send("Hey! These are the dev commands:\n```oahx dev maintenance (m)\oahx dev eval (e)\n```")      
+        
+    @dev.command(hidden=True, brief="Evaluate some code!")
+    async def eval(self,ctx, code:str):
+        code = code.strip("```py")
+        code = code.strip("```")
+        local_vars = {"sys": __import__("sys")}
+        exec_ = exec(f"""async def func():\n    {code}""", local_vars)
+        result = await local_vars['func']()   
+        paginator = OahxPaginator(text=result, colour=self.bot.colour, title="Eval")
+        await paginator.paginate(ctx)
         
     @dev.command(hidden=True,help="Confirm to use maintenance mode.",aliases=['cf'])
     async def confirm(self, ctx):
