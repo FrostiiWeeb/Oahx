@@ -34,7 +34,7 @@ class Owner(commands.Cog):
         local_vars = {"sys": __import__("sys")}
         exec_ = exec(f"""async def func():\n    {code}""", local_vars)
         result = await local_vars['func']()   
-        paginator = OahxPaginator(text=result, colour=self.bot.colour, title="Eval")
+        paginator = OahxPaginator(text=f"```{result}\n```", colour=self.bot.colour, title="Eval")
         await paginator.paginate(ctx)
         
     @dev.command(hidden=True,help="Confirm to use maintenance mode.",aliases=['cf'])
