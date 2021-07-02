@@ -11,7 +11,7 @@ class Misc(commands.Cog):
         
     @commands.command(brief="Information about the bot.")
     async def about(self, ctx):
-        async with ctx.bot.embed(title="About Oahx", description=f"Hello! Im Oahx, made by `jotte, FrostiiWeeb`, this message is stuff about me.\n\n```\nGuilds: {len(ctx.bot.guilds)}\n\nUsers: {len(ctx.bot.users)}\n```") as embed:
+        async with ctx.bot.embed(title="About Oahx", description=f"Hello! Im Oahx, made by `jotte, FrostiiWeeb, MrArkon, Cyyrus`, this message is stuff about me.\n\n```\nGuilds: {len(ctx.bot.guilds)}\n\nUsers: {len(ctx.bot.users)}\n```") as embed:
             await embed.send(ctx.channel)
             
 def setup(bot):
