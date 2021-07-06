@@ -140,4 +140,4 @@ async def run(bot):
 bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all())
 loop = asyncio.get_event_loop()
 loop.run_until_complete(run(bot=bot))
-bot.run("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.3ve4a3aC8H7l_2F5FgIndydGcr4")
+bot.run("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")

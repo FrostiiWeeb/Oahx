@@ -52,12 +52,12 @@ class Owner(commands.Cog):
     @dev.command(help="Turn on or off maintenance mode.",aliases=['maintenance'], hidden=True)
     @commands.is_owner()
     async def m(self, ctx):
-            if self.bot.owner_maintenance == True:
+            if self.bot.owner_maintenance:
                if self.bot.maintenance:
                	self.bot.maintenance = False
                	await ctx.send("Maintenance is now off.")
                else:
-                   if self.bot.owner_maintenance == True:
+                   if self.bot.owner_maintenance:
                    	self.bot.maintenance = True
                    	await ctx.send("Maintenance is now on.")
             else:
