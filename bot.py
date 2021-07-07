@@ -125,9 +125,8 @@ class Oahx(commands.Bot):
             alt_message = copy.copy(message)
             alt_message.content += " prefix"
 
-            await self.process_commands(alt_message)
-        else:
-            await self.process_commands(message)
+            return await self.process_commands(alt_message)     
+        await self.process_commands(message)
 
 
 async def run(bot):

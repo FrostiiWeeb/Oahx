@@ -1,4 +1,4 @@
-import discord
+import discord, asyncio
 from discord.ext import commands
 
 class CacheError(Exception):
@@ -42,3 +42,11 @@ class CoolContext(commands.Context):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.cache = Cache()
+        
+    async def fancy_send(self, text : str, *args, **kwarsg):
+        full_text = f"{text[0]}"
+        message = await super().send(full_text, *args, **kwargs)    
+        for letter in text:
+            full_text += letter
+            await message.edit(full_text, *args, **kwargs)
+            await asyncio.sleep(0.10)                          
