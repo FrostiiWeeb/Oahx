@@ -33,28 +33,27 @@ class Contacts(commands.Cog):
             channel_data = await self.bot.fetch_channel(channel)
         return channel_data        
                       
-    async def get_users(self, ctx, other_number):
-        phone_number = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE number = '%s'" % other_number)
-        me = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE name = '%s'" % ctx.author.name)   
-        return {"me": me, "user": phone_number}
-        
-    async def get_channels(self, ctx, other_number):
-        data = await self.get_users(ctx, other_number)
-        me  = data["me"] 
-        user = data["user"]    
-        me_channel = await self.try_channel(me['channel_id'])  
-        user_channel = await self.try_channel(user['channel_id'])     
-        return {"me": me_channel, "user": user_channel}
-        
-    async def respond(self, ctx, other_mumber, content, user="me"):
-        data = await self.get_channels(ctx, other_number)
-        me = data["me"]
-        target = data["user"]
-        if user == "me":
-            await me.send(content)
-        elif user == "target":
-            await target.send(content)                        
-                                                                                 
+    async def call_support(self, ctx, channel):
+        if channel:
+            if self.using_support:
+                return await ctx.send("Support already being used.")
+            self.using_support = True
+            channel = await self.try_channel(854670283457429524)
+            await channel.send("Hello, Someone is asking for help, please respond.")
+            await ctx.send("Hello! Welcome to 911 phone support, how may we help you? If you did not realize, this is an automated message. The support team will get back to you shortly, so please wait, thanks!")
+            def check(m):
+                return m.author.name == ctx.author.name or m.channel.id == 854670283457429524 and m.author.name != ctx.author.name                       
+            while True:                                        
+                message = await self.bot.wait_for("message", check=check)                      
+                if message.content == "cancel":
+                    self.using_support = False
+                    await ctx.send("Call ended")    
+                    await channel.send("Call ended") 
+                    return
+                elif message.author.name == ctx.author.name and message.channel.id != 854670283457429524:
+                    await channel.send(f"{ctx.author.name}: {message.content}")
+                elif message.channel.id == 854670283457429524:
+                    await ctx.send(f"Support Team: {message.content}")                                                                                                 
     @commands.group(name="phone",brief="A dummy command for the commands.", invoke_without_command=True)
     async def phone(self, ctx, user : Union[discord.Member, int] = None):
         user = user or ctx.author
@@ -83,21 +82,7 @@ class Contacts(commands.Cog):
                 return await ctx.send("Support already being used.")
             self.using_support = True
             channel = await self.try_channel(854670283457429524)
-            await channel.send("Hello, Someone is asking for help, please respond.")
-            await ctx.send("Hello! Welcome to 911 phone support, how may we help you? If you did not realize, this is an automated message. The support team will get back to you shortly, so please wait, thanks!")
-            def check(m):
-                return m.author.name == ctx.author.name or m.channel.id == 854670283457429524 and m.author.name != ctx.author.name                       
-            while True:                                        
-                message = await self.bot.wait_for("message", check=check)                      
-                if message.content == "cancel":
-                    self.using_support = False
-                    await ctx.send("Call ended")    
-                    await channel.send("Call ended") 
-                    return
-                elif message.author.name == ctx.author.name and message.channel.id != 854670283457429524:
-                    await channel.send(f"{ctx.author.name}: {message.content}")
-                elif message.channel.id == 854670283457429524:
-                    await ctx.send(f"Support Team: {message.content}")
+            await self.call_support(ctx, channel)
         try:
             phone_data = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE number = '%s'" % number)
             me = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE name = '%s'" % ctx.author.name)
@@ -162,12 +147,13 @@ class Contacts(commands.Cog):
                                     if attachment.content_type == "image/png" or attachment.content_type == "image/jpg" or attachment.content_type == "image/jpeg":
                                         my_io = io.BytesIO(await attachment.read())
                                         file = discord.File(my_io, "attachment.png")
-                                        await me_channel_data.send(file=file, content=message.content or None)
-                                    else:
+                                        await me_channel_data.send(file=file)
+                                    elif attachment.content_type == "video/mp4":
+                                        
                                         my_io = io.BytesIO()
                                         my_content = await attachment.save(my_io)
-                                        file = discord.File(my_io, "attachment.txt") 
-                                        await me_channel_data.send(file=file, content=message.content or None)                                 
+                                        file = discord.File(my_io, "attachment.mp4") 
+                                        await me_channel_data.send(file=file)                                 
                                 if message.content == "reply":
                                     def p_check(m):
                                         return m.author.name == phone_data['name']   
@@ -194,11 +180,11 @@ class Contacts(commands.Cog):
                                         my_io = io.BytesIO(await attachment.read())
                                         file = discord.File(my_io, "attachment.png")
                                         await channel_data.send(file=file, content=message.content or None)
-                                    else:
+                                    elif attachment.content_type == "video/mp4":
                                         my_io = io.BytesIO()
                                         my_content = await attachment.save(my_io)
-                                        file = discord.File(my_io, "attachment.txt") 
-                                        await channel_data.send(file=file, content=message.content or None)                                   
+                                        file = discord.File(my_io, "attachment.mp4") 
+                                        await channel_data.send(file=file)                                   
                             if message.content == "reply":
                                     def m_check(m):
                                         return m.author.name == me['name']   
@@ -294,5 +280,6 @@ class Contacts(commands.Cog):
             except KeyError:
                 self.contact_book[ctx.author.name] = []
                 raise RuntimeError("You do not have that person saved in your contacts.")     
+                
 def setup(bot):
     bot.add_cog(Contacts(bot))       

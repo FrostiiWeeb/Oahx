@@ -43,10 +43,10 @@ class CoolContext(commands.Context):
         super().__init__(*args, **kwargs)
         self.cache = Cache()
         
-    async def fancy_send(self, text : str, *args, **kwargs):
-        full_text = f"{text[0]}"
-        message = await super().send(full_text, *args, **kwargs)    
-        for letter in text:
-            full_text += letter
+    async def fancy_send(self, text : str, speed : int = 1, *args, **kwargs):
+        full_text = f"{text[0]}"                    
+        message = await super().send(full_text, *args, **kwargs)        
+        for letter in text[1:]:
+            full_text += letter        
             await message.edit(full_text, *args, **kwargs)
-            await asyncio.sleep(0.10)                          
+            await asyncio.sleep(speed)                          
