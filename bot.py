@@ -1,47 +1,12 @@
-import discord
+import discord, asyncpg, asyncio, datetime, os, time, copy
 from discord.ext import commands
-import asyncpg, asyncio
-import discord
-from discord.ext import commands
-import datetime
-import asyncio
+
 from utils.CustomContext import CoolContext
-import os, time
+from utils.subclasses import Processing, CustomEmbed, Cache
+
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
 os.environ["JISHAKU_HIDE"] = "True"
-
-class Processing:
-    def __init__(self, ctx):
-        self._start = None
-        self._end = None
-        self.ctx = ctx      
-        
-    async def __aenter__(self):
-        self.message = await self.ctx.send(embed=discord.Embed(title="Processing...", description="<a:loading:747680523459231834> Processing command, please wait...", colour=self.ctx.bot.colour))
-        return self
-        
-    async def __aexit__(self, *args, **kwargs):
-        await self.message.delete()
-        return self                                       
-
-class CustomEmbed:
-    def __init__(self, *args, **kwargs):
-        self.timestamp = kwargs.pop("timestamp", datetime.datetime.utcnow())
-        self.title = kwargs.pop("title")
-        self.description = kwargs.pop("description")
-        self.footer = kwargs.pop("footer",None)  
-        self.colour = discord.Colour.from_rgb(100, 53, 255)
-        embed = discord.Embed()    
-        self.embed = embed.from_dict({"color": 6567423, "type": "rich", "title": self.title, "description": self.description, "footer": self.footer})
- 
-    async def __aexit__(self, *args, **kwargs):
-        return self                                                                                                  
-    async def __aenter__(self):
-        return self
-        
-    async def send(self, channel, *args, **kwargs):
-        return await channel.send(embed=self.embed, *args, **kwargs)
 
 async def get_prefix(bot, message):
     if message.author.id in bot.mods:
@@ -68,12 +33,20 @@ class Oahx(commands.Bot):
         self.mods = {746807014658801704, 733370212199694467, 797044260196319282, 668906205799907348}
         self.beta_commands = []
         self.processing = Processing
-        self.languages = {"french": {"someone": "quelque-un", "hi": "bonjour", "how are you": "tu vas bien", "?": "?", ",": ","}}
-        self.add_check(self.beta_command_activated)
-
-           
+        self.cache = Cache()
+        self.bot_id = 844213992955707452
+        self.mentions = [f"<@{self.bot_id}>", f"<@!{self.bot_id}>"]
+        self.add_check(self.beta_command_activated) 
         
-    async def beta_command_activated(self, ctx):
+    async def on_message(self, message : discord.Message):
+        if message.content in self.mentions:
+            alt_message : discord.Message = copy.copy(message)
+            alt_message.content += " prefix"
+            context = await self.get_context(alt_message)
+            await self.invoke(context)                      
+        await self.process_commands(message)                                 
+        
+    async def beta_command_activated(self, ctx : CoolContext):
         if ctx.author.id in ctx.bot.mods:
             return True
         elif ctx.command.name in ctx.bot.beta_commands:
