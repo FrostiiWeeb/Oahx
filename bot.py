@@ -13,7 +13,7 @@ async def get_prefix(bot, message):
         return ['oahx ', 'boahx ']
     if not message.guild:
         return commands.when_mentioned_or("oahx ")(bot, message)
-    try:
+    try:    
         prefix = await bot.db.fetchrow("SELECT prefix FROM prefixes WHERE guild_id = $1", message.guild.id)   
         prefix = prefix['prefix']
         return commands.when_mentioned_or(prefix)(bot, message)
@@ -33,7 +33,7 @@ class Oahx(commands.Bot):
         self.mods = {746807014658801704, 733370212199694467, 797044260196319282, 668906205799907348}
         self.beta_commands = []
         self.processing = Processing
-        self.cache = Cache()
+        self.cache = Cache(self.loop)
         self.bot_id = 844213992955707452
         self.mentions = [f"<@{self.bot_id}>", f"<@!{self.bot_id}>"]
         self.add_check(self.beta_command_activated) 
@@ -65,7 +65,7 @@ class Oahx(commands.Bot):
         f"{'-' * 20}\n"
         f"Bot Name: {self.user} \n"
         f"Bot ID: {self.user.id} \n"
-        f"Bot Guilds: {self.guilds} \n"
+        f"Bot Guilds: {len(self.guilds)} \n"
         f"{'-' * 20}"
     )
 

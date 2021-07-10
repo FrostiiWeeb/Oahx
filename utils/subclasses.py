@@ -1,4 +1,4 @@
-import discord, datetime, asyncio
+import discord, datetime, asyncio, humanize, sys
 from discord.ext import commands
 
 class CacheError(Exception):
@@ -6,37 +6,47 @@ class CacheError(Exception):
         super().__init__(message)
 
 class CacheOutput:
-    def __init__(self, cache_system, data):       
-        self.cache = cache_system
-        self.data = data     
+    def __init__(self, cache_system):       
+        self.cache = cache_system 
 
+    @property                
+    def size(self):
+        return humanize.naturalsize(sys.getsizeof(self))
+        
     def replace(self, result_name, result_output):
-        self.data[result_name] = result_output
+        self[result_name] = result_output
         return self
 
-    def insert(self, result_name, result_output):
-        self.data[result_name] = result_output
-        return self
+    def insert(self, result_name, result_output, delete_after=None):
+        if delete_after:
+            self[result_name] = result_output
+            self.loop.create_task(asyncio.sleep(delete_after))
+            del self[result_name]
+            return self
+        else:
+            self[result_name] = result_output
+            return self            
 
     def delete(self, result_name):
         try:
-            del self.data[result_name]
+            del self[result_name]
         except Exception:
-            raise CacheError(f"{result_name} is not in the cach.")
+            raise CacheError(f"{result_name} is not in the cache.")
         else:           
             return self
 
     def get(self, result_name):
         try:
-            result = self.data[result_name]  
+            result = self.cache[result_name]  
         except Exception:
             raise CacheError(f"{result_name} is not in the cache.")
         else:
             return result
             
-class Cache:
-    def __init__(self):  
-        self.properties = CacheOutput(self, {})
+class Cache(dict, CacheOutput):
+    def __init__(self, loop, *args, **kwargs):        
+        super().__init__(*args, **kwargs)  
+        self.loop = loop      
 
 class Processing:
     def __init__(self, ctx):
@@ -50,6 +60,15 @@ class Processing:
         
     async def __aexit__(self, *args, **kwargs):
         return await self.message.delete()                                 
+
+#class Extension:
+#    def __init__(self, bot, name : str = None):
+#        self.bot = bot
+#        self.commands = {command for command in dir(self) if not command.startswith('__')}     
+#        self.name = name or self.__class__.__name__
+#        for command in self.commands:
+#            func = getattr(self, command)
+#            self.bot.add_command(commands.Command(name=func.__name__, description=func.__doc__, func=func))        
 
 class CustomEmbed:
     def __init__(self, *args, **kwargs):
