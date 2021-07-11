@@ -1,4 +1,4 @@
-import discord
+import discord, re
 from discord.ext import commands
 
 TIME_OBJECT = {'seconds': 1, 's': 1, 'minutes': 60, "m": 60, 'hours': 3600, 'hour': 3600, 'h': 3600, "day": 86400, "days": 86400, "d": 86400, "year": 31536000, "years": 31536000, "y": 31536000}
@@ -6,36 +6,26 @@ TIME_OBJECT = {'seconds': 1, 's': 1, 'minutes': 60, "m": 60, 'hours': 3600, 'hou
 class Duration:
     def __init__(self, time : str):
         self.time = time
-               
-    def convert(self, time_thing : str):
-        time_sep = time_thing.split("and")
-        end_time = 0
-        for time in time_sep:
-            len_tine = len(time)-1
-            if time[len_tine] in TIME_OBJECT:
-                real = ""
-                sep = ""
-                for time_lol in time:
-                    try:
-                        real_ = int(time_lol)
-                        real += str(real_)
-                    except:
-                        sep += time_lol
-                real = int(real)
-                sep = int(TIME_OBJECT[sep])
-                return real * sep                 
-            real_time = time.split(" ")
-            first = real_time[0]
-            if first == "few":
-                first = 3
-            first = int(first)
-            second = real_time[1]
-            second = TIME_OBJECT[second]
-            calc_time = first * second
+                                           
+    def seperate(self, string, seperator):
+        data = sting.split(seperator)
+        return data
+                                                   
+    def convert(self):
+        if "and" in self.time:
+            time_real = self.seperate(self.time, "and")
+        elif "," in self.time:
+            time_real = self.seperate(self.time, ",")   
+        end_time = 0                                
+        for time in time_real:
+            integer_real = re.search("\\d+", time).group(0)
+            time_for_real = time.strip(str(integer_real))
+            convert_time_to = time_for_real
+            convert_to = TIME_OBJECT[convert_time_to]
+            calc_time = integer_real * convert_to
             end_time += calc_time
         return end_time
-                               
-
+        
 class TimeConverter(commands.Converter):
 
     def __int__(self):
@@ -44,7 +34,7 @@ class TimeConverter(commands.Converter):
     async def convert(self, ctx, time : str):
     	try:
     	    self.converted_time = Duration(time)
-    	    self.converted_time = self.converted_time.convert(time)
+    	    self.converted_time = self.converted_time.convert()
     	    return self.converted_time
     		
     	except Exception as e:
