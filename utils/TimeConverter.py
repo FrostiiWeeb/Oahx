@@ -11,7 +11,8 @@ class Duration:
         time_sep = time_thing.split("and")
         end_time = 0
         for time in time_sep:
-            if time.endswith("h") or time.endswith("s") or time.endswith("m") or time.endswith("d") or time.endswith("y"):
+            len_tine = len(time)-1
+            if time[len_tine] in TIME_OBJECT:
                 real = ""
                 sep = ""
                 for time_lol in time:
