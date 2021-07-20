@@ -1,8 +1,10 @@
-import discord
+import discord, tabulate, os
 from discord.ext import commands
 from discord.ext import buttons
-import tabulate, os
 from utils.paginator import OahxPaginator
+from jishaku.codeblocks import codeblock_converter
+from aioconsole import aexec
+from utils.CustomContext import CoolContext
 
 class Owner(commands.Cog):
     def __init__(self, bot):
@@ -28,14 +30,14 @@ class Owner(commands.Cog):
         await ctx.send("Hey! These are the dev commands:\n```oahx dev maintenance (m)\oahx dev eval (e)\n```")      
         
     @dev.command(hidden=True, brief="Evaluate some code!")
-    async def eval(self,ctx, code:str):
-        code = code.strip("```py")
-        code = code.strip("```")
-        local_vars = {"sys": __import__("sys")}
-        exec_ = exec(f"""async def func():\n    {code}""", local_vars)
-        result = await local_vars['func']()   
-        paginator = OahxPaginator(text=f"```{result}\n```", colour=self.bot.colour, title="Eval")
-        await paginator.paginate(ctx)
+    async def eval(self, ctx, *, code : codeblock_converter):
+        custom_context = CoolContext(message=ctx.message, prefix=await self.bot.get_prefix(ctx.message), guild=ctx.guild, channel=ctx.channel)
+        custom_context.cog = self
+        local_vars = {"ctx": custom_context, "discord": discord, "commands": commands, "bot": self.bot, "oahx": self.bot}
+        result = await aexec(code, local_vars) 
+           
+        paginator = OahxPaginator(text=f"```py\n{result}\n```", colour=self.bot.colour, title="Evaluated")
+        await paginator.paginate(custom_context)
         
     @dev.command(hidden=True,help="Confirm to use maintenance mode.",aliases=['cf'])
     async def confirm(self, ctx):

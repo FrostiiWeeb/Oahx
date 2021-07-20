@@ -1,8 +1,9 @@
-import discord, asyncpg, asyncio, datetime, os, time, copy
+import discord, asyncpg, asyncio, datetime, os, time, copy, re
 from discord.ext import commands
 
 from utils.CustomContext import CoolContext
 from utils.subclasses import Processing, CustomEmbed, Cache
+from utils.useful import Loader
 
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
@@ -32,6 +33,8 @@ class Oahx(commands.Bot):
         self.owner_ids = {746807014658801704, 733370212199694467, 797044260196319282, 668906205799907348}
         self.mods = {746807014658801704, 733370212199694467, 797044260196319282, 668906205799907348}
         self.beta_commands = []
+        self.exts = set()
+        self.loader = Loader()
         self.processing = Processing
         self.cache = Cache(self.loop)
         self.bot_id = 844213992955707452
@@ -39,6 +42,12 @@ class Oahx(commands.Bot):
         self.add_check(self.beta_command_activated) 
         
     async def on_message(self, message : discord.Message):
+        if message.content.startswith("oahx "):
+             ctx = await self.get_context(message)
+             try:
+                 await ctx.command.callback()
+             except:
+                 pass          
         if message.content in self.mentions:
             alt_message : discord.Message = copy.copy(message)
             alt_message.content += " prefix"
