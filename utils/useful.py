@@ -1,9 +1,9 @@
 import discord, re
 from discord.ext import commands
 from functools import wraps
-from durations import Duration
+from durations import Duration as DurationConvertion
 
-class Extension(commands.Cog)
+class Extension(commands.Cog):
     def __init__(self, bot : commands.Bot):
         self.bot = bot      
         
@@ -30,7 +30,7 @@ class Duration:
         self.time = time                                          
                                                    
     def convert(self):
-        return Duration(self.time)                
+        return DurationConvertion(self.time)                
         
 class TimeConverter(commands.Converter):
 
