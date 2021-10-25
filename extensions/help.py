@@ -47,6 +47,7 @@ class MyHelpCommand(commands.HelpCommand):
         
 class Help(commands.Cog):
     def __init__(self, bot, help_command):
+        self.bot = bot
         self._original_help_command = bot.help_command
         bot.help_command = help_command()
         bot.help_command.cog = self

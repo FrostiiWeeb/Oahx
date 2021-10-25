@@ -10,9 +10,9 @@ class Information(commands.Cog):
 
     @commands.group(invoke_without_command=True)
     async def prefix(self, ctx: commands.Context):
-        await self.bot.wait_until_ready()
+        await ctx.bot.wait_until_ready()
 
-        prefixes: list[str] = await self.bot.get_prefix(ctx.message)
+        prefixes: list[str] = await ctx.bot.get_prefix(ctx.message)
         description: str = "I respond to:\n\n"
 
         # format non-mention prefixes with ticks

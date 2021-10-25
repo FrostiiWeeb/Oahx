@@ -16,7 +16,7 @@ class ErrorEmbed(discord.Embed):
                          timestamp=datetime.datetime.utcnow())
 
 
-class Error(Cog):
+class Error(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -36,8 +36,8 @@ class Error(Cog):
             commands.ExtensionNotFound: "The extension you provided is invalid.",
             commands.ExtensionNotLoaded: "The extension you provided has not been loaded.",
             commands.BadArgument: "Bad argument, cannot convert to int, str, discord member..",  
-            NumberNotFound: "{error}",
-            ConnectionError: "{error}",
+            NumberNotFound: "{error.msg}",
+            ConnectionError: "{error.msg}",
             discord.HTTPException: None,
             commands.CommandOnCooldown: None,
         }      

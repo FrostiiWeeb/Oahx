@@ -3,7 +3,6 @@ from discord.ext import commands
 import sys
 import typing
 import humanize
-from jishaku.flags import JISHAKU_HIDE
 from jishaku.modules import package_version
 from jishaku.paginators import PaginatorInterface
 from jishaku.features.baseclass import Feature
@@ -12,9 +11,11 @@ try:
     import psutil
 except ImportError:
     psutil = None
+    
+sys.version = '3.9.6 (default, Jun 30 2021, 09:17:50) [GCC 9.4.0] running on linux'
 
 class CustomDebugCog(*STANDARD_FEATURES):
-    @Feature.Command(name="jishaku", aliases=["jsk"], hidden=JISHAKU_HIDE,
+    @Feature.Command(name="jishaku", aliases=["jsk"], hidden=True,
                      invoke_without_command=True, ignore_extra=False)
     async def jsk(self, ctx: commands.Context):  # pylint: disable=too-many-branches
         """
@@ -25,11 +26,8 @@ class CustomDebugCog(*STANDARD_FEATURES):
         """
 
         summary = [
-            f"Jishaku v{package_version('jishaku')}, discord.py `{package_version('discord.py')}`, "
-            f"`Python {sys.version}` on `{sys.platform}`".replace("\n", ""),
-            f"Module was loaded {humanize.naturaltime(self.load_time)}, "
-            f"cog was loaded {humanize.naturaltime(self.start_time)}.",
-            ""
+            f"Jishaku v{package_version('jishaku')}, discord.py `{package_version('discord.py')}`, `Python {sys.version}`",
+            f"\n",
         ]
 
         # detect if [procinfo] feature is installed

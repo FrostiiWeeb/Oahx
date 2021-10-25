@@ -1,30 +1,28 @@
-import discord, re
+import discord, re    
 from discord.ext import commands
 from functools import wraps
 from durations import Duration as DurationConvertion
+from argparse import ArgumentParser
 
-class Extension(commands.Cog):
-    def __init__(self, bot : commands.Bot):
-        self.bot = bot      
+class FlagParser(ArgumentParser):
+    def __init__(self, bot : commands.Bot, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.bot = bot
+        self.args = []
         
-    def load_commands(self):
-        self.bot.exts.add(self)
-        for command in self.cog.get_commands():
-            command.cog = self
-            self.bot.add_command(command)
+    async def load_error(self, ctx : commands.Context, name : str):
+        help = None
+        for n, v in self.args:
+            if n == name:
+                help = v 
+        return await ctx.send(help)         
+        
+    def add_command_argument(self, name : str, help : str):
+        self.args.append((name, help))
+        self.add_argument(name, help=help)                           
+          
 
-    @property                 
-    def owner(self):
-        return [owner_id for owner_id in self.bot.owner_ids]
-        
-    def forbid_command(self, name : str):
-         self.bot.beta_commands.append(name)
-         
-class Loader:
-        
-    def load(self, extension : Extension):
-        extension.bot.exts.add(extension)
-        return extension.load_commands()                                                                                        
+            
 class Duration:
     def __init__(self, time : str):
         self.time = time                                          
