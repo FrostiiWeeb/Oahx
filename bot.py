@@ -3,6 +3,7 @@ from discord.ext import commands
 
 from utils.CustomContext import CoolContext
 from utils.subclasses import Processing, CustomEmbed, Cache
+from discord.ext import cli
 
 
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
@@ -25,17 +26,17 @@ async def get_prefix(bot, message):
         prefix_cache[str(ctx.guild.id)] = "oahx "
         return commands.when_mentioned_or("oahx ")(bot, message)         
         
-class Oahx(commands.Bot):
+class Oahx(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
-        super().__init__(allowed_mentions=discord.AllowedMentions(roles=False, users=False, replied_user=False), case_insensitive=True, *args, **kwargs)
-        self.__extensions = [f"extensions.{item[:-3]}" for item in os.listdir("./extensions") if item != "help.py"]
+        super().__init__(allowed_mentions=discord.AllowedMentions(roles=False, users=False, replied_user=False), case_insensitive=True, channel_id=903675342714175489, *args, **kwargs)
+        self.__extensions = [f"extensions.{item[:-3]}" for item in os.listdir("./extensions")]
         self.help_command = None        
         self.colour = discord.Colour.from_rgb(100, 53, 255)
         self.maintenance = False
         self.owner_maintenance = False
         self.embed = CustomEmbed
-        self.owner_ids = {746807014658801704, 733370212199694467, 797044260196319282, 668906205799907348}
-        self.mods = {746807014658801704, 733370212199694467, 797044260196319282, 668906205799907348}
+        self.owner_ids = {746807014658801704, 733370212199694467, 797044260196319282, 668906205799907348, 631821494774923264}
+        self.mods = {746807014658801704, 733370212199694467, 797044260196319282, 668906205799907348, 631821494774923264}
         self.beta_commands = []
         self.exts = set()       
         self.processing = Processing
@@ -44,6 +45,7 @@ class Oahx(commands.Bot):
         self.cache.insert("prefixes", {})
         self.bot_id = 844213992955707452
         self.mentions = [f"<@{self.bot_id}>", f"<@!{self.bot_id}>"]
+        self.emoji_dict = {"greyTick": "<:greyTick:596576672900186113>", "greenTick": "<:greenTick:820316551340490752>", "redTick": "<:redTick:820319748561829949>", "dpy": "<:dpy:596577034537402378>", "py": "<:python:286529073445076992>", "coin": "<:emoji_4:904048735762395176>"}
         self.add_check(self.beta_command_activated) 
         
     async def on_message(self, message : discord.Message):

@@ -7,6 +7,7 @@ from discord.ext import commands
 from discord.ext.commands import command
 from discord.ext.commands import Cog
 from extensions.contacts import NumberNotFound, ConnectionError
+from extensions.economy import NotInDB
 
 class ErrorEmbed(discord.Embed):
     def __init__(self, description, **kwargs):
@@ -38,6 +39,7 @@ class Error(commands.Cog):
             commands.BadArgument: "Bad argument, cannot convert to int, str, discord member..",  
             NumberNotFound: "{error.msg}",
             ConnectionError: "{error.msg}",
+            NotInDB: "{error}",
             discord.HTTPException: None,
             commands.CommandOnCooldown: None,
         }      

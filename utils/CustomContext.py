@@ -9,6 +9,7 @@ class CoolContext(commands.Context):
         full_text = f"{text[0]}"                    
         message = await super().send(full_text, *args, **kwargs)        
         for letter in text[1:]:
-            full_text += letter        
+            full_text += letter 
+            await asyncio.sleep(speed)       
             await message.edit(full_text, *args, **kwargs)
-            await asyncio.sleep(speed)                          
+                                      
