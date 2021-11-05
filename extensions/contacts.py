@@ -87,8 +87,14 @@ class Contacts(commands.Cog):
                 async with self.bot.embed(title="Phone ", description=f"{me['name']}'s number is `%s`" % me["number"]) as embed:
                     await embed.send(ctx.channel)
             except:
-                return await ctx.send(embed=PhoneEmbed(f"{user} does not have a phone number"))                                                                                                                                                                  
-       
+                return await ctx.send(embed=PhoneEmbed(f"{user} does not have a phone number"))           
+                
+    @phone.command(name="number", brief="Set someone's phone number!")
+    async def number_set(self, ctx, num : str, id : int):
+    	await self.bot.db.execute("UPDATE numbers SET number = $1 WHERE id = $2", num, id)
+    	await ctx.send("Changed number to {}".format(num))
+    	
+    		         
     @phone.command(name="call", brief="Call Someone by their phone number!") 
     @commands.max_concurrency(1, per=BucketType.channel, wait=False)  
     async def call(self, ctx, number : str, name : str = None):
@@ -144,8 +150,8 @@ class Contacts(commands.Cog):
                         message = await self.bot.wait_for("message",check=check)
                         if message.content == f"{ctx.prefix}hangup":
                             
-                            await me_channel_data.send("Call ended")
-                            await channel_data.send("Call ended")
+                            await me_channel_data.send(embed=discord.Embed(description="Call ended"))
+                            await channel_data.send(embed=discord.Embed(description="Call ended"))                            
                             break
                             return    
                                                                                           
