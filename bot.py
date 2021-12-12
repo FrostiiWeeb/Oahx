@@ -28,7 +28,7 @@ async def get_prefix(bot, message):
         
 class Oahx(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
-        super().__init__(allowed_mentions=discord.AllowedMentions(roles=False, users=False, replied_user=False), case_insensitive=True, channel_id=903675342714175489, *args, **kwargs)
+        super().__init__(allowed_mentions=discord.AllowedMentions(roles=False, users=False, replied_user=False), case_insensitive=True, *args, **kwargs)
         self.__extensions = [f"extensions.{item[:-3]}" for item in os.listdir("./extensions")]
         self.help_command = None        
         self.colour = discord.Colour.from_rgb(100, 53, 255)
