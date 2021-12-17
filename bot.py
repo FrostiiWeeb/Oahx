@@ -4,6 +4,7 @@ from discord.ext import commands
 from utils.CustomContext import CoolContext
 from utils.subclasses import Processing, CustomEmbed, Cache
 from discord.ext import cli
+import aiohttp
 
 
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
@@ -103,4 +104,5 @@ async def run(bot):
 bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all())
 loop = asyncio.get_event_loop()
 loop.run_until_complete(run(bot=bot))
+bot.session = aiohttp.ClientSession()
 bot.run("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")            
