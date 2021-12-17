@@ -64,11 +64,8 @@ class DropdownView(discord.ui.View):
     async def delete(self, button: discord.ui.Button, interaction: discord.Interaction):
         button.value = "Yo"    	
         # Make sure to update the message with our updated selves
-        await interaction.response.edit_message(embed=discord.Embed(description="_Original Message Deleted_"))
-        self.remove_item(self.b1)
-        self.remove_item(self.b2)
-        self.remove_item(button)
-        self.remove_item(Dropdown(self.context, self.h))
+	self.clear_items()
+        await interaction.response.delete()
                 
 
     async def interaction_check(self, interaction : discord.Interaction):
