@@ -78,7 +78,7 @@ class CustomEmbed:
         self.footer = kwargs.pop("footer",None)  
         self.colour = discord.Colour.from_rgb(100, 53, 255)
         embed = discord.Embed()    
-        self.embed = embed.from_dict({"color": 6567423, "type": "rich", "title": self.title, "description": self.description, "footer": self.footer or "Oahx is property of AlePI"})
+        self.embed = embed.from_dict({"color": 6567423, "type": "rich", "title": self.title, "description": self.description, "footer": self.footer or None})
  
     async def __aexit__(self, *args, **kwargs):
         return self                                                                                                  
