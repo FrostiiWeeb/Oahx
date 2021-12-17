@@ -65,7 +65,7 @@ class DropdownView(discord.ui.View):
         button.value = "Yo"    	
         # Make sure to update the message with our updated selves
         self.clear_items()
-        await interaction.response.delete()
+        await interaction.delete_original_message()
                 
 
     async def interaction_check(self, interaction : discord.Interaction):
