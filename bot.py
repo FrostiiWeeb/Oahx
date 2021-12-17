@@ -60,7 +60,15 @@ class Oahx(commands.AutoShardedBot):
             alt_message.content += " prefix"
             context = await self.get_context(alt_message)
             await self.invoke(context)                      
-        await self.process_commands(message)                                 
+        await self.process_commands(message)
+           
+    async def on_message_edit(self, before: discord.Message, after: discord.Message):
+
+        if before.content.lower() == after.content.lower():
+            return
+        if after.attachments:
+            return
+        await self.process_commands(after) 
         
     async def beta_command_activated(self, ctx : CoolContext):
         if ctx.author.id in ctx.bot.mods:
