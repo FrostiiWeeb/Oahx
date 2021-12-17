@@ -31,7 +31,7 @@ class Owner(commands.Cog):
         
     @dev.command(hidden=True, brief="Evaluate some code!")
     async def eval(self, ctx, *, code : codeblock_converter):
-        custom_context = CoolContext(message=ctx.message, prefix=await self.bot.get_prefix(ctx.message), channel=ctx.channel)
+        custom_context = CoolContext(message=ctx.message, prefix=await self.bot.get_prefix(ctx.message))
         custom_context.cog = self
         custom_context.bot = self.bot
         local_vars = {"ctx": custom_context, "discord": discord, "commands": commands, "bot": self.bot, "oahx": self.bot}
