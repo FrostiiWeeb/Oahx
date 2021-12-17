@@ -5,7 +5,6 @@ import aiohttp
 class CoolContext(commands.Context):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.bot.session = aiohttp.ClientSession()
         
     async def fancy_send(self, text : str, speed : int = 1, *args, **kwargs):
         full_text = f"{text[0]}" 
