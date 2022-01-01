@@ -7,18 +7,17 @@ import random
 from typing import Union
 
 class Moderation(discord.ext.commands.Cog):
-	def __init__(self, bot):
+    def __init__(self, bot):
         self.bot = bot
         self.muted_perms = discord.Permissions(send_messages=False, speak=False)
-	
-	async def _get_mute_role(self, guild: discord.Guild):
+        
+    async def _get_mute_role(self, guild: discord.Guild):
 	    # automate retrieval and possible instantiation of muted role
 	    mute_role = discord.utils.get(guild.roles, name="Muted")
-	       
-	    if not mute_role:
-	        mute_role = await guild.create_role(
-	        name="Muted",
-	        permissions=self.muted_perms)
+        if not mute_role:
+            mute_role = await guild.create_role(
+                name="Muted",
+                permissions=self.muted_perms)
             return mute_role
     
     async def do_action(self, ctx, action, author, user, reason):
