@@ -33,7 +33,7 @@ class Duration:
 class TimeConverter(commands.Converter):
 
     def __int__(self):
-        return self.converted_time
+        pass
                                 
     async def convert(self, ctx, time : str):
     	try:
