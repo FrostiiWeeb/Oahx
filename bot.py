@@ -83,7 +83,8 @@ class Oahx(commands.AutoShardedBot):
             return True
         
     async def get_context(self, message, *, cls=None):
-        return await super().get_context(message, cls=cls or CoolContext)                                         
+        return await super().get_context(message, cls=cls or CoolContext)  
+                                               
     async def on_ready(self):
 		    
 		    print(
