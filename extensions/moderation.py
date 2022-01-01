@@ -12,8 +12,8 @@ class Moderation(discord.ext.commands.Cog):
         self.muted_perms = discord.Permissions(send_messages=False, speak=False)
         
     async def _get_mute_role(self, guild: discord.Guild):
-	    # automate retrieval and possible instantiation of muted role
-	    mute_role = discord.utils.get(guild.roles, name="Muted")
+        # automate retrieval and possible instantiation of muted role
+        # mute_role = discord.utils.get(guild.roles, name="Muted")
         if not mute_role:
             mute_role = await guild.create_role(
                 name="Muted",
@@ -21,64 +21,56 @@ class Moderation(discord.ext.commands.Cog):
             return mute_role
     
     async def do_action(self, ctx, action, author, user, reason):
-		user = await self.bot.fetch_user(user)
-		return await ctx.embed(
+        user = await self.bot.fetch_user(user)
+        return await ctx.embed(
 		description=f"**New {action}**\nUser: **{user}**\nReason: **{reason}**"
 		)
-	
-	@commands.command(aliases=['tm'])
-	@commands.has_permissions(manage_guild=True)
-	async def tempmute(self, ctx, duration="5s", target : Union[discord.Member, int] = None, reason="Not found "):
-		time = await imeConverter().convert(duration)
-		if target == ctx.author:
-			return await ctx.send("You can\'t do that to yourself!")
-					
-		role = await self._get_mute_role(ctx.guild)
-		await target.add_roles(role)	
-		await self.do_action(ctx, "Tempmute", ctx.author, target.id, reason)	
-		await asyncio.sleep(time)
-		await target.remove_roles(role)
-		
-		
-		
-							
-		
-	@commands.command(aliases=['b'])
-	@commands.has_permissions(ban_members=True)
-	@commands.bot_has_permissions(ban_members=True)
-	async def ban(self, ctx, target : Union[discord.Member, int] = None, *, reason="Not Provided."):
-		"""
+        
+    @commands.command(aliases=['tm'])
+    @commands.has_permissions(manage_guild=True)
+    async def tempmute(self, ctx, duration="5s", target : Union[discord.Member, int] = None, reason="Not found "):
+        time = await imeConverter().convert(duration)
+        if target == ctx.author:
+            return await ctx.send("You can\'t do that to yourself!")
+        role = await self._get_mute_role(ctx.guild)
+        await target.add_roles(role)	
+        await self.do_action(ctx, "Tempmute", ctx.author, target.id, reason)	
+        await asyncio.sleep(time)
+        await target.remove_roles(role)
+    
+    @commands.command(aliases=['b'])
+    @commands.has_permissions(ban_members=True)
+    @commands.bot_has_permissions(ban_members=True)
+    async def ban(self, ctx, target : Union[discord.Member, int] = None, *, reason="Not Provided."):
+        """
 		Bans a user
 		"""
-		target = target or ctx.author
-		if target.id == ctx.author.id:
-			return await ctx.send("You can\'t do that to yourself!")
-		if target.top_role >= ctx.me.top_role:
-			return await ctx.send("The user\'s role is higher or equal to mine.")
-		with __import__('contextlib').suppress(discord.HTTPException):
-			await target.send(f"You were banned from {ctx.guild.name} for {reason}")
-		
-		audit = f"{ctx.author} [{ctx.author.id}] - {reason}"
-		await ctx.guild.ban(target, reason=audit)
-		await self.do_action(ctx, "Ban", ctx.author, target.id, reason)
-	
-	@commands.command()
-	@commands.guild_only()
-	@commands.has_permissions(ban_members=True)
-	@commands.bot_has_permissions(ban_members=True)
-	async def unban(self, ctx, user: int, *, reason=None):
-	       """Unbans a user with a given ID"""
-	       if user == ctx.author.id:
-	       	return await ctx.send("You can't do that to yourself!")
-	       member = discord.Object(id=user)
-	       try:
-	         
-	           await ctx.guild.unban(member, reason=f"{ctx.author} [{ctx.author.id}] - {reason}")
-	           await self.do_action(ctx, "Unban", ctx.author, target.id, reason)
-	       except discord.NotFound:
+        target = target or ctx.author
+        if target.id == ctx.author.id:
+            return await ctx.send("You can\'t do that to yourself!")
+        if target.top_role >= ctx.me.top_role:
+            return await ctx.send("The user\'s role is higher or equal to mine.")
+        with __import__('contextlib').suppress(discord.HTTPException):
+            await target.send(f"You were banned from {ctx.guild.name} for {reason}")
+        audit = f"{ctx.author} [{ctx.author.id}] - {reason}"
+        await ctx.guild.ban(target, reason=audit)
+        await self.do_action(ctx, "Ban", ctx.author, target.id, reason)
+        
+    @commands.command()
+    @commands.guild_only()
+    @commands.has_permissions(ban_members=True)
+    @commands.bot_has_permissions(ban_members=True)
+    async def unban(self, ctx, user: int, *, reason=None):
+        """Unbans a user with a given ID"""
+        if user == ctx.author.id:
+            return await ctx.send("You can't do that to yourself!")
+        member = discord.Object(id=user)
+        try:
+            await ctx.guild.unban(member, reason=f"{ctx.author} [{ctx.author.id}] - {reason}")
+            await self.do_action(ctx, "Unban", ctx.author, target.id, reason)
+        except discord.NotFound:
 	       	return await ctx.send(embed=discord.Embed(description="That user doesn't seem to be banned."))
-
-	
+               
     @commands.command(aliases=['gstart'])
 	@commands.is_owner()
 	async def giveaway(self, ctx):
