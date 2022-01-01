@@ -101,7 +101,7 @@ class Moderation(discord.ext.commands.Cog):
         time = await TimeConverter().convert(str(answers[1]))
         prize = answers[2]
         await ctx.send(f"The Giveaway will be in {channel.mention} and will last {answers[1]}!")
-        embed = discord.Embed(title = "Giveaway!", description = f"{prize}", color = ctx.bot.
+        embed = discord.Embed(title = "Giveaway!", description = f"{prize}", color = ctx.bot.color)
         embed.add_field(name = "Hosted by:", value = ctx.author.mention)
 		embed.set_footer(text = f"Ends {answers[1]} from now!")
         my_msg = await channel.send(embed = embed)
