@@ -9,7 +9,7 @@ from typing import Union
 class Moderation(discord.ext.commands.Cog):
 	def __init__(self, bot):
         self.bot = bot
-		self.muted_perms = discord.Permissions(send_messages=False, speak=False)
+        self.muted_perms = discord.Permissions(send_messages=False, speak=False)
 	
 	async def _get_mute_role(self, guild: discord.Guild):
 	    # automate retrieval and possible instantiation of muted role
