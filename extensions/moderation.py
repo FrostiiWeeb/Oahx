@@ -103,43 +103,28 @@ class Moderation(discord.ext.commands.Cog):
         await ctx.send(f"The Giveaway will be in {channel.mention} and will last {answers[1]}!")
         embed = discord.Embed(title = "Giveaway!", description = f"{prize}", color = ctx.bot.color)
         embed.add_field(name = "Hosted by:", value = ctx.author.mention)
-		embed.set_footer(text = f"Ends {answers[1]} from now!")
+        embed.set_footer(text = f"Ends {answers[1]} from now!")
         my_msg = await channel.send(embed = embed)
         await my_msg.add_reaction("🎉")
-		
-		await asyncio.sleep(time)
-		new_msg = await channel.fetch_message(my_msg.id)
-		users = await new_msg.reactions[0].users().flatten()
-		users.pop(users.index(self.bot.user))
-		winner = random.choice(users)
-		await channel.send(embed=discord.Embed(description=f"Congratulations! {winner.mention} won {prize}!"))
+        await asyncio.sleep(time)
+        new_msg = await channel.fetch_message(my_msg.id)
+        users = await new_msg.reactions[0].users().flatten()
+        users.pop(users.index(self.bot.user))
+        winner = random.choice(users)
+        await channel.send(embed=discord.Embed(description=f"Congratulations! {winner.mention} won {prize}!"))
 	
     @commands.command()
-	@commands.has_permissions(kick_members=True)
-	async def warn(
+    @commands.has_permissions(kick_members=True)
+    async def warn(
 	self, ctx, *, target : Union[discord.Member, int], reason : str = "cuz you were warned ||yea boi||"
 	):
-		async with self.bot.db.acquire() as c:
-			import string
-			import random
-			ret = random.choices(string.digits, k=6)
-			res = "".join(ret)
-			await c.execute("INSERT INTO warns(user_id, warn_id, reason) VALUES ($1, $2, $3)", target.id, res, reason)
-		await self.do_action(ctx, "Warn", ctx.author, target.id, reason)
-	
-	@commands.command()
-	@commands.has_permissions(kick_members=True)
-	async def warns(self, ctx, *, target : Union[discord.Member, int]):
-		async with self.bot.db.acquire() as c:
-			try:
-				
-				embed = discord.Embed(colour=self.bot.embed_color)
-				for m in ["r"]:
-					data = await c.fetchrow("SELECT * FROM warns WHERE user_id = $1", target.id)
-					embed.add_field(name=f"Warn ID: {data['warn_id']}", value=f"```\nMember: {str(target)}\nReason: {data['reason']}```")
-				await ctx.send(embed=embed)
-			except:
-				raise self.bot.custom_errors.NotInDB(f"{target}")	
+        async with self.bot.db.acquire() as c:
+            import string
+            import random
+            ret = random.choices(string.digits, k=6)
+            res = "".join(ret)
+            await c.execute("INSERT INTO warns(user_id, warn_id, reason) VALUES ($1, $2, $3)", target.id, res, reason)
+        await self.do_action(ctx, "Warn", ctx.author, target.id, reason)	
 
 def setup(bot):
 	bot.add_cog(Moderation(bot))

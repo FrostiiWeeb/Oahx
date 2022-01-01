@@ -46,7 +46,7 @@ class Oahx(commands.AutoShardedBot):
         self.cache.insert("prefixes", {})
         self.bot_id = 844213992955707452
         self.mentions = [f"<@{self.bot_id}>", f"<@!{self.bot_id}>"]
-        self.colour, self.color = discord.Colour.from_rgb(100, 53, 255)
+        self.colour, self.color = discord.Colour.from_rgb(100, 53, 255), discord.Colour.from_rgb(100, 53, 255)
         self.emoji_dict = {"greyTick": "<:greyTick:596576672900186113>", "greenTick": "<:greenTick:820316551340490752>", "redTick": "<:redTick:820319748561829949>", "dpy": "<:dpy:596577034537402378>", "py": "<:python:286529073445076992>", "coin": "<:emoji_4:904048735762395176>"}
         self.add_check(self.beta_command_activated) 
         
