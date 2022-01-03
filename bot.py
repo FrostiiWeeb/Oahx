@@ -10,6 +10,15 @@ import aiohttp
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
 os.environ["JISHAKU_HIDE"] = "True"
+
+async def run(bot):
+    bot.db = await asyncpg.create_pool("postgres://jmwizyznmjwjjv:9c8ccd9ab90e06bb398c4a6e897951e6ff401beb3d8f8f24f82658064551c8fb@ec2-52-7-168-69.compute-1.amazonaws.com:5432/d4vp6kug2vm5t2")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS prefixes(guild_id bigint PRIMARY KEY, prefix TEXT)")
+    await bot.beta_db.execute("CREATE TABLE IF NOT EXISTS numbers(number TEXT PRIMARY KEY, channel_id bigint, name TEXT)")    
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS numbers(number TEXT PRIMARY KEY, channel_id bigint, name TEXT)")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS premium_users(code TEXT PRIMARY KEY, user_id bigint, name TEXT)")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS application_setup(guild_id bigint PRIMARY KEY, channel_id bigint, skill_dm boolean)")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS application(id text PRIMARY KEY, guild_id bigint, channel_id bigint, why_staff text, why_choose_you text, what_bring text, how_help text)")
         
 async def get_prefix(bot, message):
     try:
@@ -31,6 +40,7 @@ class Oahx(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
         super().__init__(allowed_mentions=discord.AllowedMentions(roles=False, users=False, replied_user=False), case_insensitive=True, *args, **kwargs)
         self.__extensions = [f"extensions.{item[:-3]}" for item in os.listdir("./extensions")]
+        bot = self
         self.help_command = None        
         self.colour = discord.Colour.from_rgb(100, 53, 255)
         self.maintenance = False
@@ -39,7 +49,8 @@ class Oahx(commands.AutoShardedBot):
         self.owner_ids = {746807014658801704, 733370212199694467, 797044260196319282, 668906205799907348, 631821494774923264}
         self.mods = {746807014658801704, 733370212199694467, 797044260196319282, 668906205799907348, 631821494774923264}
         self.beta_commands = []
-        self.exts = set()       
+        self.exts = set()  
+        bot.session = aiohttp.ClientSession()     
         self.processing = Processing
         [self.load_extension(cog) for cog in self.__extensions if cog != "extensions.__pycach"]
         self.cache = Cache(self.loop)
@@ -84,29 +95,17 @@ class Oahx(commands.AutoShardedBot):
         
     async def get_context(self, message, *, cls=None):
         return await super().get_context(message, cls=cls or CoolContext)  
-                                               
+
     async def on_ready(self):
-		    
-		    print(
+        await asyncio.gather(asyncio.create_task(run(self)))
+        print(
         "Logged in! \n"
         f"{'-' * 20}\n"
         f"Bot Name: {self.user} \n"
         f"Bot ID: {self.user.id} \n"
         f"Bot Guilds: {len(self.guilds)} \n"
         f"{'-' * 20}"
-    )
+        )
 
-async def run(bot):
-    bot.db = await asyncpg.create_pool("postgres://jmwizyznmjwjjv:9c8ccd9ab90e06bb398c4a6e897951e6ff401beb3d8f8f24f82658064551c8fb@ec2-52-7-168-69.compute-1.amazonaws.com:5432/d4vp6kug2vm5t2")
-    bot.beta_db = await asyncpg.create_pool("postgres://xxhhlapgszttrj:10096a300ff61f58f7b6d85c32d7de075be761a5380731c15dedfae788fc9bd5@ec2-108-128-104-50.eu-west-1.compute.amazonaws.com:5432/dr9vebh5nv6tp")
-    await bot.db.execute("CREATE TABLE IF NOT EXISTS prefixes(guild_id bigint PRIMARY KEY, prefix TEXT)")
-    await bot.beta_db.execute("CREATE TABLE IF NOT EXISTS numbers(number TEXT PRIMARY KEY, channel_id bigint, name TEXT)")    
-    await bot.db.execute("CREATE TABLE IF NOT EXISTS numbers(number TEXT PRIMARY KEY, channel_id bigint, name TEXT)")
-    await bot.db.execute("CREATE TABLE IF NOT EXISTS premium_users(code TEXT PRIMARY KEY, user_id bigint, name TEXT)")
-    await bot.db.execute("CREATE TABLE IF NOT EXISTS application_setup(guild_id bigint PRIMARY KEY, channel_id bigint, skill_dm boolean)")
-    await bot.db.execute("CREATE TABLE IF NOT EXISTS application(id text PRIMARY KEY, guild_id bigint, channel_id bigint, why_staff text, why_choose_you text, what_bring text, how_help text)")
 bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all())
-loop = asyncio.get_event_loop()
-loop.run_until_complete(run(bot=bot))
-bot.session = aiohttp.ClientSession()
 bot.run("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")            
