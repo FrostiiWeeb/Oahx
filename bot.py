@@ -4,14 +4,15 @@ from discord.ext import commands
 from utils.CustomContext import CoolContext
 from utils.subclasses import Processing, CustomEmbed, Cache
 from discord.ext import cli
-import aiohttp
+import aiohttp, uvloop
 
 
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
 os.environ["JISHAKU_HIDE"] = "True"
 
-async def run(bot):
+async def run():
+    bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all())  
     bot.db = await asyncpg.create_pool("postgres://jmwizyznmjwjjv:9c8ccd9ab90e06bb398c4a6e897951e6ff401beb3d8f8f24f82658064551c8fb@ec2-52-7-168-69.compute-1.amazonaws.com:5432/d4vp6kug2vm5t2")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS prefixes(guild_id bigint PRIMARY KEY, prefix TEXT)")
     await bot.beta_db.execute("CREATE TABLE IF NOT EXISTS numbers(number TEXT PRIMARY KEY, channel_id bigint, name TEXT)")    
@@ -19,7 +20,8 @@ async def run(bot):
     await bot.db.execute("CREATE TABLE IF NOT EXISTS premium_users(code TEXT PRIMARY KEY, user_id bigint, name TEXT)")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS application_setup(guild_id bigint PRIMARY KEY, channel_id bigint, skill_dm boolean)")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS application(id text PRIMARY KEY, guild_id bigint, channel_id bigint, why_staff text, why_choose_you text, what_bring text, how_help text)")
-        
+    bot.run("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc") 
+
 async def get_prefix(bot, message):
     try:
         ctx = message
@@ -40,7 +42,6 @@ class Oahx(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
         super().__init__(allowed_mentions=discord.AllowedMentions(roles=False, users=False, replied_user=False), case_insensitive=True, *args, **kwargs)
         self.__extensions = [f"extensions.{item[:-3]}" for item in os.listdir("./extensions")]
-        bot = self
         self.help_command = None        
         self.colour = discord.Colour.from_rgb(100, 53, 255)
         self.maintenance = False
@@ -50,7 +51,7 @@ class Oahx(commands.AutoShardedBot):
         self.mods = {746807014658801704, 733370212199694467, 797044260196319282, 668906205799907348, 631821494774923264}
         self.beta_commands = []
         self.exts = set()  
-        bot.session = aiohttp.ClientSession()     
+        self.session = aiohttp.ClientSession()     
         self.processing = Processing
         [self.load_extension(cog) for cog in self.__extensions if cog != "extensions.__pycach"]
         self.cache = Cache(self.loop)
@@ -97,7 +98,6 @@ class Oahx(commands.AutoShardedBot):
         return await super().get_context(message, cls=cls or CoolContext)  
 
     async def on_ready(self):
-        await asyncio.gather(asyncio.create_task(run(self)))
         print(
         "Logged in! \n"
         f"{'-' * 20}\n"
@@ -105,7 +105,8 @@ class Oahx(commands.AutoShardedBot):
         f"Bot ID: {self.user.id} \n"
         f"Bot Guilds: {len(self.guilds)} \n"
         f"{'-' * 20}"
-        )
+        )         
 
-bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all())
-bot.run("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")            
+uvloop.install()  
+loop = asyncio.get_event_loop()
+loop.run_until_complete(run())
