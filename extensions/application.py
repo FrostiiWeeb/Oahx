@@ -34,7 +34,7 @@ class Application(commands.Cog):
     why_choose_you = answers[1]
     follow_rule = answers[3]
     how_help = answers[2]
-    await self.bot.db.execute("INNSERT INTO application(id, guild_id, channel_id, why_staff, why_choose_you, follow_rule, how_help) VALUES ($1, $2, $3, $4, $5, $6, $7)", code, answer.guild.id, answer.channel.id, answers[0], answers[1], answers[3], answers[2])
+    # await self.bot.db.execute("INSERT INTO application(id, guild_id, channel_id, why_staff, why_choose_you, follow_rule, how_help) VALUES ($1, $2, $3, $4, $5, $6, $7)", code, answer.guild.id, answer.channel.id, answers[0], answers[1], answers[3], answers[2])
     await ctx.send(", ".join([why_staff, why_choose_you, follow_rule, how_help]))
 def setup(bot):
     bot.add_cog(Application(bot))

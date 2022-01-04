@@ -19,9 +19,12 @@ async def run():
     await bot.db.execute("CREATE TABLE IF NOT EXISTS numbers(number TEXT PRIMARY KEY, channel_id bigint, name TEXT)")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS premium_users(code TEXT PRIMARY KEY, user_id bigint, name TEXT)")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS application_setup(guild_id bigint PRIMARY KEY, channel_id bigint, skill_dm boolean)")
-    await bot.db.execute("CREATE TABLE IF NOT EXISTS application(id text PRIMARY KEY, guild_id bigint, channel_id bigint, why_staff text, why_choose_you text, what_bring text, how_help text)")
-    bot.session = aiohttp.ClientSession()  
-    bot.run("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")         
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS application(id text PRIMARY KEY, guild_id bigint, channel_id bigint, why_staff text, why_choose_you text, what_bring text, how_help text)")       
+    try:
+        await bot.start('ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc')
+    except KeyboardInterrupt:
+        await db.close()
+        await bot.logout() 
         
 class Oahx(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
@@ -33,8 +36,8 @@ class Oahx(commands.AutoShardedBot):
         self.maintenance = False
         self.owner_maintenance = False
         self.embed = CustomEmbed
-        self.owner_ids = {746807014658801704, 733370212199694467, 797044260196319282, 668906205799907348, 631821494774923264}
-        self.mods = {746807014658801704, 733370212199694467, 797044260196319282, 668906205799907348, 631821494774923264}
+        self.owner_ids = {746807014658801704, 733370212199694467, 797044260196319282, 668906205799907348, 631821494774923264, 699839134709317642}
+        self.mods = {746807014658801704, 733370212199694467, 797044260196319282, 668906205799907348, 631821494774923264, 699839134709317642}
         self.beta_commands = []
         self.exts = set()     
         self.processing = Processing
@@ -92,6 +95,7 @@ class Oahx(commands.AutoShardedBot):
         f"{'-' * 20}"
         )         
 
-uvloop.install()  
-loop = asyncio.get_event_loop()
-loop.create_task(run())
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())       
+uvloop.install()
+loop = uvloop.new_event_loop()
+loop.run_until_complete(run())
