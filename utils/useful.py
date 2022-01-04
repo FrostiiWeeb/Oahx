@@ -4,6 +4,22 @@ from functools import wraps
 from durations import Duration as DurationConvertion
 from argparse import ArgumentParser
 
+async def get_prefix(bot, message):
+    try:
+        ctx = message
+        if ctx.author.id in bot.owner_ids or ctx.author.id in bot.mods:
+            return commands.when_mentioned_or(*["oahx ", "boahx "])(bot, message)
+        prefix_cache = bot.cache.get("prefixes")
+        if str(ctx.guild.id) in prefix_cache:
+            return commands.when_mentioned_or(prefix_cache[str(ctx.guild.id)])(bot, message)
+        prefix = await bot.db.fetchrow("SELECT prefix FROM prefixes WHERE guild_id = $1", message.guild.id)
+        return commands.when_mentioned_or(prefix['prefix'])(bot, message)
+    except Exception:
+        ctx = message
+        prefix_cache = bot.cache.get("prefixes")
+        prefix_cache[str(ctx.guild.id)] = "oahx "
+        return commands.when_mentioned_or("oahx ")(bot, message) 
+
 class FlagParser(ArgumentParser):
     def __init__(self, bot : commands.Bot, *args, **kwargs):
         super().__init__(*args, **kwargs)

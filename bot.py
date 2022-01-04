@@ -5,6 +5,7 @@ from utils.CustomContext import CoolContext
 from utils.subclasses import Processing, CustomEmbed, Cache
 from discord.ext import cli
 import aiohttp, uvloop
+from utils.useful import get_prefix
 
 
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
@@ -19,23 +20,8 @@ async def run():
     await bot.db.execute("CREATE TABLE IF NOT EXISTS premium_users(code TEXT PRIMARY KEY, user_id bigint, name TEXT)")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS application_setup(guild_id bigint PRIMARY KEY, channel_id bigint, skill_dm boolean)")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS application(id text PRIMARY KEY, guild_id bigint, channel_id bigint, why_staff text, why_choose_you text, what_bring text, how_help text)")
-    bot.run("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc") 
-
-async def get_prefix(bot, message):
-    try:
-        ctx = message
-        if ctx.author.id in bot.owner_ids or ctx.author.id in bot.mods:
-            return commands.when_mentioned_or(*["oahx ", "boahx "])(bot, message)
-        prefix_cache = bot.cache.get("prefixes")
-        if str(ctx.guild.id) in prefix_cache:
-            return commands.when_mentioned_or(prefix_cache[str(ctx.guild.id)])(bot, message)
-        prefix = await bot.db.fetchrow("SELECT prefix FROM prefixes WHERE guild_id = $1", message.guild.id)
-        return commands.when_mentioned_or(prefix['prefix'])(bot, message)
-    except Exception:
-        ctx = message
-        prefix_cache = bot.cache.get("prefixes")
-        prefix_cache[str(ctx.guild.id)] = "oahx "
-        return commands.when_mentioned_or("oahx ")(bot, message)         
+    bot.session = aiohttp.ClientSession()  
+    bot.run("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")         
         
 class Oahx(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
@@ -50,8 +36,7 @@ class Oahx(commands.AutoShardedBot):
         self.owner_ids = {746807014658801704, 733370212199694467, 797044260196319282, 668906205799907348, 631821494774923264}
         self.mods = {746807014658801704, 733370212199694467, 797044260196319282, 668906205799907348, 631821494774923264}
         self.beta_commands = []
-        self.exts = set()  
-        self.session = aiohttp.ClientSession()     
+        self.exts = set()     
         self.processing = Processing
         [self.load_extension(cog) for cog in self.__extensions if cog != "extensions.__pycach"]
         self.cache = Cache(self.loop)
