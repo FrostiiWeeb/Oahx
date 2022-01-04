@@ -108,4 +108,4 @@ class Oahx(commands.AutoShardedBot):
 
 uvloop.install()  
 loop = asyncio.get_event_loop()
-loop.run_forever(run())
+loop.create_task(run())
