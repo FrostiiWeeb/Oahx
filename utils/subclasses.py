@@ -20,12 +20,17 @@ class CacheOutput:
     def insert(self, result_name, result_output, delete_after=None):
         if delete_after:
             self[result_name] = result_output
-            self.loop.create_task(asyncio.sleep(delete_after))
-            del self[result_name]
+            if delete_after:
+                self.loop.create_task(asyncio.sleep(delete_after))
+                del self[result_name]
             return self
         else:
             self[result_name] = result_output
-            return self            
+            return self  
+
+    def insert_cache(self, result_name_one, result_name, result_output):
+        self.cache[result_name_one][result_name] = result_output
+        return self    
 
     def delete(self, result_name):
         try:

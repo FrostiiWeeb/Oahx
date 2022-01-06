@@ -31,7 +31,7 @@ class Misc(commands.Cog):
         
     @commands.command(name="source", aliases=['src'], brief="This might be a surprise.")
     async def susrc(self, ctx):
-        async with ctx.bot.embed(title="Uhhhh", description="This bot is private-sourced, that means you'll have to dm me the reason you want to get access to it.") as e:
+        async with ctx.bot.embed(title="Uhhhh", description="This bot is private-sourced, that means you'll have to dm FrostiiWeeb#8373 the reason you want to get access to it.") as e:
             await e.send(ctx.channel) 
             
     @commands.command(name="credit", aliases=['crdit'], brief="This might be a surprise, again.")

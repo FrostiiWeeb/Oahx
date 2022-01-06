@@ -19,13 +19,14 @@ class OahxPaginatorEmbed:
         self.author = embed.author  
         self.icon_url = embed.icon_url                                     
 class OahxPaginator:
-    __slosts__ = ('pages', 'text', 'buttons', 'message', 'total_pages', 'current_page', 'use_custom_embed', 'use_default_embed', 'page_embed', 'message','title', 'description', 'timestamp', 'colour', 'color')
-    def __init__(self, pages=None, text=None, title=None, description=None, timestamp=None, colour=discord.Colour.blurple(), color=discord.Colour.blurple()):
+    __slosts__ = ('pages', 'text', 'buttons', 'message', 'total_pages', 'current_page', 'use_custom_embed', 'use_default_embed', 'page_embed', 'message','title', 'description', 'timestamp', 'colour', 'color', 'timeout')
+    def __init__(self, pages=None, text=None, title=None, description=None, timestamp=None, colour=discord.Colour.blurple(), color=discord.Colour.blurple(), timeout : int = 60):
         self.pages = pages
         self.text = text
         self.title = title
         self.description = description
         self.timestamp = timestamp
+        self.timeout = timeout
         self.colour = colour
         self.color = color
         self.buttons = ["<:oahx_left:859143802005356615>", "<:oahx_right:859143734921527316>", "<:oahx_stop:859143862089023528>"]

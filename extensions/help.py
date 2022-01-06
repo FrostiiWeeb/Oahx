@@ -22,7 +22,9 @@ class Dropdown(discord.ui.Select):
             discord.SelectOption(label='Information', description='All the commands for bot info.', value="Information"),
             discord.SelectOption(label='Owner', description='All the commands for the owner.', value="Owner"),
             discord.SelectOption(label='Economy', description='All the commands for economy.', value="Economy"),
-            discord.SelectOption(label="Contacts", description='All the commands for contacts.', value="Contacts")
+            discord.SelectOption(label="Contacts", description='All the commands for contacts.', value="Contacts"),
+            discord.SelectOption(label="Moderation", description="All the commands for moderation.", value="Moderation"),
+            discord.SelectOption(label="Tags", description="All the commands for tags.", value="Tags")
         ]
         super().__init__(placeholder='Where do you wanna go', min_values=1, custom_id="Dropdowns", max_values=1, options=options)
 
@@ -81,7 +83,7 @@ class DropdownView(discord.ui.View):
 class MyHelpCommand(commands.HelpCommand):
    def get_command_signature(self, command, group_main=None):
         if group_main != None:
-            return '%s%s %s %s' % (self.context.clean_prefix, group_main, command.qualified_name, command.signature)           	 
+            return '%s %s %s' % (self.context.clean_prefix, command.qualified_name, command.signature)           	 
         else:
             return '%s%s %s' % (self.context.clean_prefix, command.qualified_name, command.signature)
     

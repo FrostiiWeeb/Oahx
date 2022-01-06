@@ -13,13 +13,18 @@ os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
 os.environ["JISHAKU_HIDE"] = "True"
 
 async def run():
-    db = await asyncpg.connect('postgresql://postgres@localhost/alex')
+    db = await asyncpg.create_pool(dsn='postgresql://postgres@localhost/alex', max_queries=100000)
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=db)  
     await bot.db.execute("CREATE TABLE IF NOT EXISTS prefixes(guild_id bigint PRIMARY KEY, prefix TEXT)")  
-    await bot.db.execute("CREATE TABLE IF NOT EXISTS numbers(number TEXT PRIMARY KEY, channel_id bigint, name TEXT)")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS numbers(number TEXT PRIMARY KEY, channel_id bigint, name TEXT, id bigint)")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS premium_users(code TEXT PRIMARY KEY, user_id bigint, name TEXT)")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS application_setup(guild_id bigint PRIMARY KEY, channel_id bigint, skill_dm boolean)")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS application(id text PRIMARY KEY, guild_id bigint, channel_id bigint, why_staff text, why_choose_you text, what_bring text, how_help text)")       
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS tags(user_id bigint, name text PRIMARY KEY, content text, author TEXT)")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS economy(user_id bigint PRIMARY KEY, wallet bigint, bank bigint)")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS cooldown_channel(channel_id bigint, command TEXT PRIMARY KEY)")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS cooldown_user(user_id bigint, command TEXT PRIMARY KEY)")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS cooldown_guild(guild_id bigint, command TEXT PRIMARY KEY)")
     try:
         await bot.start('ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc')
     except KeyboardInterrupt:
@@ -37,7 +42,7 @@ class Oahx(commands.AutoShardedBot):
         self.owner_maintenance = False
         self.embed = CustomEmbed
         self.owner_ids = {746807014658801704, 733370212199694467, 797044260196319282, 668906205799907348, 631821494774923264, 699839134709317642}
-        self.mods = {746807014658801704, 733370212199694467, 797044260196319282, 668906205799907348, 631821494774923264, 699839134709317642}
+        self.mods = {746807014658801704, 733370212199694467, 797044260196319282, 668906205799907348, 631821494774923264, 699839134709317642, 747737674952999024}
         self.beta_commands = []
         self.exts = set()     
         self.processing = Processing

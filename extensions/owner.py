@@ -13,14 +13,13 @@ class Owner(commands.Cog):
         
     async def maintenance_mode(self, ctx):
         if self.bot.maintenance:
-        	if ctx.author.id in self.bot.owner_ids:
-        		self.bot.owner_maintenance = True
-        	else:
-        	    embed = discord.Embed(description="Sorry, but maintenence mode is active.",colour=discord.Colour(0xffff00))
-        	    embed.set_author(name=ctx.author, icon_url=ctx.author.avatar.url)
-        	    await ctx.send(embed=embed, delete_after=60)        		
-        	    
-        	    return False
+            if ctx.author.id in self.bot.owner_ids:
+                self.bot.owner_maintenance = True
+            else:
+                embed = discord.Embed(description="Sorry, but maintenance mode is active.",colour=discord.Colour(0xffff00))
+                embed.set_author(name=ctx.author, icon_url=ctx.author.avatar.url)
+                await ctx.send(embed=embed, delete_after=60)        		
+                return False
         	
         return True                               
         
@@ -55,14 +54,16 @@ class Owner(commands.Cog):
     @dev.command(help="Turn on or off maintenance mode.",aliases=['maintenance'], hidden=True)
     @commands.is_owner()
     async def m(self, ctx):
+        if ctx.author.id in self.bot.owner_ids:
+            self.bot.owner_maintenance = True
             if self.bot.owner_maintenance:
-               if self.bot.maintenance:
-               	self.bot.maintenance = False
-               	await ctx.send("Maintenance is now off.")
-               else:
-                   if self.bot.owner_maintenance:
-                   	self.bot.maintenance = True
-                   	await ctx.send("Maintenance is now on.")
+                if self.bot.maintenance:
+                    self.bot.maintenance = False
+                    await ctx.send("Maintenance is now off.")
+                else:
+                    if self.bot.owner_maintenance:
+                        self.bot.maintenance = True
+                        await ctx.send("Maintenance is now on.")
             else:
                 pass
                 

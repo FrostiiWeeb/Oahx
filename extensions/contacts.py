@@ -184,13 +184,14 @@ class Contacts(commands.Cog):
                                     def p_check(m):
                                         return m.author.name == phone_data['name']   
                                     await channel_data.send("Send the message id you want to reply to.")
-                                    replied_message = await self.bot.wait_for("message", check=p_check)
+                                    replied_message = await self.bot.wait_for("message", check=lambda m : m.author.name == phone_data["name"])
                                     replied_message = int(replied_message.content)
                                     await channel_data.send("Send the reply content.")
-                                    text_message = await self.bot.wait_for("message", check=p_check)
+                                    text_message = await self.bot.wait_for("message", check=lambda m : m.author.name == phone_data["name"])
                                     text_message = text_message.content
-                                    my_data = await self.bot.http.get_message(phone_data['channel_id'], replied_message)
-                                    await me_channel_data.send(f"> {my_data['content']}\n\n\n{text_message}")
+                                    ch = await self.bot.fetch_channel(phone_data["channel_id"])
+                                    my_data = await ch.fetch_message(replied_message)
+                                    await me_channel_data.send(f"> {my_data.content}\n\n\n{text_message}")
                                       
                                                                  
                                 else:
