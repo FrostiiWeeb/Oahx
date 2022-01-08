@@ -8,16 +8,14 @@ async def get_prefix(bot, message):
     try:
         ctx = message
         if ctx.author.id in bot.owner_ids or ctx.author.id in bot.mods:
-            return commands.when_mentioned_or(*["oahx ", "boahx "])(bot, message)
-        prefix_cache = bot.cache.get("prefixes")
-        if str(ctx.guild.id) in prefix_cache:
-            return commands.when_mentioned_or(prefix_cache[str(ctx.guild.id)])(bot, message)
-        prefix = await bot.db.fetchrow("SELECT prefix FROM prefixes WHERE guild_id = $1", message.guild.id)
-        return commands.when_mentioned_or(prefix['prefix'])(bot, message)
+            return commands.when_mentioned_or(*["oahx ", "boahx ", ""])(bot, message)
+        prefix = await bot.redis.hget("prefixes", message.guild.name)
+        if not prefix:
+            await bot.redis.hset("prefixes", message.guild.name, "oahx ")
+        prefix = await bot.redis.hget("prefixes", message.guild.name)
+        return commands.when_mentioned_or(prefix)(bot, message)
     except Exception:
         ctx = message
-        prefix_cache = bot.cache.get("prefixes")
-        prefix_cache[str(ctx.guild.id)] = "oahx "
         return commands.when_mentioned_or("oahx ")(bot, message) 
 
 class FlagParser(ArgumentParser):

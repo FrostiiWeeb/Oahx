@@ -6,6 +6,7 @@ from utils.subclasses import Processing, CustomEmbed, Cache
 from discord.ext import cli
 import aiohttp, uvloop
 from utils.useful import get_prefix
+import asyncrd
 
 
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
@@ -13,8 +14,10 @@ os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
 os.environ["JISHAKU_HIDE"] = "True"
 
 async def run():
-    db = await asyncpg.create_pool(dsn='postgresql://postgres@localhost/alex', max_queries=100000)
+    db = await asyncpg.create_pool(dsn='postgresql://postgres@localhost/alex', max_queries=100000000)
+    redis = await asyncrd.connect("redis://localhost")
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=db)  
+    bot.redis = redis
     await bot.db.execute("CREATE TABLE IF NOT EXISTS prefixes(guild_id bigint PRIMARY KEY, prefix TEXT)")  
     await bot.db.execute("CREATE TABLE IF NOT EXISTS numbers(number TEXT PRIMARY KEY, channel_id bigint, name TEXT, id bigint)")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS premium_users(code TEXT PRIMARY KEY, user_id bigint, name TEXT)")
@@ -54,6 +57,18 @@ class Oahx(commands.AutoShardedBot):
         self.colour, self.color = discord.Colour.from_rgb(100, 53, 255), discord.Colour.from_rgb(100, 53, 255)
         self.emoji_dict = {"greyTick": "<:greyTick:596576672900186113>", "greenTick": "<:greenTick:820316551340490752>", "redTick": "<:redTick:820319748561829949>", "dpy": "<:dpy:596577034537402378>", "py": "<:python:286529073445076992>", "coin": "<:emoji_4:904048735762395176>"}
         self.add_check(self.beta_command_activated) 
+
+    async def try_channel(self, channel_id : int):
+        channel = super().get_channel(channel_id)
+        if not channel:
+            channel = await super().fetch_channel(channel_id)
+        return channel
+
+    async def try_user(self, user_id : int):
+        user = super().get_user(user_id)
+        if not user:
+            channel = await super().fetch_user(user_id)
+        return user      
         
     async def on_message(self, message : discord.Message):
         if message.content.startswith("oahx "):

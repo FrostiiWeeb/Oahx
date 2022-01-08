@@ -33,16 +33,18 @@ class Information(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @prefix.command(name="set", usage="[prefix]")
+    @prefix.command(name="set", usage="[prefix lmao]")
     @commands.has_permissions(administrator=True)
     async def set(self, ctx, *, prefix="oahx "):
+        cache = self.bot.cache.get("prefixes")
+        cache[str(ctx.guild.id)] = prefix
         prefix = prefix.replace('\'', ' ')
         """
         Change the prefix!
         """
         # Insert the prefix into the database
-        await self.bot.db.execute("UPDATE prefixes SET prefix = $1 WHERE guild_id = $2", prefix, ctx.guild.id)
-        async with ctx.bot.embed(description=f"New prefix: **{prefix}**") as emb:
+        await self.bot.redis.hset("prefixes", ctx.guild.name, prefix)
+        async with ctx.bot.embed(title=None, description=f"New prefix: **{prefix}**") as emb:
             await emb.send(ctx.channel)
         
         

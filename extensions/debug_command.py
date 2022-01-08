@@ -27,6 +27,7 @@ class CustomDebugCog(*STANDARD_FEATURES):
 
         summary = [
             f"Jishaku v{package_version('jishaku')}, discord.py `{package_version('discord.py')}`, `Python {sys.version}`",
+            f"Redis DB and PostgreSQL: {ctx.bot.redis}, {ctx.bot.db}"
             f"\n",
         ]
 

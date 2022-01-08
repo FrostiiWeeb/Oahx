@@ -29,7 +29,7 @@ class Moderation(discord.ext.commands.Cog):
     @commands.command(aliases=['tm'])
     @commands.has_permissions(manage_guild=True)
     async def tempmute(self, ctx, duration="5s", target : Union[discord.Member, int] = None, reason="Not found "):
-        time = await imeConverter().convert(duration)
+        time = await TimeConverter().convert(duration)
         if target == ctx.author:
             return await ctx.send("You can\'t do that to yourself!")
         role = await self._get_mute_role(ctx.guild)
@@ -96,7 +96,7 @@ class Moderation(discord.ext.commands.Cog):
             c_id = int(answers[0][2:-1])
         except:
             return await ctx.send(f"You didn't mention a channel properly.")
-        channel = self.bot.get_channel(c_id)
+        channel = await self.bot.fetch_channel(c_id)
         
         time = await TimeConverter().convert(str(answers[1]))
         prize = answers[2]
