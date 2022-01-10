@@ -90,7 +90,7 @@ class Owner(commands.Cog):
     async def git_pull(self, ctx : CoolContext):
         import subprocess
         @run_in_async_loop
-        async def process():
+        def process():
             sub = subprocess.run(["git", "pull"], check=False, capture_output=True, text=True)
             return sub
         result = await process()
