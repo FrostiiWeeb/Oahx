@@ -98,6 +98,8 @@ class Owner(commands.Cog):
         code = result.returncode
         async with self.bot.embed(title=f"Return Code: {str(code)}", description=f"```py\n{output}\n```") as embed:
             await embed.send(ctx.channel)
+        for cog in self.bot.__extensions:
+            self.bot.reload_extension(cog)
 
                 
 def setup(bot):
