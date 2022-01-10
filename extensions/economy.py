@@ -38,7 +38,7 @@ class Economy(commands.Cog):
             await asyncio.sleep(3)
             async with ctx.bot.embed(
                 title="Bank",
-                description="You have created an account! And take the extra **$100**!",
+                description=f"You have created an account! And take the extra **100{self.bot.emoji_dict['coin']}**!",
             ) as emb:
                 return await emb.send(ctx.channel)
 
@@ -146,7 +146,7 @@ class Economy(commands.Cog):
 
             await ctx.send(
                 embed=discord.Embed(
-                    description=f"You earned **{self.bot.emoji_dict['coin']}**!",
+                    description=f"You earned **{money}{self.bot.emoji_dict['coin']}**!",
                     colour=ctx.bot.colour,
                 )
             )
