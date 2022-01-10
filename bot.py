@@ -71,6 +71,7 @@ class Oahx(commands.AutoShardedBot):
         self.__extensions = [
             f"extensions.{item[:-3]}" for item in os.listdir("./extensions")
         ]
+        self.owner_cogs = self.__extensions
         self.help_command = None
         self.db = kwargs.pop("db", None)
         self.colour = discord.Colour.from_rgb(100, 53, 255)

@@ -14,7 +14,7 @@ class Moderation(discord.ext.commands.Cog):
 
     async def _get_mute_role(self, guild: discord.Guild):
         # automate retrieval and possible instantiation of muted role
-        # mute_role = discord.utils.get(guild.roles, name="Muted")
+        mute_role = discord.utils.get(guild.roles, name="Muted")
         if not mute_role:
             mute_role = await guild.create_role(
                 name="Muted", permissions=self.muted_perms
@@ -78,7 +78,7 @@ class Moderation(discord.ext.commands.Cog):
             await ctx.guild.unban(
                 member, reason=f"{ctx.author} [{ctx.author.id}] - {reason}"
             )
-            await self.do_action(ctx, "Unban", ctx.author, target.id, reason)
+            await self.do_action(ctx, "Unban", ctx.author, user.id, reason)
         except discord.NotFound:
             return await ctx.send(
                 embed=discord.Embed(description="That user doesn't seem to be banned.")

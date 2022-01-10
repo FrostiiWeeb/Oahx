@@ -96,10 +96,13 @@ class Owner(commands.Cog):
         result = await process()
         output = result.stdout
         code = result.returncode
-        async with self.bot.embed(title=f"Return Code: {str(code)}", description=f"```py\n{output}\n```") as embed:
-            await embed.send(ctx.channel)
-        for cog in self.bot.__extensions:
+        [
             self.bot.reload_extension(cog)
+            for cog in self.bot.owner_cogs
+            if cog != "extensions.__pycach"
+        ]
+        async with self.bot.embed(title=f"Return Code: {str(code)}", description=f"```py\n{output}\n```\nReloaded all extensions.") as embed:
+            await embed.send(ctx.channel)
 
                 
 def setup(bot):
