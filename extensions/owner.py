@@ -10,9 +10,9 @@ from utils.CustomContext import CoolContext
 
 def run_in_async_loop(f):
     @functools.wraps(f)
-    async def wrapped(*args, **kwargs):
+    async def wrapped():
         loop = asyncio.get_running_loop()
-        return (await loop.run_in_executor(None, f(*args, **kwargs)))
+        return (await loop.run_in_executor(None, f()))
     return wrapped
 class Owner(commands.Cog):
     def __init__(self, bot):
