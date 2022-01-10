@@ -4,8 +4,16 @@ from discord.ext import buttons
 from utils.paginator import OahxPaginator
 from jishaku.codeblocks import codeblock_converter
 from aioconsole import aexec
+import functools, asyncio
 from utils.CustomContext import CoolContext
 
+
+def run_in_async_loop(f):
+    @functools.wraps(f)
+    async def wrapped(*args, **kwargs):
+        loop = asyncio.get_running_loop()
+        return (await loop.run_in_executor(None, f(*args, **kwargs)))
+    return wrapped
 class Owner(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -65,6 +73,31 @@ class Owner(commands.Cog):
                         await ctx.send("Maintenance is now on.")
             else:
                 pass
+
+    @dev.group(name="git", invoke_without_command=True)
+    async def git(self, ctx : CoolContext):
+        message = """
+        `git` subcommands:
+            sync {s}
+            pull {s}
+        """
+        async with self.bot.embed(
+            title="git", description=message
+        ) as embed:
+            await embed.send(ctx.channel)
+
+    @git.command(name="sync", aliases=["pull", "s"])
+    async def git_pull(self, ctx : CoolContext):
+        import subprocess
+        @run_in_async_loop
+        async def process():
+            sub = subprocess.run(["git", "pull"], check=False, capture_output=True, text=True)
+            return sub
+        result = await process()
+        output = result.stdout
+        code = result.returncode
+        async with self.bot.embed(title=str(code), description=f"```py\n{output}\n```") as embed:
+            await embed.send(ctx.channel)
 
                 
 def setup(bot):
