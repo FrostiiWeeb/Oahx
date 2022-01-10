@@ -7,16 +7,23 @@ from jishaku.modules import package_version
 from jishaku.paginators import PaginatorInterface
 from jishaku.features.baseclass import Feature
 from jishaku.cog import STANDARD_FEATURES, OPTIONAL_FEATURES
+
 try:
     import psutil
 except ImportError:
     psutil = None
-    
-sys.version = '3.9.6 (default, Jun 30 2021, 09:17:50) [GCC 9.4.0] running on linux'
+
+sys.version = "3.9.6 (default, Jun 30 2021, 09:17:50) [GCC 9.4.0] running on linux"
+
 
 class CustomDebugCog(*STANDARD_FEATURES):
-    @Feature.Command(name="jishaku", aliases=["jsk"], hidden=True,
-                     invoke_without_command=True, ignore_extra=False)
+    @Feature.Command(
+        name="jishaku",
+        aliases=["jsk"],
+        hidden=True,
+        invoke_without_command=True,
+        ignore_extra=False,
+    )
     async def jsk(self, ctx: commands.Context):  # pylint: disable=too-many-branches
         """
         The Jishaku debug and diagnostic commands.
@@ -27,8 +34,7 @@ class CustomDebugCog(*STANDARD_FEATURES):
 
         summary = [
             f"Jishaku v{package_version('jishaku')}, discord.py `{package_version('discord.py')}`, `Python {sys.version}`",
-            f"Redis DB and PostgreSQL: {ctx.bot.redis}, {ctx.bot.db}"
-            f"\n",
+            f"Redis DB and PostgreSQL: {ctx.bot.redis}, {ctx.bot.db}" f"\n",
         ]
 
         # detect if [procinfo] feature is installed
@@ -39,9 +45,11 @@ class CustomDebugCog(*STANDARD_FEATURES):
                 with proc.oneshot():
                     try:
                         mem = proc.memory_full_info()
-                        summary.append(f"Using {humanize.naturalsize(mem.rss)} physical memory and "
-                                       f"{humanize.naturalsize(mem.vms)} virtual memory, "
-                                       f"{humanize.naturalsize(mem.uss)} of which unique to this process.")
+                        summary.append(
+                            f"Using {humanize.naturalsize(mem.rss)} physical memory and "
+                            f"{humanize.naturalsize(mem.vms)} virtual memory, "
+                            f"{humanize.naturalsize(mem.uss)} of which unique to this process."
+                        )
                     except psutil.AccessDenied:
                         pass
 
@@ -50,7 +58,9 @@ class CustomDebugCog(*STANDARD_FEATURES):
                         pid = proc.pid
                         thread_count = proc.num_threads()
 
-                        summary.append(f"Running on PID {pid} (`{name}`) with {thread_count} thread(s).")
+                        summary.append(
+                            f"Running on PID {pid} (`{name}`) with {thread_count} thread(s)."
+                        )
                     except psutil.AccessDenied:
                         pass
 
@@ -62,7 +72,9 @@ class CustomDebugCog(*STANDARD_FEATURES):
                 )
                 summary.append("")  # blank line
 
-        cache_summary = f"{len(ctx.bot.guilds)} guild(s) and {len(ctx.bot.users)} user(s)"
+        cache_summary = (
+            f"{len(ctx.bot.guilds)} guild(s) and {len(ctx.bot.users)} user(s)"
+        )
 
         # Show shard settings to summary
         if isinstance(ctx.bot, discord.AutoShardedClient):
@@ -72,7 +84,7 @@ class CustomDebugCog(*STANDARD_FEATURES):
                     f" and can see {cache_summary}."
                 )
             else:
-                shard_ids = ', '.join(str(i) for i in ctx.bot.shards.keys())
+                shard_ids = ", ".join(str(i) for i in ctx.bot.shards.keys())
                 summary.append(
                     f"This bot is automatically sharded (Shards {shard_ids} of {ctx.bot.shard_count})"
                     f" and can see {cache_summary}."
@@ -87,7 +99,9 @@ class CustomDebugCog(*STANDARD_FEATURES):
 
         # pylint: disable=protected-access
         if ctx.bot._connection.max_messages:
-            message_cache = f"Message cache capped at {ctx.bot._connection.max_messages}"
+            message_cache = (
+                f"Message cache capped at {ctx.bot._connection.max_messages}"
+            )
         else:
             message_cache = "Message cache is disabled"
 
@@ -104,10 +118,15 @@ class CustomDebugCog(*STANDARD_FEATURES):
         # pylint: enable=protected-access
 
         # Show websocket latency in milliseconds
-        summary.append(f"Average websocket latency: {round(ctx.bot.latency * 1000, 2)}ms")
+        summary.append(
+            f"Average websocket latency: {round(ctx.bot.latency * 1000, 2)}ms"
+        )
 
-        async with ctx.bot.embed(title="Custom Jishaku", description="\n".join(summary)) as emb:
+        async with ctx.bot.embed(
+            title="Custom Jishaku", description="\n".join(summary)
+        ) as emb:
             await emb.send(ctx.channel)
+
 
 def setup(bot):
     bot.add_cog(CustomDebugCog(bot=bot))
