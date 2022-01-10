@@ -96,7 +96,7 @@ class Owner(commands.Cog):
         result = await process()
         output = result.stdout
         code = result.returncode
-        async with self.bot.embed(title=str(code), description=f"```py\n{output}\n```") as embed:
+        async with self.bot.embed(title=f"Return Code: {str(code)}", description=f"```py\n{output}\n```") as embed:
             await embed.send(ctx.channel)
 
                 
