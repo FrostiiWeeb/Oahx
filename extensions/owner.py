@@ -12,7 +12,7 @@ def run_in_async_loop(f):
     @functools.wraps(f)
     async def wrapped():
         loop = asyncio.get_running_loop()
-        return (await loop.run_in_executor(None, f()))
+        return (await loop.run_in_executor(None, f))
     return wrapped
 class Owner(commands.Cog):
     def __init__(self, bot):
@@ -93,7 +93,7 @@ class Owner(commands.Cog):
         def process():
             sub = subprocess.run(["git", "pull"], check=False, capture_output=True, text=True)
             return sub
-        result = await process
+        result = await process()
         output = result.stdout
         code = result.returncode
         async with self.bot.embed(title=str(code), description=f"```py\n{output}\n```") as embed:
