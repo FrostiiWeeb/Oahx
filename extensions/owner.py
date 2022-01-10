@@ -93,6 +93,10 @@ class Owner(commands.Cog):
         def process():
             sub = subprocess.run(["git", "pull"], check=False, capture_output=True, text=True)
             return sub
+        @run_in_async_loop
+        def restart_process():
+            sub = subprocess.run(["pm2", "restart", "bot", "--update-env"], check=False, capture_output=True, text=True)
+            return sub
         result = await process()
         output = result.stdout
         code = result.returncode
@@ -103,6 +107,7 @@ class Owner(commands.Cog):
         ]
         async with self.bot.embed(title=f"Return Code: {str(code)}", description=f"```py\n{output}\n```\nReloaded all extensions.") as embed:
             await embed.send(ctx.channel)
+        await restart_process()
 
                 
 def setup(bot):
