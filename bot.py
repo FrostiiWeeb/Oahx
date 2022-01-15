@@ -37,7 +37,7 @@ async def run():
         "CREATE TABLE IF NOT EXISTS application(id text PRIMARY KEY, guild_id bigint, channel_id bigint, why_staff text, why_choose_you text, what_bring text, how_help text)"
     )
     await bot.db.execute(
-        "CREATE TABLE IF NOT EXISTS tags(user_id bigint, name text PRIMARY KEY, content text, author TEXT)"
+        "CREATE TABLE IF NOT EXISTS tags(user_id bigint, name text PRIMARY KEY, content text, author TEXT, timestamp BIGINT)"
     )
     await bot.db.execute(
         "CREATE TABLE IF NOT EXISTS economy(user_id bigint PRIMARY KEY, wallet bigint, bank bigint)"

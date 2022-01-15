@@ -28,9 +28,9 @@ class Error(commands.Cog):
             commands.MissingRequiredArgument: "Missing required argument(s): "
             "{error.param}",
             commands.MissingPermissions: "Missing required permission(s): "
-            "{error.missing_perms}",
-            commands.BotMissingPermissions: "Im missing permission(s): "
-            "{error.missing_perms}",
+            "{missing_perms}",
+            commands.BotMissingPermissions: "I'm missing permission(s): "
+            "{missing_perms}",
             commands.NotOwner: "You don't own this bot.",
             commands.NSFWChannelRequired: "{ctx.command} is required to be "
             "invoked in a NSFW channel.",
@@ -56,12 +56,17 @@ class Error(commands.Cog):
 
         if isinstance(error, tuple(self.bot.errors.keys())):
             reinvokable = isinstance(
-                error, commands.MissingPermissions
+                error, (commands.MissingPermissions, commands.BotMissingPermissions)
             ) and await self.bot.is_owner(ctx.author)
-
-            if reinvokable:
-                return await ctx.reinvoke()
-            description = str.format(self.bot.errors[type(error)], ctx=ctx, error=error)
+            #if reinvokable:
+                #return await ctx.reinvoke()
+            reinvokable = isinstance(error, (commands.MissingPermissions, commands.BotMissingPermissions))
+            try:
+                description = str.format(self.bot.errors[type(error)], ctx=ctx, error=error)
+            except KeyError:
+                if reinvokable:
+                    description = str.format(self.bot.errors[type(error)], ctx=ctx, error=error, missing_perms=f"{', '.join(error.missing_permissions)}")
+            print(description, file=sys.stdout)
         else:
             ignored = (
                 commands.CommandNotFound,

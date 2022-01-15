@@ -91,7 +91,7 @@ class CustomEmbed:
     def __init__(self, *args, **kwargs):
         self.timestamp = kwargs.pop("timestamp", datetime.datetime.utcnow())
         self.title = kwargs.pop("title")
-        self.description = kwargs.pop("description")
+        self.description = kwargs.pop("description", None)
         self.footer = kwargs.pop("footer", None)
         self.colour = discord.Colour.from_rgb(100, 53, 255)
         embed = discord.Embed()

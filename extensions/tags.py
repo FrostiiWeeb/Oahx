@@ -1,4 +1,4 @@
-import discord
+import discord, datetime
 from discord.ext import commands
 import asyncio
 from typing import Optional
@@ -120,7 +120,7 @@ class Tags(commands.Cog):
         except Exception as e:
             print(e)
             tags = [db["name"] for db in await self.bot.db.fetch("SELECT * FROM tags")]
-            matches = get_close_matches(name, tags)
+            matches = get_close_matches(tag, tags)
             if len(matches) > 0:
                 await ctx.send(
                     f'A tag with that name does not exist, did you mean "{matches[0]}"?'
@@ -176,12 +176,17 @@ class Tags(commands.Cog):
             )
             owner = data["author"]
             name = data["name"]
-            async with ctx.bot.embed(
-                description=f"**Name:**\n{name}\n**Owner:**\n{owner}\n"
-            ) as emb:
-                await emb.send(ctx)
+            timestamp = datetime.datetime.utcfromtimestamp(data["timestamp"])
+            user = await self.bot.try_user(data["user_id"])
+            print(user)
+            emb = discord.Embed(colour=6567423, title=name, timestamp=timestamp)
+            emb.set_footer(text="Tag created ")
+            emb.set_author(name=str(user), icon_url=user.avatar.url)
+            emb.add_field(name="Owner", value=f"<@!{user.id}>")
+            await ctx.send(embed=emb)
         except Exception as e:
-            print(e)
+            import traceback
+            traceback.print_exc()
             await ctx.send("A tag with that name does not exist.")
 
     @tag.command()
@@ -195,6 +200,7 @@ class Tags(commands.Cog):
             await ctx.send(
                 "Heyyoo! You want to make a tag, ay? Alright. Answer these questions."
             )
+            await asyncio.sleep(2)
             await ctx.send("What do you want the tag name to be?")
             message = await self.bot.wait_for(
                 "message", check=lambda m: m.author == ctx.author
@@ -224,11 +230,12 @@ class Tags(commands.Cog):
                 await emb.send(ctx.channel)
             # await db.execute("DELETE FROM cooldown_channel WHERE channel_id = $1 AND command = $2", ctx.channel.id, ctx.command.name)
             await db.execute(
-                "INSERT INTO tags(user_id, name, content, author) VALUES ($1, $2, $3, $4)",
+                "INSERT INTO tags(user_id, name, content, author, timestamp) VALUES ($1, $2, $3, $4, $5)",
                 ctx.author.id,
                 name,
                 content,
                 str(ctx.author),
+                round(datetime.datetime.utcnow().timestamp())
             )
 
 
