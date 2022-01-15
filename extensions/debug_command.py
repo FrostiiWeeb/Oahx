@@ -13,8 +13,6 @@ try:
 except ImportError:
     psutil = None
 
-sys.version = "3.9.6 (default, Jun 30 2021, 09:17:50) [GCC 9.4.0] running on linux"
-
 
 class CustomDebugCog(*STANDARD_FEATURES):
     @Feature.Command(

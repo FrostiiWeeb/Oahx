@@ -1,3 +1,4 @@
+from threading import local
 import discord, tabulate, os
 from discord.ext import commands
 from discord.ext import buttons
@@ -26,7 +27,7 @@ class Owner(commands.Cog):
             else:
                 embed = discord.Embed(description="Sorry, but maintenance mode is active.",colour=discord.Colour(0xffff00))
                 embed.set_author(name=ctx.author, icon_url=ctx.author.avatar.url)
-                await ctx.send(embed=embed, delete_after=60)        		
+                await ctx.send(embed=embed, delete_after=10)        		
                 return False
         	
         return True                               
@@ -38,12 +39,9 @@ class Owner(commands.Cog):
         
     @dev.command(hidden=True, brief="Evaluate some code!")
     async def eval(self, ctx, *, code : codeblock_converter):
-        custom_context = commands.Context(message=ctx.message, prefix=await self.bot.get_prefix(ctx.message))
-        custom_context.cog = self
-        custom_context.bot = self.bot
-        local_vars = {"ctx": custom_context, "discord": discord, "commands": commands, "bot": self.bot, "oahx": self.bot}
-        result = await aexec(code, local_vars) 
-           
+        custom_context = commands.Context(message=ctx.message, prefix=await self.bot.get_prefix(ctx.message), bot=self.bot, view=None)
+        local_vars = {"ctx": custom_context, "discord": discord, "commands": commands, "bot": self.bot, "oahx": self.bot, "wrapper": __import__("discord.wrapper")}
+        result = await aexec(code.content, local_vars)
         paginator = OahxPaginator(text=f"```py\n{result}\n```", colour=self.bot.colour, title="Evaluated")
         await paginator.paginate(custom_context)
         
