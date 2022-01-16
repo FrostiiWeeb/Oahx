@@ -3,7 +3,7 @@ from discord.ext import commands
 
 from utils.CustomContext import CoolContext
 from utils.subclasses import Processing, CustomEmbed, Cache
-from discord.ext import cli
+from discord.ext import cli, ipc
 import aiohttp, uvloop
 from utils.useful import get_prefix
 import asyncrd
@@ -52,6 +52,7 @@ async def run():
         "CREATE TABLE IF NOT EXISTS cooldown_guild(guild_id bigint, command TEXT PRIMARY KEY)"
     )
     try:
+        bot.ipc.start() 
         await bot.start("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")
     except KeyboardInterrupt:
         await db.close()
@@ -71,9 +72,11 @@ class Oahx(commands.AutoShardedBot):
         self.__extensions = [
             f"extensions.{item[:-3]}" for item in os.listdir("./extensions")
         ]
+        self.load_extension("extensions.ipc")  
         self.owner_cogs = self.__extensions
         self.help_command = None
         self.db = kwargs.pop("db", None)
+        self.ipc = ipc.Server(self, secret_key="my_secret_key") 
         self.colour = discord.Colour.from_rgb(100, 53, 255)
         self.maintenance = False
         self.owner_maintenance = False

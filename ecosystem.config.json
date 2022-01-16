@@ -9,6 +9,16 @@
             "autorestart": true,
             "max_restarts": 1000000,
             "interpreter": "python3.10"
+        },
+        {
+            "name": "ipc",
+            "script": "webserver.py",
+            "args": ["-c", "my_config.prod.json"],
+            "instances": "1",
+            "wait_ready": true,
+            "autorestart": true,
+            "max_restarts": 1000000,
+            "interpreter": "python3.10"    
         }
     ]
 }
