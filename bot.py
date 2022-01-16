@@ -7,8 +7,6 @@ from discord.ext import cli, ipc
 import aiohttp, uvloop
 from utils.useful import get_prefix
 import asyncrd
-import nest_asyncio
-nest_asyncio.apply()
 
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
@@ -16,11 +14,12 @@ os.environ["JISHAKU_HIDE"] = "True"
 
 
 async def run():
+    bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
+    bot.ipc.start() 
     db = await asyncpg.create_pool(
         dsn="postgres://merxmfgczboito:3e88a71de02e92ee7fb5f04d0773bb61f131f45e1dff70d0a497cdee4592a348@ec2-34-250-92-138.eu-west-1.compute.amazonaws.com:5432/dd85gkpf1k6u9b", max_queries=100000000
     )
     redis = await asyncrd.connect("redis://localhost:7000")
-    bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=db)
     bot.redis = redis
     await bot.db.execute(
         "CREATE TABLE IF NOT EXISTS prefixes(guild_id bigint PRIMARY KEY, prefix TEXT)"
@@ -53,7 +52,6 @@ async def run():
         "CREATE TABLE IF NOT EXISTS cooldown_guild(guild_id bigint, command TEXT PRIMARY KEY)"
     )
     try:
-        bot.ipc.start() 
         await bot.start("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")
     except KeyboardInterrupt:
         await db.close()
