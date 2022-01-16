@@ -122,11 +122,11 @@ class OahxPaginator:
                         timeout=30.0,
                     )
                 except asyncio.TimeoutError:
-                    break
                     async with ctx.bot.embed(
                         title="Error", description="You took too long to respond."
                     ) as emb:
-                        return await emb.send(ctx.channel)
+                        await emb.send(ctx.channel)
+                        break
                 if str(reaction.emoji.name) == "oahx_stop":
                     await self.message.delete()
                     break
