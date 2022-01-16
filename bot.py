@@ -72,7 +72,6 @@ class Oahx(commands.AutoShardedBot):
         self.__extensions = [
             f"extensions.{item[:-3]}" for item in os.listdir("./extensions")
         ]
-        self.load_extension("extensions.ipc")  
         self.owner_cogs = self.__extensions
         self.help_command = None
         self.db = kwargs.pop("db", None)
