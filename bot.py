@@ -52,6 +52,8 @@ async def run():
         "CREATE TABLE IF NOT EXISTS cooldown_guild(guild_id bigint, command TEXT PRIMARY KEY)"
     )
     try:
+        loop = uvloop.new_event_loop()
+        asyncio.set_event_loop(loop)
         bot.ipc.start() 
         await bot.start("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")
     except KeyboardInterrupt:

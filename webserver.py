@@ -1,5 +1,5 @@
 from quart import Quart
-from discord.ext import 
+from discord.ext import ipc
 import uvloop, asyncio
 loop = uvloop.new_event_loop()
 
