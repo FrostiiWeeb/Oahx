@@ -183,6 +183,5 @@ class Oahx(commands.AutoShardedBot):
 
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-uvloop.install()
-loop = uvloop.new_event_loop()
+loop = asyncio.new_event_loop()
 loop.run_until_complete(run())
