@@ -1,5 +1,7 @@
 from quart import Quart
-from discord.ext import ipc
+from discord.ext import 
+import uvloop, asyncio
+loop = uvloop.new_event_loop()
 
 
 app = Quart(__name__)
@@ -16,4 +18,4 @@ async def index():
 
 
 if __name__ == "__main__":
-    app.run(port=7676)
+    app.run(port=7676, loop=loop)
