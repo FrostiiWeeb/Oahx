@@ -10,20 +10,13 @@ class PaginationError(Exception):
         super().__init__(message)
 
 
-class OahxPaginatorEmbed:
-    def __init__(self, embed: discord.Embed):
-        self.embed = embed
-        self.title = embed.title
-        self.description = embed.description
-        self.footer = embed.footer
-        self.timestamp = embed.timestamp
-        self.thumbnail = embed.thumbnail
-        self.author = embed.author
-        self.icon_url = embed.icon_url
+class OahxEmbed(discord.Embed):
+    def __init__(self, **kwargs):
+        super().__init__(colour=discord.Colour.from_rgb(100, 53, 255), **kwargs)
 
 
 class OahxPaginator:
-    __slosts__ = (
+    __slots__ = (
         "pages",
         "text",
         "buttons",
