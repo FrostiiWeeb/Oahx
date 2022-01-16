@@ -16,7 +16,7 @@ os.environ["JISHAKU_HIDE"] = "True"
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
     bot.ipc.start() 
-    db = await asyncpg.create_pool(
+    bot.db = await asyncpg.create_pool(
         dsn="postgres://merxmfgczboito:3e88a71de02e92ee7fb5f04d0773bb61f131f45e1dff70d0a497cdee4592a348@ec2-34-250-92-138.eu-west-1.compute.amazonaws.com:5432/dd85gkpf1k6u9b", max_queries=100000000
     )
     redis = await asyncrd.connect("redis://localhost:7000")
@@ -54,7 +54,7 @@ async def run():
     try:
         await bot.start("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")
     except KeyboardInterrupt:
-        await db.close()
+        await bot.db.close()
         await bot.logout()
 
 
@@ -74,7 +74,7 @@ class Oahx(commands.AutoShardedBot):
         self.owner_cogs = self.__extensions
         self.help_command = None
         self.db = kwargs.pop("db", None)
-        self.ipc = ipc.Server(self, secret_key="my_secret_key") 
+        self.ipc = ipc.Server(self, secret_key="my_secret_key", multicast_port=28900, port=7870) 
         self.colour = discord.Colour.from_rgb(100, 53, 255)
         self.maintenance = False
         self.owner_maintenance = False
@@ -184,4 +184,5 @@ class Oahx(commands.AutoShardedBot):
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 loop = asyncio.new_event_loop()
-loop.run_until_complete(run())
+asyncio.ensure_future(run(), loop=loop)
+loop.run_forever()
