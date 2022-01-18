@@ -14,7 +14,7 @@ except ImportError:
     psutil = None
 
 
-class CustomDebugCog(*STANDARD_FEATURES):
+class CustomDebugCog(*STANDARD_FEATURES, *OPTIONAL_FEATURES):
     @Feature.Command(
         name="jishaku",
         aliases=["jsk"],
@@ -121,7 +121,7 @@ class CustomDebugCog(*STANDARD_FEATURES):
         )
 
         async with ctx.bot.embed(
-            title="Custom Jishaku", description="\n".join(summary)
+            description="\n".join(summary)
         ) as emb:
             await emb.send(ctx.channel)
 
