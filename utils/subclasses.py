@@ -63,9 +63,6 @@ class Processing:
         self._start = None
         self._end = None
         self.ctx = ctx
-        
-    def __call__(self, *args: typing.Any, **kwds: Any) -> Any:
-        pass
 
     async def __aenter__(self):
         self.message = await self.ctx.send(
