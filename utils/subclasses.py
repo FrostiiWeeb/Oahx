@@ -63,9 +63,10 @@ class Processing:
         self._start = None
         self._end = None
         self.ctx = ctx
+        self.__call__()
         
     def __call__(self, *args: Any, **kwds: Any) -> Any:
-        return asyncio.create_task(asyncio.gather(self.__aenter__, self.__aexit__))
+        return asyncio.create_task(asyncio.gather(self.__aenter__(), self.__aexit__()))
 
     async def __aenter__(self):
         self.message = await self.ctx.send(
