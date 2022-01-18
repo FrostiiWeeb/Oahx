@@ -90,20 +90,30 @@ class Processing:
 class CustomEmbed:
     def __init__(self, *args, **kwargs):
         self.timestamp = kwargs.pop("timestamp", datetime.datetime.utcnow())
-        self.title = kwargs.pop("title")
+        self.title = kwargs.pop("title", None)
         self.description = kwargs.pop("description", None)
         self.footer = kwargs.pop("footer", None)
         self.colour = discord.Colour.from_rgb(100, 53, 255)
         embed = discord.Embed()
-        self.embed = embed.from_dict(
-            {
-                "color": 6567423,
-                "type": "rich",
-                "title": self.title,
-                "description": self.description,
-                "footer": self.footer or None,
-            }
-        )
+        if not self.title:
+            self.embed = embed.from_dict(
+                {
+                    "color": 6567423,
+                    "type": "rich",
+                    "description": self.description,
+                    "footer": self.footer or None,
+                }
+            )
+        else:
+            self.embed = embed.from_dict(
+                {
+                    "color": 6567423,
+                    "type": "rich",
+                    "title": self.title,
+                    "description": self.description,
+                    "footer": self.footer or None,
+                }
+            )
 
     async def __aexit__(self, *args, **kwargs):
         return self
