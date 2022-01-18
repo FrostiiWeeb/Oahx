@@ -66,7 +66,7 @@ class Processing:
         self.__call__()
         
     def __call__(self, *args: Any, **kwds: Any) -> Any:
-        return asyncio.create_task(asyncio.gather(self.__aenter__(), self.__aexit__()))
+        return asyncio.create_task(asyncio.gather(self.__aenter__()))
 
     async def __aenter__(self):
         self.message = await self.ctx.send(
@@ -76,7 +76,7 @@ class Processing:
                 colour=self.ctx.bot.colour,
             )
         )
-        return self
+        return asyncio.create_task(self.__aexit__())
 
     async def __aexit__(self, *args, **kwargs):
         return await self.message.delete()
