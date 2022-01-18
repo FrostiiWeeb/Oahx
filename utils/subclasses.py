@@ -1,4 +1,5 @@
 import discord, datetime, asyncio, humanize, sys
+from typing import *
 from discord.ext import commands
 
 
@@ -62,6 +63,9 @@ class Processing:
         self._start = None
         self._end = None
         self.ctx = ctx
+        
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        return asyncio.create_task(asyncio.gather(self.__aenter__, self.__aexit__))
 
     async def __aenter__(self):
         self.message = await self.ctx.send(
