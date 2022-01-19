@@ -27,12 +27,13 @@ class Call:
     async def respond(
         self, ctx, user: str = "me", message: str = None, *args, **kwargs
     ):
-        if isinstance(self.channel, None):
+        try:
+            if user == "me":
+                await ctx.send(f"{self.recipients[0]}: {message}", *args, **kwargs)
+            else:
+                await self.channel.send(f"{self.recipients[1]}: {message}", *args, **kwargs)
+        except TypeError:
             raise Exception("The call was ended, aborting...")
-        if user == "me":
-            await ctx.send(f"{self.recipients[0]}: {message}", *args, **kwargs)
-        else:
-            await self.channel.send(f"{self.recipients[1]}: {message}", *args, **kwargs)
 
 
 class PhoneEmbed(discord.Embed):
