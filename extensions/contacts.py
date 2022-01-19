@@ -21,14 +21,18 @@ class Call:
     async def close(self, ctx):
         await self.channel.send("Call ended")
         await ctx.send("Call ended")
+        self.channel = None
+        self.recipients = None
 
     async def respond(
         self, ctx, user: str = "me", message: str = None, *args, **kwargs
     ):
+        if not (self.channel, self.recipients):
+            raise Exception("The call was ended, aborting...")
         if user == "me":
-            await ctx.send(f"{self.recipients[1]}: {message}", *args, **kwargs)
+            await ctx.send(f"{self.recipients[0]}: {message}", *args, **kwargs)
         else:
-            await self.channel.send(f"{self.recipients[0]}: {message}", *args, **kwargs)
+            await self.channel.send(f"{self.recipients[1]}: {message}", *args, **kwargs)
 
 
 class PhoneEmbed(discord.Embed):
