@@ -71,7 +71,7 @@ class Owner(commands.Cog):
         for i in res:
             for header in headers:
                 stuff[header] = [i[header]]
-        thing = tabulate(stuff, headers="keys")
+        thing = tabulate(stuff)
         await ctx.send(f"```\n{thing}\n```")	
 		    
     @dev.command(help="Turn on or off maintenance mode.",aliases=['maintenance'], hidden=True)
