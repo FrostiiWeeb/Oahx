@@ -18,12 +18,15 @@ class Call:
         self.channel = channel
         self.recipients = recipients
 
+
+    def raise_error(self, *args, **kwargs):
+        raise ConnectionError("The call was ended, aborting...")
     async def close(self, ctx):
         await self.channel.send("Call ended")
         await ctx.send("Call ended")
         self.channel = None
         self.recipients = None
-        self.respond = None
+        self.respond = self.raise_error
 
     async def respond(
         self, ctx, user: str = "me", message: str = None, *args, **kwargs
