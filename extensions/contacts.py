@@ -23,6 +23,7 @@ class Call:
         await ctx.send("Call ended")
         self.channel = None
         self.recipients = None
+        self.respond = None
 
     async def respond(
         self, ctx, user: str = "me", message: str = None, *args, **kwargs
