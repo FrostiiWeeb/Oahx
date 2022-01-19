@@ -66,8 +66,10 @@ class Owner(commands.Cog):
         if len(res) == 0:
             return await ctx.message.add_reaction('✅')
         headers = list(res[0].keys())
-        print(headers)
-        thing = tabulate(headers, headers="keys")
+        stuff = {}
+        for header in headers:
+            stuff[header] = []
+        thing = tabulate(stuff, headers="keys")
         await ctx.send(f"```\n{thing}\n```")	
 		    
     @dev.command(help="Turn on or off maintenance mode.",aliases=['maintenance'], hidden=True)
