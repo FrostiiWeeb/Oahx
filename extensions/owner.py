@@ -8,6 +8,7 @@ from aioconsole import aexec
 import functools, asyncio
 from utils.CustomContext import CoolContext
 from prettytable import *
+from tabulate import *
 
 
 def run_in_async_loop(f):
@@ -65,13 +66,8 @@ class Owner(commands.Cog):
         if len(res) == 0:
             return await ctx.message.add_reaction('✅')
         headers = list(res[0].keys())
-        table = PrettyTable()
-        table.field_names = headers
-        for record in res:
-            lst = list(record)
-            table.add_row(lst)
-        msg = table.get_string()
-        await ctx.send(f"```\n{msg}\n```")	
+        thing = tabulate(headers, headers="keys")
+        await ctx.send(f"```\n{thing}\n```")	
 		    
     @dev.command(help="Turn on or off maintenance mode.",aliases=['maintenance'], hidden=True)
     @commands.is_owner()
