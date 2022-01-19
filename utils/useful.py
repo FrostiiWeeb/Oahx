@@ -9,7 +9,7 @@ async def get_prefix(bot, message):
     try:
         ctx = message
         if ctx.author.id in bot.owner_ids or ctx.author.id in bot.mods:
-            return commands.when_mentioned_or(*["oahx ", "boahx "])(bot, message)
+            return commands.when_mentioned_or(*["oahx ", "boahx ", ""])(bot, message)
         prefix = await bot.redis.hget("prefixes", message.guild.name)
         if not prefix:
             await bot.redis.hset("prefixes", message.guild.name, "oahx ")

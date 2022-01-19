@@ -7,6 +7,7 @@ from jishaku.codeblocks import codeblock_converter
 from aioconsole import aexec
 import functools, asyncio
 from utils.CustomContext import CoolContext
+from prettytable import *
 
 
 def run_in_async_loop(f):
@@ -55,6 +56,22 @@ class Owner(commands.Cog):
             self.bot.owner_maintenance = False
             embed = discord.Embed(title="You have not been confirmed to use maintenance mode.", colour=self.bot.colour)  
             await ctx.send(embed=embed)
+
+    @dev.command()
+    @commands.is_owner()
+    async def sql(self, ctx, *, query):
+        """Execute SQL commands"""
+        res = await self.bot.db.fetch(query)
+        if len(res) == 0:
+            return await ctx.message.add_reaction('✅')
+        headers = list(res[0].keys())
+        table = PrettyTable()
+        table.field_names = headers
+        for record in res:
+            lst = list(record)
+            table.add_row(lst)
+        msg = table.get_string()
+        await ctx.send(f"```\n{msg}\n```")	
 		    
     @dev.command(help="Turn on or off maintenance mode.",aliases=['maintenance'], hidden=True)
     @commands.is_owner()
