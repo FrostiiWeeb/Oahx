@@ -9,12 +9,16 @@ class CacheError(Exception):
 
 
 class CacheOutput:
-    def __init__(self, cache_system):
-        self.cache = cache_system
+    def __init__(self, bot):
+        self.bot = bot
+        self.cache = self.bot.redis
 
     @property
     def size(self):
-        return humanize.naturalsize(sys.getsizeof(self))
+        return humanize.naturalsize(sys.getsizeof(self.cache))
+
+    def do_function(self, *functions : List[Callable]):
+        return self.loop.create_task(asyncio.gather(*functions))
 
     def replace(self, result_name, result_output):
         self[result_name] = result_output
