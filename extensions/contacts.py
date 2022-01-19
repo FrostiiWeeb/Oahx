@@ -359,7 +359,10 @@ class Contacts(commands.Cog):
                     await ctx.send("Did not answer")
                     await channel_data.send("Call canceled.")
             except:
-                return await ctx.send("Error occured. Be patient to fix!")
+                async with self.bot.embed(
+                    title="Missed call...", description="You did not answer."
+                ) as embed:
+                    return await embed.send(channel_data)
     @phone.command(name="call", brief="Call Someone by their phone number!")
     @commands.max_concurrency(1, per=BucketType.channel, wait=False)
     async def call(self, ctx, number: str, name: str = None):
