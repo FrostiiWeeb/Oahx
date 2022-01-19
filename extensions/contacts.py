@@ -143,7 +143,223 @@ class Contacts(commands.Cog):
             "UPDATE numbers SET number = $1 WHERE id = $2", num, id
         )
         await ctx.send("Changed number to {}".format(num))
+        
+    @phone.command(name="rcall", brief="Call Someone by their phone number (random edition)!")
+    @commands.max_concurrency(1, per=BucketType.channel, wait=False)  
+    async def rdial(self, ctx):
+        try:
+            me = await self.bot.db.fetchrow(
+                "SELECT * FROM numbers WHERE name = '%s'" % ctx.author.name
+            )
+        except:
+            await ctx.send(
+                embed=PhoneEmbed(
+                    'The number you provided was not found or you dont have a number. create a number using "oahx phone create"'
+                )
+            )
 
+        else:
+            numbers = []
+            for number in await self.bot.db.fetch("SELECT * FROM numbers"):
+                numbers.append(number["number"])
+            number = random.choice(numbers)
+            number = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE number = $1", number) 
+            channel_data = await self.try_channel(int(number["channel_id"]))
+            try:
+                me_channel_data = await self.try_channel(me["channel_id"])
+            except:
+                return await ctx.send(
+                    embed=PhoneEmbed(
+                        'The number you provided was not found or you dont have a number. create a number using "oahx phone create"'
+                    )
+                )
+            async with self.bot.processing(ctx):
+                await asyncio.sleep(3)
+                async with self.bot.embed(
+                    title="Calling..",
+                    description="<:phone:857956883464978432> Calling phone number `%s`"
+                    % number["number"],
+                ) as embed:
+                    await embed.send(ctx.channel)
+            async with self.bot.embed(
+                title="Incoming call..",
+                description=f"<:phone:857956883464978432> There is an incoming call from `{me['name']} ({me['number']})` is calling `{number['name']}`, you can either type {ctx.prefix}decline or {ctx.prefix}pickup",
+            ) as embed:
+                await embed.send(channel_data)
+
+            def s_check(m):
+                return m.author.name == number["name"]
+
+            try:
+                message = await self.bot.wait_for(
+                    "message", timeout=60.0, check=s_check
+                )
+                message = message.content.lower()
+                if message == f"{ctx.prefix}pickup":
+                    await channel_data.send(
+                        "You are now talking with `{}`".format(me["name"])
+                    )
+                    await me_channel_data.send(
+                        "You are now talking with `{}`".format(number["name"])
+                    )
+                    while True:
+
+                        def check(m):
+                            return (
+                                m.author.id == number["id"]
+                                and m.channel.id == number["channel_id"]
+                                or m.author.id == me["id"]
+                                and m.channel.id == me["channel_id"]
+                            )
+
+                        message = await self.bot.wait_for("message", check=check)
+                        if message.content == f"{ctx.prefix}hangup":
+
+                            await me_channel_data.send(
+                                embed=discord.Embed(description="Call ended")
+                            )
+                            await channel_data.send(
+                                embed=discord.Embed(description="Call ended")
+                            )
+                            break
+                            return
+
+                        elif message.author.name == number["name"]:
+                            if message.content == "mute":
+
+                                self.phone_mute = True
+                                await me_channel_data.send(
+                                    "The other user have muted themselves."
+                                )
+                            elif message.content == "unmute":
+
+                                self.phone_mute = False
+                                await me_channel_data.send(
+                                    "The other user have unmuted themselves."
+                                )
+                                await me_channel_data.send(
+                                    f"{number['name']}: {message.content}"
+                                )
+                            elif self.phone_mute:
+                                pass
+                            elif not self.phone_mute:
+                                if message.attachments:
+                                    attachment = message.attachments[0]
+                                    if (
+                                        attachment.content_type == "image/png"
+                                        or attachment.content_type == "image/jpg"
+                                        or attachment.content_type == "image/jpeg"
+                                    ):
+                                        my_io = io.BytesIO(await attachment.read())
+                                        file = discord.File(my_io, "attachment.png")
+                                        await me_channel_data.send(file=file)
+                                    elif attachment.content_type == "video/mp4":
+
+                                        my_io = io.BytesIO()
+                                        my_content = await attachment.save(my_io)
+                                        file = discord.File(my_io, "attachment.mp4")
+                                        await me_channel_data.send(file=file)
+                                if message.content == "reply":
+
+                                    def p_check(m):
+                                        return m.author.name == number["name"]
+
+                                    await channel_data.send(
+                                        "Send the message id you want to reply to."
+                                    )
+                                    replied_message = await self.bot.wait_for(
+                                        "message",
+                                        check=lambda m: m.author.name
+                                        == number["name"],
+                                    )
+                                    replied_message = int(replied_message.content)
+                                    await channel_data.send("Send the reply content.")
+                                    text_message = await self.bot.wait_for(
+                                        "message",
+                                        check=lambda m: m.author.name
+                                        == number["name"],
+                                    )
+                                    text_message = text_message.content
+                                    ch = await self.bot.fetch_channel(
+                                        number["channel_id"]
+                                    )
+                                    my_data = await ch.fetch_message(replied_message)
+                                    await me_channel_data.send(
+                                        f"> {my_data.content}\n\n\n{text_message}"
+                                    )
+
+                                else:
+                                    await me_channel_data.send(
+                                        f"{number['name']}: {message.content}"
+                                    )
+
+                        elif message.author.name == me["name"]:
+                            if message.content.lower() == "mute":
+                                await channel_data.send(
+                                    "The other user have muted themselves."
+                                )
+                                self.me_mute = True
+                            elif message.content.lower() == "unmute":
+                                await channel_data.send(
+                                    "The other user have unmuted themselves."
+                                )
+                                self.me_mute = False
+                                await channel_data.send(
+                                    f"{me['name']}: {message.content}"
+                                )
+                            elif self.me_mute:
+                                pass
+                            elif not self.me_mute:
+                                if message.attachments:
+                                    attachment = message.attachments[0]
+                                    if (
+                                        attachment.content_type == "image/png"
+                                        or attachment.content_type == "image/jpg"
+                                        or attachment.content_type == "image/jpeg"
+                                    ):
+                                        my_io = io.BytesIO(await attachment.read())
+                                        file = discord.File(my_io, "attachment.png")
+                                        await channel_data.send(
+                                            file=file, content=message.content or None
+                                        )
+                                    elif attachment.content_type == "video/mp4":
+                                        my_io = io.BytesIO()
+                                        my_content = await attachment.save(my_io)
+                                        file = discord.File(my_io, "attachment.mp4")
+                                        await channel_data.send(file=file)
+                            if message.content == "reply":
+
+                                def m_check(m):
+                                    return m.author.name == me["name"]
+
+                                await me_channel_data.send(
+                                    "Send the message id you want to reply to."
+                                )
+                                replied_message = await self.bot.wait_for(
+                                    "message", check=m_check
+                                )
+                                replied_message = int(replied_message.content)
+                                await me_channel_data.send("Send the reply content.")
+                                text_message = await self.bot.wait_for(
+                                    "message", check=p_check
+                                )
+                                text_message = text_message.content
+                                my_data = await self.bot.http.get_message(
+                                    me["channel_id"], replied_message
+                                )
+                                await channel_data.send(
+                                    f"> {my_data['content']}\n\n\n{text_message}"
+                                )
+                            else:
+                                await channel_data.send(
+                                    f"{me['name']}: {message.content}"
+                                )
+                                
+                elif message == f"{ctx.prefix}decline":
+                    await ctx.send("Did not answer")
+                    await channel_data.send("Call canceled.")
+            except:
+                return await ctx.send("Error occured. Be patient to fix!")
     @phone.command(name="call", brief="Call Someone by their phone number!")
     @commands.max_concurrency(1, per=BucketType.channel, wait=False)
     async def call(self, ctx, number: str, name: str = None):
