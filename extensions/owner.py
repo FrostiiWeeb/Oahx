@@ -66,6 +66,7 @@ class Owner(commands.Cog):
         if len(res) == 0:
             return await ctx.message.add_reaction('✅')
         headers = list(res[0].keys())
+        print(headers)
         thing = tabulate(headers, headers="keys")
         await ctx.send(f"```\n{thing}\n```")	
 		    
