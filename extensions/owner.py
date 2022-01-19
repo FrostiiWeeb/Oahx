@@ -65,6 +65,7 @@ class Owner(commands.Cog):
         res = await self.bot.db.fetch(query)
         if len(res) == 0:
             return await ctx.message.add_reaction('✅')
+        print(res)
         headers = list(res[0].keys())
         stuff = {}
         for header in headers:
