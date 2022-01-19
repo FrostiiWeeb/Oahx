@@ -68,8 +68,9 @@ class Owner(commands.Cog):
         print(res)
         headers = list(res[0].keys())
         stuff = {}
-        for header in headers:
-            stuff[header] = []
+        for i in res:
+            for header in headers:
+                stuff[header] = [i[header]]
         thing = tabulate(stuff, headers="keys")
         await ctx.send(f"```\n{thing}\n```")	
 		    
