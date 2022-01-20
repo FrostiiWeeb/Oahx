@@ -164,13 +164,19 @@ class Contacts(commands.Cog):
                 numbers.append(number["number"])
             number = random.choice(numbers)
             number = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE number = $1", number) 
+            if number["number"] == me["number"]:
+                return await ctx.send(
+                    embed=PhoneEmbed(
+                        'The number was the same as your\'s. Try again.'
+                    )
+                )
             channel_data = await self.try_channel(int(number["channel_id"]))
             try:
                 me_channel_data = await self.try_channel(me["channel_id"])
             except:
                 return await ctx.send(
                     embed=PhoneEmbed(
-                        'The number you provided was not found or you dont have a number. create a number using "oahx phone create"'
+                        'The number was not found or you dont have a number. create a number using "oahx phone create"'
                     )
                 )
             async with self.bot.processing(ctx):
@@ -183,7 +189,7 @@ class Contacts(commands.Cog):
                     await embed.send(ctx.channel)
             async with self.bot.embed(
                 title="Incoming call..",
-                description=f"<:phone:857956883464978432> There is an incoming call from `{me['name']} ({me['number']})` is calling `{number['name']}`, you can either type {ctx.prefix}decline or {ctx.prefix}pickup",
+                description=f"<:phone:857956883464978432> There is an incoming call from `{me['name']} ({me['number']})`. They are calling `{number['name']}`, you can either type {ctx.prefix}decline or {ctx.prefix}pickup",
             ) as embed:
                 await embed.send(channel_data)
 
@@ -436,7 +442,7 @@ class Contacts(commands.Cog):
                     await embed.send(ctx.channel)
             async with self.bot.embed(
                 title="Incoming call..",
-                description=f"<:phone:857956883464978432> There is an incoming call from `{me['name']} ({me['number']})` is calling `{phone_data['name']}`, you can either type {ctx.prefix}decline or {ctx.prefix}pickup",
+                description=f"<:phone:857956883464978432> There is an incoming call from `{me['name']} ({me['number']})`. They are calling `{phone_data['name']}`, you can either type {ctx.prefix}decline or {ctx.prefix}pickup",
             ) as embed:
                 await embed.send(channel_data)
 
@@ -630,7 +636,7 @@ class Contacts(commands.Cog):
                     )
                     await ctx.send("Channel changed to current channel!")
             except:
-                await ctx.send(embed=PhoneEmbed("You dont have a phone number."))
+                await ctx.send(embed=PhoneEmbed("You don\'t have a phone number."))
 
     @phone.command(name="delete", brief="Delete your phone number!")
     async def delete(self, ctx):
@@ -707,7 +713,7 @@ class Contacts(commands.Cog):
         elif option == "delete" and number == None:
             try:
                 data = self.contact_book
-                del data[ctx.author.name]
+                del data[name]
                 async with self.bot.embed(
                     title="Deleted!",
                     description="Deleted that person from your contacts.",

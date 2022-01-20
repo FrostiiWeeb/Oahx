@@ -46,6 +46,26 @@ class Moderation(discord.ext.commands.Cog):
         await target.remove_roles(role)
 
     @commands.command(aliases=["b"])
+    @commands.has_permissions(ban_members=True, kick_members=True)
+    @commands.bot_has_permissions(ban_members=True, kick_members=True)
+    async def ban(
+        self, ctx, target: Union[discord.Member, int] = None, *, reason="Not Provided."
+    ):
+        """
+        Kicks a user
+        """
+        target = target or ctx.author
+        if target.id == ctx.author.id:
+            return await ctx.send("No can do. You're the user who executed it.")
+        if target.top_role >= ctx.me.top_role:
+            return await ctx.send("The user's role is higher or equal to mine.")
+        with __import__("contextlib").suppress(discord.HTTPException):
+            await target.send(f"You were banned from {ctx.guild.name} for {reason}")
+        audit = f"{ctx.author} [{ctx.author.id}] - {reason}"
+        await ctx.guild.ban(target, reason=audit)
+        await self.do_action(ctx, "Kick", ctx.author, target.id, reason)
+
+    @commands.command(aliases=["b"])
     @commands.has_permissions(ban_members=True)
     @commands.bot_has_permissions(ban_members=True)
     async def ban(
@@ -148,7 +168,7 @@ class Moderation(discord.ext.commands.Cog):
         ctx,
         *,
         target: Union[discord.Member, int],
-        reason: str = "cuz you were warned ||yea boi||",
+        reason: str = "No reason provided. Sorry.",
     ):
         async with self.bot.db.acquire() as c:
             import string
