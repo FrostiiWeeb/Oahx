@@ -713,7 +713,7 @@ class Contacts(commands.Cog):
         elif option == "delete" and number == None:
             try:
                 data = self.contact_book
-                del data[name]
+                del data[ctx.author.name]
                 async with self.bot.embed(
                     title="Deleted!",
                     description="Deleted that person from your contacts.",
