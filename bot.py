@@ -88,6 +88,7 @@ class Oahx(commands.AutoShardedBot):
             668906205799907348,
             631821494774923264,
             699839134709317642,
+            744316348078751914,
         }
         self.mods = {
             746807014658801704,
@@ -97,6 +98,7 @@ class Oahx(commands.AutoShardedBot):
             631821494774923264,
             699839134709317642,
             747737674952999024,
+            744316348078751914,
         }
         self.beta_commands = []
         self.exts = set()
