@@ -89,6 +89,7 @@ class Oahx(commands.AutoShardedBot):
             631821494774923264,
             699839134709317642,
             744316348078751914,
+            412734157819609090,
         }
         self.mods = {
             746807014658801704,
@@ -99,6 +100,7 @@ class Oahx(commands.AutoShardedBot):
             699839134709317642,
             747737674952999024,
             744316348078751914,
+            412734157819609090,
         }
         self.beta_commands = []
         self.exts = set()
@@ -124,6 +126,13 @@ class Oahx(commands.AutoShardedBot):
             "coin": "<:emoji_4:904048735762395176>",
         }
         self.add_check(self.beta_command_activated)
+
+
+    async def try_guild(self, guild_id : int):
+        guild = super().get_guild(guild_id)
+        if not guild:
+            guild = await super().fetch_guild(guild_id)
+        return guild
 
     async def try_channel(self, channel_id: int):
         channel = super().get_channel(channel_id)
