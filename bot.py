@@ -185,6 +185,7 @@ class Oahx(commands.AutoShardedBot):
         return await super().get_context(message, cls=cls or CoolContext)
 
     async def on_ready(self):
+        self.session = aiohttp.ClientSession(loop=self.loop)
         print(
             "Logged in! \n"
             f"{'-' * 20}\n"
