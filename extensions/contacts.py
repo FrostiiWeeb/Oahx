@@ -380,6 +380,9 @@ class Contacts(commands.Cog):
         if number == "*661":
             channel = await self.try_channel(854670283457429524)
             return await self.call_support(ctx, channel)
+        if number == "991":
+            channel = await self.try_channel(854670283457429524)
+            return await self.call_support(ctx, channel)
         try:
             phone_data = await self.bot.db.fetchrow(
                 "SELECT * FROM numbers WHERE number = '%s'" % number
