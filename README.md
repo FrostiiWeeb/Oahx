@@ -7,3 +7,7 @@
 
 
 Oahx is a multi-purpose bot for discord with a phone system, and much more is coming soon! Yes, you need **permission** to view the source, if you **do** get accepted for viewing this repository, **do** not steal the token, thanks! Happy using!
+
+<a href="https://top.gg/bot/844213992955707452">
+  <img src="https://top.gg/api/widget/844213992955707452.svg">
+</a>
