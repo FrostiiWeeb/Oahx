@@ -3,7 +3,26 @@ from discord.ext import commands
 from functools import wraps
 from durations import Duration as DurationConvertion
 from argparse import ArgumentParser
+import threading, typing
 
+class tasks():
+    def __init__(self) -> None:
+        self.event = threading.Event()
+
+    @classmethod
+    def loop(cls, seconds : int = None, minutes : int = None, hours : int = None):
+        converter = TimeConverter()
+        time_ = seconds or minutes or hours
+        if seconds:
+            time = converter.convert("{} seconds".format(time_))
+        elif minutes:
+            time = converter.convert("{} minutes".format(time_))  
+        elif hours:
+            time = converter.convert("{} hours".format(time_))
+        async def wrapper(func: typing.Callable) -> typing.Callable:
+            while not cls.event.wait(time):
+                await func()
+        return wrapper
 
 async def get_prefix(bot, message):
     try:
@@ -46,11 +65,11 @@ class Duration:
         return DurationConvertion(self.time)
 
 
-class TimeConverter(commands.Converter):
+class TimeConverter:
     def __int__(self):
         pass
 
-    async def convert(self, ctx, time: str):
+    def convert(self, time: str):
         try:
             self.converted_time = Duration(time=time)
             self.converted_time = self.converted_time.convert()

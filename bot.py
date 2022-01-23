@@ -6,7 +6,9 @@ from utils.subclasses import Processing, CustomEmbed, Cache
 from discord.ext import cli, ipc
 import aiohttp, uvloop
 from utils.useful import get_prefix
+from utils import tasks
 import asyncrd
+import topgg
 
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
@@ -199,4 +201,7 @@ class Oahx(commands.AutoShardedBot):
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 loop = asyncio.new_event_loop()
 asyncio.ensure_future(run(), loop=loop)
+#
+# @tasks.loop(seconds=60)
+#async def update_stats()
 loop.run_forever()
