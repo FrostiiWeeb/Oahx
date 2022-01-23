@@ -77,8 +77,8 @@ class Oahx(commands.AutoShardedBot):
         self.help_command = None
         self.db = kwargs.pop("db", None)
         os.environ["IPC_KEY"] = "oahx_ipc"
-        self.ipc = ipc.Server(self, secret_key=os.environ["IPC_KEY"], multicast_port=28900, port=7870) 
-        self.client = ipc.Client(port=7870, multicast_port=28900, secret_key=os.environ.get("IPC_KEY"))
+        self.ipc = ipc.Server(self, secret_key=os.environ["IPC_KEY"], port=7870) 
+        self.client = ipc.Client(port=7870, secret_key=os.environ.get("IPC_KEY"))
         self.colour = discord.Colour.from_rgb(100, 53, 255)
         self.maintenance = False
         self.owner_maintenance = False
