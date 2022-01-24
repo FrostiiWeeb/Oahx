@@ -9,6 +9,7 @@ from utils.useful import get_prefix
 from utils import tasks
 import asyncrd
 import topgg
+import slash_util
 
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
@@ -54,13 +55,17 @@ async def run():
         "CREATE TABLE IF NOT EXISTS cooldown_guild(guild_id bigint, command TEXT PRIMARY KEY)"
     )
     try:
+        @slash_util.slash_command(guild_id=864832236271435777)
+        async def my_command(ctx, number: slash_util.Range[0, 10]):
+            # `number` will only be an int within this range
+            await ctx.send(f"Your number was {number}!", ephemeral=True)
         await bot.start("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")
     except KeyboardInterrupt:
         await bot.db.close()
         await bot.logout()
 
 
-class Oahx(commands.AutoShardedBot):
+class Oahx(slash_util.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(
             allowed_mentions=discord.AllowedMentions(
