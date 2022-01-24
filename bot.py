@@ -56,7 +56,7 @@ async def run():
     )
     try:
         @slash_util.slash_command(guild_id=864832236271435777)
-        async def my_command(ctx, number: slash_util.Range[0, 10]):
+        async def my_command(self, ctx, number: slash_util.Range[0, 10]):
             # `number` will only be an int within this range
             await ctx.send(f"Your number was {number}!", ephemeral=True)
         await bot.start("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")
