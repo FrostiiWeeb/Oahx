@@ -1,19 +1,23 @@
 import discord
 from discord.ext import commands
 import asyncio
+import typing
 #
 
-class PaginatorButtons(discord.ui.View):
-    def __init__(self):
+class PaginatorButton(discord.ui.View):
+    def __init__(self, text : str = None, pages : typing.List[discord.Embed] = None):
         super().__init__()
         self.value = None
+        self.pages = pages
+        self.text = text
+        self.total_pages = len(self.pages)
 
     # When the confirm button is pressed, set the inner value to `True` and
     # stop the View from listening to more input.
     # We also send the user an ephemeral message that we're confirming their choice.
-    @discord.ui.button(label='<', style=discord.ButtonStyle.green, emoji="<:oahx_left:859143802005356615>")
+    @discord.ui.button(style=discord.ButtonStyle.green, emoji="<:oahx_left:859143802005356615>")
     async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
-        await interaction.response.send_message('Confirming', ephemeral=True)
+        await interaction.response.edit_message('Confirming', ephemeral=True)
         self.value = True
         self.stop()
 
@@ -84,9 +88,7 @@ class OahxPaginator:
         if self.pages and self.text == None:
             self.total_pages = len(self.pages)
             self.current_page = 1
-            self.message = await ctx.send(embed=self.pages[self.current_page - 1])
-            for reaction in self.buttons:
-                await self.message.add_reaction(reaction)
+            self.message = await ctx.send(embed=self.pages[self.current_page - 1], view=PaginatorButton(text=self.text, pages = self.pages))
             while True:
                 try:
                     reaction, user = await ctx.bot.wait_for(
@@ -97,7 +99,6 @@ class OahxPaginator:
                         timeout=30.0,
                     )
                 except asyncio.TimeoutError:
-                    break
                     return await ctx.send("You took too long to respond.")
                 if str(reaction.emoji.name) == "oahx_stop":
                     await self.message.delete()

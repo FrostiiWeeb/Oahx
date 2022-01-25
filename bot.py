@@ -19,6 +19,31 @@ os.environ["JISHAKU_HIDE"] = "True"
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
     bot.ipc.start() 
+    import databases
+    import sqlalchemy
+    from fastapi import FastAPI
+    from pydantic import BaseModel
+
+    # SQLAlchemy specific code, as with any other app
+    DATABASE_URL = "postgres://merxmfgczboito:3e88a71de02e92ee7fb5f04d0773bb61f131f45e1dff70d0a497cdee4592a348@ec2-34-250-92-138.eu-west-1.compute.amazonaws.com:5432/dd85gkpf1k6u9b"
+
+    database = databases.Database(DATABASE_URL)
+
+    metadata = sqlalchemy.MetaData()
+
+
+    engine = sqlalchemy.create_engine(
+        DATABASE_URL, connect_args={"check_same_thread": False}
+    )
+    metadata.create_all(engine)
+    bot.prefixes = sqlalchemy.Table(
+    "prefixes",
+    metadata,
+    sqlalchemy.Column("guild_id", sqlalchemy.Integer, primary_key=True),
+    sqlalchemy.Column("preifx", sqlalchemy.String),
+)
+    await database.connect()
+
     bot.db = await asyncpg.create_pool(
         dsn="postgres://merxmfgczboito:3e88a71de02e92ee7fb5f04d0773bb61f131f45e1dff70d0a497cdee4592a348@ec2-34-250-92-138.eu-west-1.compute.amazonaws.com:5432/dd85gkpf1k6u9b", max_queries=100000000
     )
