@@ -26,7 +26,7 @@ async def run():
     from pydantic import BaseModel
 
     # SQLAlchemy specific code, as with any other app
-    DATABASE_URL = "postgresql+asyncpg://merxmfgczboito:3e88a71de02e92ee7fb5f04d0773bb61f131f45e1dff70d0a497cdee4592a348@ec2-34-250-92-138.eu-west-1.compute.amazonaws.com:5432/dd85gkpf1k6u9b"
+    DATABASE_URL = "postgresql+asyncpg://frostiiweeb:my_password@localhost/oahx"
 
     database = databases.Database(DATABASE_URL)
 
