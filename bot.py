@@ -16,14 +16,13 @@ import sqlalchemy
 import asyncio
 
 database = databases.Database("postgresql://frostiiweeb:my_password@localhost/oahx")
-asyncio.new_event_loop().create_task(database.connect())
 metadata = orm.ModelRegistry(database=database)
 class Prefixes(orm.Model):
     tablename = "prefixes"
     registry = metadata
 
     
-    fields = {"guild_id":orm.Integer(primary_key=True), "prefix":orm.String(max_length=5)}
+    fields = {"guild_id":orm.BigInteger(primary_key=True), "prefix":orm.Text()}
 
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
