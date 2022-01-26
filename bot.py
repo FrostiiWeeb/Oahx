@@ -29,7 +29,7 @@ class Snipes(orm.Model):
     registry = metadata
 
     
-    fields = {"message_id":orm.BigInteger(), "content":orm.String()}
+    fields = {"message_id":orm.BigInteger(), "content":orm.String(max_length=2000)}
 
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
