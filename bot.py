@@ -31,6 +31,13 @@ class Snipes(orm.Model):
     
     fields = {"message_id":orm.BigInteger(primary_key=True), "content":orm.String(max_length=2000)}
 
+class EditSnipes(orm.Model):
+    tablename = "editsnipes"
+    registry = metadata
+
+    
+    fields = {"message_id":orm.BigInteger(primary_key=True), "before_content":orm.String(max_length=2000), "after_content":orm.String(max_length=2000)}
+
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
 os.environ["JISHAKU_HIDE"] = "True"
@@ -42,6 +49,7 @@ async def run():
     await metadata.create_all()
     bot.prefixes = Prefixes
     bot.snipes = Snipes
+    bot.editsnipes = EditSnipes
     bot.orm = database
     bot.meta_orm = metadata
 

@@ -1,5 +1,6 @@
 import discord, time, asyncio
 from discord.ext import commands
+from pydantic import NoneBytes
 from utils.models import *
 from __main__ import database
 
@@ -11,7 +12,9 @@ class Misc(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_edit(self, before:discord.Message, after:discord.Message):
+        await database.connect()
         self.last_snipe = SnipedMessage(after.author, before, snipe_before=before.content, snipe_after=after.content)
+        await self.bot.editsnipes.objects.create(message_id=before.id, before_content=before.content, after_content=after.content)
     
     @commands.Cog.listener()
     async def on_message_delete(self, message:discord.Message):
@@ -20,12 +23,12 @@ class Misc(commands.Cog):
         await self.bot.snipes.objects.create(message_id=self.last_snipe.message.id, content=self.last_snipe.message.content)
 
     @commands.group("snipe", invoke_without_command=True)
-    async def snipe(self, ctx : commands.Context):
+    async def snipe(self, ctx : commands.Context, snipe_id : int = None):
         await database.connect()
         exe = None
         err = False
         try:
-            exe = await self.bot.snipes.objects.get(message_id=self.last_snipe.message.id)
+            exe = await self.bot.snipes.objects.get(message_id=snipe_id or self.last_snipe.message.id)
         except:
             exe = self.last_snipe
             err = True
@@ -35,9 +38,11 @@ class Misc(commands.Cog):
             return await self.last_snipe.send(exe.content)
 
     @snipe.command("edit")
-    async def snipe_edit(self, ctx):
+    async def snipe_edit(self, ctx, snipe_id : int = None):
+        await database.connect()
         snipe = self.last_snipe
-        async with ctx.bot.embed(title="Snipe", description=f"**Snipe Before:**\n{snipe.snipe_before}\n\n**Snipe Before:**\n{snipe.snipe_after}") as embed:
+        snipe = await self.bot.editsnipes.objects.get(message_id=snipe_id or self.last_snipe.message.id)
+        async with ctx.bot.embed(title="Snipe", description=f"**Snipe Before:**\n{snipe.before_content}\n\n**Snipe After:**\n{snipe.after_content}") as embed:
             await embed.send(self.last_snipe.message.channel)
 
     @commands.command(brief="Information about the bot.")
