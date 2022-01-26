@@ -43,7 +43,7 @@ class Misc(commands.Cog):
         await database.connect()
         snipe = self.last_snipe
         id = snipe_id or snipe.message.id
-        snipe = await self.bot.editsnipes.objects.get(pk=id)
+        snipe = await self.bot.editsnipes.objects.get(message_id=id)
         async with ctx.bot.embed(title="Snipe", description=f"**Snipe Before:**\n{snipe.before_content}\n\n**Snipe After:**\n{snipe.after_content}") as embed:
             await embed.send(self.last_snipe.message.channel)
 
