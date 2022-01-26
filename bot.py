@@ -10,6 +10,19 @@ from utils import tasks
 import asyncrd
 import topgg
 import slash_util
+import databases
+import orm
+import sqlalchemy
+
+database = databases.Database("postgresql://frostiiweeb:my_password@localhost/oahx")
+metadata = sqlalchemy.MetaData()
+class Prefixes(orm.Model):
+    __tablename__ = 'prefixes'
+    __database__ = database
+    __metadata__ = metadata
+
+    guild_id = orm.Integer(primary_key=True)
+    prefix = orm.String(max_length=5)
 
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
@@ -19,36 +32,14 @@ os.environ["JISHAKU_HIDE"] = "True"
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
     bot.ipc.start() 
-    import databases
-    from sqlalchemy.ext.asyncio import create_async_engine
-    import sqlalchemy
-    from fastapi import FastAPI
-    from pydantic import BaseModel
-
-    # SQLAlchemy specific code, as with any other app
-    DATABASE_URL = "postgresql+asyncpg://frostiiweeb:my_password@localhost/oahx"
-
-    database = databases.Database(DATABASE_URL)
-
-    metadata = sqlalchemy.MetaData()
-
-
-    engine = create_async_engine(
-        DATABASE_URL
-    )
-    bot.prefixes = sqlalchemy.Table(
-    "prefixes",
-    metadata,
-    sqlalchemy.Column("guild_id", sqlalchemy.Integer, primary_key=True),
-    sqlalchemy.Column("preifx", sqlalchemy.String),
-)
-    async with engine.begin() as conn:
-        await conn.run_sync(metadata.drop_all)
-        await conn.run_sync(metadata.create_all)
-    bot.orm = await database.connect()
+    engine = sqlalchemy.create_engine(str(database.url))
+    metadata.create_all(engine)
+    bot.prefixes = Prefixes
+    bot.orm = database
+    bot.meta_orm = metadata
 
     bot.db = await asyncpg.create_pool(
-        dsn="postgres://merxmfgczboito:3e88a71de02e92ee7fb5f04d0773bb61f131f45e1dff70d0a497cdee4592a348@ec2-34-250-92-138.eu-west-1.compute.amazonaws.com:5432/dd85gkpf1k6u9b", max_queries=100000000
+        dsn="postgresql://frostiiweeb:my_password@localhost/oahx", max_queries=100000000
     )
     redis = await asyncrd.connect("redis://localhost:7000")
     bot.redis = redis
