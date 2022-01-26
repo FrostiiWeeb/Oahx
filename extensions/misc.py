@@ -1,10 +1,24 @@
 import discord, time, asyncio
 from discord.ext import commands
+from utils.models import *
+from __main__ import database
 
 
 class Misc(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.last_snipe : SnipedMessage = None
+
+    @commands.Cog.listener()
+    async def on_message_delete(self, message:discord.Message):
+        self.last_snipe = SnipedMessage(message.author, message)
+        await self.bot.snipes.objects.create(message_id=self.last_snipe.message.id, content=self.last_snipe.message.content)
+
+    @commands.command("snipe")
+    async def snipe(self, ctx : commands.Context):
+        await database.connect()
+        exe = await self.bot.snipes.objects.get(message_id=self.last_snipe.message.id)
+        return await self.last_snipe.send(exe.content)
 
     @commands.command(brief="Information about the bot.")
     async def about(self, ctx):

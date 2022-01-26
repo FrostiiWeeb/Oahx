@@ -24,6 +24,13 @@ class Prefixes(orm.Model):
     
     fields = {"guild_id":orm.BigInteger(primary_key=True), "prefix":orm.Text()}
 
+class Snipes(orm.Model):
+    tablename = "snipes"
+    registry = metadata
+
+    
+    fields = {"message_id":orm.BigInteger(), "content":orm.String()}
+
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
 os.environ["JISHAKU_HIDE"] = "True"
@@ -34,6 +41,7 @@ async def run():
     bot.ipc.start() 
     await metadata.create_all()
     bot.prefixes = Prefixes
+    bot.snipes = Snipes
     bot.orm = database
     bot.meta_orm = metadata
 
