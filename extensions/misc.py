@@ -17,8 +17,17 @@ class Misc(commands.Cog):
     @commands.command("snipe")
     async def snipe(self, ctx : commands.Context):
         await database.connect()
-        exe = await self.bot.snipes.objects.get(message_id=self.last_snipe.message.id)
-        return await self.last_snipe.send(exe.content)
+        exe = None
+        err = False
+        try:
+            exe = await self.bot.snipes.objects.get(message_id=self.last_snipe.message.id)
+        except:
+            exe = self.last_snipe
+            err = True
+        if err:
+            return await self.last_snipe.send(exe.message.content)
+        else:
+            return await self.last_snipe.send(exe.content)
 
     @commands.command(brief="Information about the bot.")
     async def about(self, ctx):
