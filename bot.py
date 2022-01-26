@@ -15,14 +15,13 @@ import orm
 import sqlalchemy
 
 database = databases.Database("postgresql://frostiiweeb:my_password@localhost/oahx")
-metadata = sqlalchemy.MetaData()
+metadata = orm.ModelRegistry(database=database)
 class Prefixes(orm.Model):
     __tablename__ = 'prefixes'
     __database__ = database
     __metadata__ = metadata
-
-    guild_id = orm.Integer(primary_key=True)
-    prefix = orm.String(max_length=5)
+    
+    fields = {"guild_id":orm.Integer(primary_key=True), "prefix":orm.String(max_length=5)}
 
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
