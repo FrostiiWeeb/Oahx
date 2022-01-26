@@ -17,9 +17,9 @@ import sqlalchemy
 database = databases.Database("postgresql://frostiiweeb:my_password@localhost/oahx")
 metadata = orm.ModelRegistry(database=database)
 class Prefixes(orm.Model):
-    __tablename__ = 'prefixes'
-    __database__ = database
-    __metadata__ = metadata
+    tablename = "prefixes"
+    registry = metadata
+
     
     fields = {"guild_id":orm.Integer(primary_key=True), "prefix":orm.String(max_length=5)}
 
