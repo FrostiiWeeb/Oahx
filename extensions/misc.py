@@ -36,7 +36,7 @@ class Misc(commands.Cog):
         if err:
             return await self.last_snipe.send(exe.message.content)
         else:
-            return await self.last_snipe.send(exe.message.content)
+            return await self.last_snipe.send(exe.content)
 
     @snipe.command("edit")
     async def snipe_edit(self, ctx, snipe_id : int = None):
