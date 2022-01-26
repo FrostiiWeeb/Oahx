@@ -10,12 +10,16 @@ class Misc(commands.Cog):
         self.last_snipe : SnipedMessage = None
 
     @commands.Cog.listener()
+    async def on_message_edit(self, before:discord.Message, after:discord.Message):
+        self.last_snipe = SnipedMessage(after.author, before, snipe_before=before.content, snipe_after=after.content)
+    
+    @commands.Cog.listener()
     async def on_message_delete(self, message:discord.Message):
         await database.connect()
         self.last_snipe = SnipedMessage(message.author, message)
         await self.bot.snipes.objects.create(message_id=self.last_snipe.message.id, content=self.last_snipe.message.content)
 
-    @commands.command("snipe")
+    @commands.group("snipe", invoke_without_command=True)
     async def snipe(self, ctx : commands.Context):
         await database.connect()
         exe = None
@@ -29,6 +33,11 @@ class Misc(commands.Cog):
             return await self.last_snipe.send(exe.message.content)
         else:
             return await self.last_snipe.send(exe.content)
+
+    @snipe.command("edit")
+    async def snipe_edit(self, ctx):
+        snipe = self.last_snipe
+        async with ctx.bot.embed(title="Snipe", description=f"**Snipe Before:**\n{snipe.snipe_before}")
 
     @commands.command(brief="Information about the bot.")
     async def about(self, ctx):
