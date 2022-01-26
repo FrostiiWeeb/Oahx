@@ -13,8 +13,10 @@ import slash_util
 import databases
 import orm
 import sqlalchemy
+import asyncio
 
 database = databases.Database("postgresql://frostiiweeb:my_password@localhost/oahx")
+asyncio.create_task(database.connect())
 metadata = orm.ModelRegistry(database=database)
 class Prefixes(orm.Model):
     tablename = "prefixes"
