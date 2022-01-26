@@ -11,6 +11,7 @@ class Misc(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_delete(self, message:discord.Message):
+        await database.connect()
         self.last_snipe = SnipedMessage(message.author, message)
         await self.bot.snipes.objects.create(message_id=self.last_snipe.message.id, content=self.last_snipe.message.content)
 
