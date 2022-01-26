@@ -31,7 +31,7 @@ os.environ["JISHAKU_HIDE"] = "True"
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
     bot.ipc.start() 
-    metadata.create_all()
+    await metadata.create_all()
     bot.prefixes = Prefixes
     bot.orm = database
     bot.meta_orm = metadata
