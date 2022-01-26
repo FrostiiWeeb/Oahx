@@ -37,7 +37,8 @@ class Misc(commands.Cog):
     @snipe.command("edit")
     async def snipe_edit(self, ctx):
         snipe = self.last_snipe
-        async with ctx.bot.embed(title="Snipe", description=f"**Snipe Before:**\n{snipe.snipe_before}")
+        async with ctx.bot.embed(title="Snipe", description=f"**Snipe Before:**\n{snipe.snipe_before}\n\n**Snipe Before:**\n{snipe.snipe_after}") as embed:
+            await embed.send(self.last_snipe.message.channel)
 
     @commands.command(brief="Information about the bot.")
     async def about(self, ctx):
