@@ -94,8 +94,12 @@ async def run():
         await bot.db.close()
         await bot.logout()
 
+class BaseOahx(commands.AutoShardedBot):
+    def __init__(self, command_prefix, help_command=..., description=None, **options):
+        super().__init__(command_prefix, help_command, description, **options)
+        self.user = None
 
-class Oahx(commands.AutoShardedBot):
+class Oahx(BaseOahx, metaclass=BaseOahx):
     def __init__(self, *args, **kwargs):
         super().__init__(
             allowed_mentions=discord.AllowedMentions(
