@@ -42,10 +42,10 @@ class Misc(commands.Cog):
     async def snipe_edit(self, ctx, snipe_id : int = None):
         await database.connect()
         snipe = self.last_snipe
-        id = snipe_id or snipe.message.id
+        id = snipe_id or len(await self.bot.editsnipes.objects.all())
         snipe = await self.bot.editsnipes.objects.get(message_id=id)
-        async with ctx.bot.embed(title="Snipe", description=f"<:branch:935908907715555378>**Snipe Before:**\n```\n{discord.utils.escape_markdown(snipe.before_content)}\n```\n**<:branch:935908907715555378>Snipe After:**\n```\n{discord.utils.escape_markdown(snipe.after_content)}\n```") as embed:
-            await embed.send(self.last_snipe.message.channel)
+        async with ctx.bot.embed(title="Snipe", description=f"<:branch:935908907715555378>**Snipe Before:**\n```\n{discord.utils.escape_markdown(snipe.before_content)}\n```\n**<:branch:935908907715555378>Snipe After:**\n```\n{discord.utils.escape_markdown(snipe.after_content)}\n```\n\n**<:branch:935908907715555378>Message From:\n```\nWIP\n```") as embed:
+            await embed.send(ctx.channel)
 
     @commands.command(brief="Information about the bot.")
     async def about(self, ctx):
