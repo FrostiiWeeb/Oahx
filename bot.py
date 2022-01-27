@@ -95,7 +95,7 @@ async def run():
         await bot.logout()
 
 class BaseOahx(commands.AutoShardedBot):
-    def __init__(self, command_prefix, help_command=..., description=None, **options):
+    def __init__(self, command_prefix, help_command=commands.DefaultHelpCommand(), description=None, **options):
         super().__init__(command_prefix, help_command, description, **options)
         self.user = None
 
