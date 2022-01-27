@@ -23,7 +23,7 @@ class LavalinkVoiceClient(discord.VoiceClient):
     https://discordpy.readthedocs.io/en/latest/api.html#voiceprotocol
     """
 
-    def __init__(self, client: discord.Client, channel: discord.abc.Connectable):
+    def __init__(self, client: discord.ext.commands.Bot, channel: discord.abc.Connectable):
         self.client = client
         self.channel = channel
         # ensure there exists a client already
