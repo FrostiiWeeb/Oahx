@@ -31,7 +31,7 @@ class LavalinkVoiceClient(discord.VoiceClient):
         if hasattr(self.client, 'lavalink'):
             self.lavalink = self.client.lavalink
         else:
-            self.client.lavalink = lavalink.Client(client.user.id)
+            self.client.lavalink = lavalink.Client(user.id)
             self.client.lavalink.add_node(
                     'localhost',
                     2333,
