@@ -99,7 +99,7 @@ class BaseOahx(commands.AutoShardedBot):
         super().__init__(command_prefix, help_command, description, **options)
         self.user = None
 
-class Oahx(BaseOahx, metaclass=BaseOahx):
+class Oahx(BaseOahx):
     def __init__(self, *args, **kwargs):
         super().__init__(
             allowed_mentions=discord.AllowedMentions(
