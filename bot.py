@@ -94,12 +94,7 @@ async def run():
         await bot.db.close()
         await bot.logout()
 
-class BaseOahx(commands.AutoShardedBot):
-    def __init__(self, command_prefix, help_command=commands.DefaultHelpCommand(), description=None, **options):
-        super().__init__(command_prefix, help_command, description, **options)
-        self.user = None
-
-class Oahx(BaseOahx):
+class Oahx(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
         super().__init__(
             allowed_mentions=discord.AllowedMentions(
@@ -122,7 +117,6 @@ class Oahx(BaseOahx):
         self.maintenance = False
         self.owner_maintenance = False
         self.embed = CustomEmbed
-        self.user = discord.user.ClientUser(state=discord.state.ConnectionState(dispatch=super().dispatch, handlers=[], hooks=[], http=self.http, loop=self.loop), data={'id': '844213992955707452', 'username': 'Oahx', 'avatar': '68ce329c58840bcd9bd3ee9061542c43', 'discriminator': '7757', 'public_flags': 0, 'bot': True, 'banner': None, 'banner_color': None, 'accent_color': None})
         self.owner_ids = {
             746807014658801704,
             733370212199694467,

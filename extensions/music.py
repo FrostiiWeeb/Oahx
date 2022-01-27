@@ -26,6 +26,7 @@ class LavalinkVoiceClient(discord.VoiceClient):
     def __init__(self, client: discord.Client, channel: discord.abc.Connectable):
         self.client = client
         self.channel = channel
+        user = discord.user.ClientUser(state=discord.state.ConnectionState(dispatch=client.dispatch, handlers=[], hooks=[], http=client.http, loop=client.loop), data={'id': '844213992955707452', 'username': 'Oahx', 'avatar': '68ce329c58840bcd9bd3ee9061542c43', 'discriminator': '7757', 'public_flags': 0, 'bot': True, 'banner': None, 'banner_color': None, 'accent_color': None})
         # ensure there exists a client already
         if hasattr(self.client, 'lavalink'):
             self.lavalink = self.client.lavalink
