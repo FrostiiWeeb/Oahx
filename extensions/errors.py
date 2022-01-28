@@ -69,7 +69,7 @@ class Error(commands.Cog):
             except KeyError:
                 if reinvokable:
                     description = str.format(self.bot.errors[type(error)], ctx=ctx, error=error, missing_perms=f"{', '.join(error.missing_permissions)}")
-            print(description, file=sys.stdout)
+            print(description, file=sys.stderr)
         else:
             ignored = (
                 commands.CommandNotFound,
