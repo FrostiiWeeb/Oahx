@@ -48,12 +48,13 @@ class tasks:
         cls = self
         converter = TimeConverter()
         time_ = seconds or minutes or hours
+        time = ""
         if seconds:
-            time = converter.convert("{} seconds".format(time_))
+            time += converter.convert(", {} seconds".format(time_))
         elif minutes:
-            time = converter.convert("{} minutes".format(time_))
+            time += converter.convert(", {} minutes".format(time_))
         elif hours:
-            time = converter.convert("{} hours".format(time_))
+            time += converter.convert(", {} hours".format(time_))
 
         def wrapper(func: typing.Callable) -> typing.Callable:
             self.loops.add(Loop(func, func.__name__, timeout=time.to_seconds()))
