@@ -3,22 +3,41 @@ from discord.ext import commands
 from functools import wraps
 from durations import Duration as DurationConvertion
 from argparse import ArgumentParser
-import threading, typing
+import threading, typing, asyncio
 
 class Loop():
-    def __init__(self, callback : typing.Callable, name : str) -> None:
+    def __init__(self, callback : typing.Callable, name : str, timeout : int) -> None:
         self.callback : typing.Callable = callback
+        self.name = name
+        self.timeout = timeout
 
-class Set(dict):
-    def __init__(self) -> None:
-        pass
 class tasks:
     def __init__(self) -> None:
         self.event = threading.Event()
-        self.loops = Set()
+        self.loops = set()
+        self.loop : asyncio.AbstractEventLoop = asyncio.get_running_loop()
 
-    def start_loop(self, name : str, executor : bool = False):
-        ...
+    async def wait_run(self, loop : Loop, coro : typing.Coroutine, executor : bool = False):
+        if executor:
+            while not self.event.wait(loop.timeout):
+                await self.loop.run_in_executor(None, coro)
+        else:
+            while not self.event.wait(loop.timeout):
+                await coro
+
+    async def start_loop(self, name : str, executor : bool = False):
+        for l in self.loops:
+            l : Loop = l
+            if l.name == name:
+                if executor:
+                    await self.wait_run(l, l.callback, executor=True)
+                    
+                else:
+                    await self.wait_run(l, l.callback, executor=False)
+
+    def run_loop(self, *args, **kwargs):
+        self.loop.create_task(self.start_loop(*args, **kwargs))
+                    
 
     def loop(self, seconds: int = None, minutes: int = None, hours: int = None, name : str = None):
         cls = self
@@ -32,7 +51,7 @@ class tasks:
             time = converter.convert("{} hours".format(time_))
 
         def wrapper(func: typing.Callable) -> typing.Callable:
-            self.loops.add(Loop(func(), func.__name__))
+            self.loops.add(Loop(func(), func.__name__, timeout=time))
 
         return wrapper
 

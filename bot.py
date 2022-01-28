@@ -126,6 +126,7 @@ class Oahx(commands.AutoShardedBot):
         self.colour = discord.Colour.from_rgb(100, 53, 255)
         self.maintenance = False
         self.owner_maintenance = False
+        self.tasks = tasks()
         self.embed = CustomEmbed
         self.owner_ids = {
             746807014658801704,
