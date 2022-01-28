@@ -16,13 +16,13 @@ class tasks:
     def __init__(self) -> None:
         self.event = threading.Event()
         self.loops = set()
-        self.loop : asyncio.AbstractEventLoop = asyncio.get_running_loop()
+        self.ab_loop : asyncio.AbstractEventLoop = asyncio.get_running_loop()
 
     async def wait_run(self, loop : Loop, coro, executor : bool = False):
         if executor:
             time = datetime.utcnow() + __import__("datetime").timedelta(seconds=loop.timeout)
             await discord.utils.sleep_until(time)
-            await self.loop.run_in_executor(None, coro)
+            await self.ab_loop.run_in_executor(None, coro)
             await self.wait_run(loop, coro, executor=executor)
         else:
             time = datetime.utcnow() + __import__("datetime").timedelta(seconds=loop.timeout)
@@ -41,7 +41,7 @@ class tasks:
                     await self.wait_run(l, l.callback, executor=False)
 
     def run_loop(self, *args, **kwargs):
-        self.loop.create_task(self.start_loop(*args, **kwargs))
+        self.ab_loop.create_task(self.start_loop(*args, **kwargs))
                     
 
     def loop(self, seconds: int = None, minutes: int = None, hours: int = None, name : str = None):
