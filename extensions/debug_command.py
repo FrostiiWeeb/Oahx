@@ -71,7 +71,7 @@ class CustomDebugCog(*STANDARD_FEATURES, *OPTIONAL_FEATURES):
                 summary.append("")  # blank line
 
         cache_summary = (
-            f"{len(ctx.bot.guilds)} guild(s) and {len(ctx.bot.users)} user(s)"
+            f"`{len(ctx.bot.guilds)}` guild(s) and `{len(ctx.bot.users)}` user(s)"
         )
 
         # Show shard settings to summary
@@ -96,6 +96,7 @@ class CustomDebugCog(*STANDARD_FEATURES, *OPTIONAL_FEATURES):
             summary.append(f"This bot is not sharded and can see {cache_summary}.")
 
         # pylint: disable=protected-access
+        ctx.bot._connection.max_messages = 1000000000000000000000000000000000000000000000000000000000000000000000000000
         if ctx.bot._connection.max_messages:
             message_cache = (
                 f"Message cache capped at {ctx.bot._connection.max_messages}"
