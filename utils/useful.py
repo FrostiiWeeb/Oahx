@@ -28,6 +28,7 @@ class tasks:
             time = datetime.utcnow() + __import__("datetime").timedelta(seconds=loop.timeout)
             await discord.utils.sleep_until(time)
             await coro()
+            await self.wait_run(loop, coro, executor=executor)
 
     async def start_loop(self, name : str, executor : bool = False):
         for l in self.loops:
