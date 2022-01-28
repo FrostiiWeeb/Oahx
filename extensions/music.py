@@ -71,7 +71,7 @@ class VoiceState:
 
             self.current.source.volume = self._volume
             self.voice.play(self.current.source, after=self.play_next_song)
-            await self.current.source.channel.send(embed=self.current.create_embed())
+            await self.current.source.channel.reply(embed=self.current.create_embed())
 
             await self.next.wait()
 
@@ -185,7 +185,7 @@ class Music(commands.Cog):
     async def _now(self, ctx: commands.Context):
         """Displays the currently playing song."""
 
-        await ctx.send(embed=ctx.voice_state.current.create_embed())
+        await ctx.reply(embed=ctx.voice_state.current.create_embed())
 
     @commands.command(name="pause")
     @commands.has_permissions(manage_guild=True)
@@ -204,6 +204,8 @@ class Music(commands.Cog):
         if not ctx.voice_state.is_playing and ctx.voice_state.voice.is_paused():
             ctx.voice_state.voice.resume()
             await ctx.message.add_reaction("⏯")
+            await asyncio.sleep(2)
+            await ctx.message.remove_reaction("⏯", ctx.bot)
 
     @commands.command(name="stop")
     @commands.has_permissions(manage_guild=True)
