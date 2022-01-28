@@ -22,6 +22,9 @@ class FakeBot():
 
 	def add_listener(self, *args, **kwargs):
 		return self.bot.add_listener(*args, **kwargs)
+
+	async def wait_until_ready(self):
+		return await self.bot.wait_until_ready()
 class Music(commands.Cog):
     
     def __init__(self, bot) -> None:
