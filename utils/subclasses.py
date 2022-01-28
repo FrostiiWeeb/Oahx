@@ -17,7 +17,7 @@ class CacheOutput:
     def size(self):
         return humanize.naturalsize(sys.getsizeof(self.cache))
 
-    def do_function(self, *functions : List[Callable]):
+    def do_function(self, *functions: List[Callable]):
         return self.loop.create_task(asyncio.gather(*functions))
 
     def replace(self, result_name, result_output):

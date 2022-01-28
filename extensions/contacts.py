@@ -18,9 +18,9 @@ class Call:
         self.channel = channel
         self.recipients = recipients
 
-
     def raise_error(self, *args, **kwargs):
         raise ConnectionError("The call was ended, aborting...")
+
     async def close(self, ctx):
         await self.channel.send("Call ended")
         await ctx.send("Call ended")
@@ -143,9 +143,11 @@ class Contacts(commands.Cog):
             "UPDATE numbers SET number = $1 WHERE id = $2", num, id
         )
         await ctx.send("Changed number to {}".format(num))
-        
-    @phone.command(name="rcall", brief="Call Someone by their phone number (random edition)!")
-    @commands.max_concurrency(1, per=BucketType.channel, wait=False)  
+
+    @phone.command(
+        name="rcall", brief="Call Someone by their phone number (random edition)!"
+    )
+    @commands.max_concurrency(1, per=BucketType.channel, wait=False)
     async def rdial(self, ctx):
         try:
             me = await self.bot.db.fetchrow(
@@ -163,12 +165,12 @@ class Contacts(commands.Cog):
             for number in await self.bot.db.fetch("SELECT * FROM numbers"):
                 numbers.append(number["number"])
             number = random.choice(numbers)
-            number = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE number = $1", number) 
+            number = await self.bot.db.fetchrow(
+                "SELECT * FROM numbers WHERE number = $1", number
+            )
             if number["number"] == me["number"]:
                 return await ctx.send(
-                    embed=PhoneEmbed(
-                        'The number was the same as your\'s. Try again.'
-                    )
+                    embed=PhoneEmbed("The number was the same as your's. Try again.")
                 )
             channel_data = await self.try_channel(int(number["channel_id"]))
             try:
@@ -275,15 +277,13 @@ class Contacts(commands.Cog):
                                     )
                                     replied_message = await self.bot.wait_for(
                                         "message",
-                                        check=lambda m: m.author.name
-                                        == number["name"],
+                                        check=lambda m: m.author.name == number["name"],
                                     )
                                     replied_message = int(replied_message.content)
                                     await channel_data.send("Send the reply content.")
                                     text_message = await self.bot.wait_for(
                                         "message",
-                                        check=lambda m: m.author.name
-                                        == number["name"],
+                                        check=lambda m: m.author.name == number["name"],
                                     )
                                     text_message = text_message.content
                                     ch = await self.bot.fetch_channel(
@@ -360,7 +360,7 @@ class Contacts(commands.Cog):
                                 await channel_data.send(
                                     f"{me['name']}: {message.content}"
                                 )
-                                
+
                 elif message == f"{ctx.prefix}decline":
                     await ctx.send("Did not answer")
                     await channel_data.send("Call canceled.")
@@ -369,6 +369,7 @@ class Contacts(commands.Cog):
                     title="Missed call...", description="You did not answer."
                 ) as embed:
                     return await embed.send(channel_data)
+
     @phone.command(name="call", brief="Call Someone by their phone number!")
     @commands.max_concurrency(1, per=BucketType.channel, wait=False)
     async def call(self, ctx, number: str, name: str = None):
@@ -639,7 +640,7 @@ class Contacts(commands.Cog):
                     )
                     await ctx.send("Channel changed to current channel!")
             except:
-                await ctx.send(embed=PhoneEmbed("You don\'t have a phone number."))
+                await ctx.send(embed=PhoneEmbed("You don't have a phone number."))
 
     @phone.command(name="delete", brief="Delete your phone number!")
     async def delete(self, ctx):

@@ -8,28 +8,39 @@ from __main__ import database
 class Misc(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.last_snipe : SnipedMessage = None
+        self.last_snipe: SnipedMessage = None
 
     @commands.Cog.listener()
-    async def on_message_edit(self, before:discord.Message, after:discord.Message):
+    async def on_message_edit(self, before: discord.Message, after: discord.Message):
         await database.connect()
         print(before, after)
-        self.last_snipe = SnipedMessage(after.author, before, snipe_before=before.content, snipe_after=after.content)
-        await self.bot.editsnipes.objects.create(message_id=before.id, before_content=before.content, after_content=after.content)
-    
+        self.last_snipe = SnipedMessage(
+            after.author, before, snipe_before=before.content, snipe_after=after.content
+        )
+        await self.bot.editsnipes.objects.create(
+            message_id=before.id,
+            before_content=before.content,
+            after_content=after.content,
+        )
+
     @commands.Cog.listener()
-    async def on_message_delete(self, message:discord.Message):
+    async def on_message_delete(self, message: discord.Message):
         await database.connect()
         self.last_snipe = SnipedMessage(message.author, message)
-        await self.bot.snipes.objects.create(message_id=self.last_snipe.message.id, content=self.last_snipe.message.content)
+        await self.bot.snipes.objects.create(
+            message_id=self.last_snipe.message.id,
+            content=self.last_snipe.message.content,
+        )
 
     @commands.group("snipe", invoke_without_command=True)
-    async def snipe(self, ctx : commands.Context, snipe_id : int = None):
+    async def snipe(self, ctx: commands.Context, snipe_id: int = None):
         await database.connect()
         exe = None
         err = False
         try:
-            exe = await self.bot.snipes.objects.get(pk=snipe_id or self.last_snipe.message.id)
+            exe = await self.bot.snipes.objects.get(
+                pk=snipe_id or self.last_snipe.message.id
+            )
         except:
             exe = self.last_snipe
             err = True
@@ -39,12 +50,15 @@ class Misc(commands.Cog):
             return await self.last_snipe.send(exe.content)
 
     @snipe.command("edit")
-    async def snipe_edit(self, ctx, snipe_id : int = None):
+    async def snipe_edit(self, ctx, snipe_id: int = None):
         await database.connect()
         snipe = self.last_snipe
         id = snipe_id or len(await self.bot.editsnipes.objects.all())
         snipe = await self.bot.editsnipes.objects.get(message_id=id)
-        async with ctx.bot.embed(title="Snipe", description=f"<:branch:935908907715555378>**Snipe Before:**\n```\n{discord.utils.escape_markdown(snipe.before_content)}\n```\n**<:branch:935908907715555378>Snipe After:**\n```\n{discord.utils.escape_markdown(snipe.after_content)}\n```\n\n**<:branch:935908907715555378>Message From:\n```\nWIP\n```") as embed:
+        async with ctx.bot.embed(
+            title="Snipe",
+            description=f"<:branch:935908907715555378>**Snipe Before:**\n```\n{discord.utils.escape_markdown(snipe.before_content)}\n```\n**<:branch:935908907715555378>Snipe After:**\n```\n{discord.utils.escape_markdown(snipe.after_content)}\n```\n\n**<:branch:935908907715555378>Message From:\n```\nWIP\n```",
+        ) as embed:
             await embed.send(ctx.channel)
 
     @commands.command(brief="Information about the bot.")

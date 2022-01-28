@@ -120,9 +120,7 @@ class CustomDebugCog(*STANDARD_FEATURES, *OPTIONAL_FEATURES):
             f"Average websocket latency: {round(ctx.bot.latency * 1000, 2)}ms"
         )
 
-        async with ctx.bot.embed(
-            description="\n".join(summary)
-        ) as emb:
+        async with ctx.bot.embed(description="\n".join(summary)) as emb:
             await emb.send(ctx.channel)
 
 

@@ -186,6 +186,7 @@ class Tags(commands.Cog):
             await ctx.send(embed=emb)
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             await ctx.send("A tag with that name does not exist.")
 
@@ -235,7 +236,7 @@ class Tags(commands.Cog):
                 name,
                 content,
                 str(ctx.author),
-                round(datetime.datetime.utcnow().timestamp())
+                round(datetime.datetime.utcnow().timestamp()),
             )
 
 

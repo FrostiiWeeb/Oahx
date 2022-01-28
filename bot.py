@@ -17,26 +17,35 @@ import asyncio
 
 database = databases.Database("postgresql://frostiiweeb:my_password@localhost/oahx")
 metadata = orm.ModelRegistry(database=database)
+
+
 class Prefixes(orm.Model):
     tablename = "prefixes"
     registry = metadata
 
-    
-    fields = {"guild_id":orm.BigInteger(primary_key=True), "prefix":orm.Text()}
+    fields = {"guild_id": orm.BigInteger(primary_key=True), "prefix": orm.Text()}
+
 
 class Snipes(orm.Model):
     tablename = "snipes"
     registry = metadata
 
-    
-    fields = {"message_id":orm.BigInteger(primary_key=True), "content":orm.String(max_length=2000)}
+    fields = {
+        "message_id": orm.BigInteger(primary_key=True),
+        "content": orm.String(max_length=2000),
+    }
+
 
 class EditSnipes(orm.Model):
     tablename = "editsnipes"
     registry = metadata
 
-    
-    fields = {"message_id":orm.BigInteger(primary_key=True), "before_content":orm.String(max_length=2000), "after_content":orm.String(max_length=2000)}
+    fields = {
+        "message_id": orm.BigInteger(primary_key=True),
+        "before_content": orm.String(max_length=2000),
+        "after_content": orm.String(max_length=2000),
+    }
+
 
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
@@ -45,7 +54,7 @@ os.environ["JISHAKU_HIDE"] = "True"
 
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
-    bot.ipc.start() 
+    bot.ipc.start()
     await metadata.create_all()
     bot.prefixes = Prefixes
     bot.snipes = Snipes
@@ -94,6 +103,7 @@ async def run():
         await bot.db.close()
         await bot.logout()
 
+
 class Oahx(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
         super().__init__(
@@ -111,7 +121,7 @@ class Oahx(commands.AutoShardedBot):
         self.help_command = None
         self.db = kwargs.pop("db", None)
         os.environ["IPC_KEY"] = "oahx_ipc"
-        self.ipc = ipc.Server(self, secret_key="oahx_ipc", port=7870) 
+        self.ipc = ipc.Server(self, secret_key="oahx_ipc", port=7870)
         self.client = ipc.Client(secret_key="oahx_ipc", port=7870)
         self.colour = discord.Colour.from_rgb(100, 53, 255)
         self.maintenance = False
@@ -163,8 +173,7 @@ class Oahx(commands.AutoShardedBot):
         }
         self.add_check(self.beta_command_activated)
 
-
-    async def try_guild(self, guild_id : int):
+    async def try_guild(self, guild_id: int):
         guild = super().get_guild(guild_id)
         if not guild:
             guild = await super().fetch_guild(guild_id)
@@ -237,5 +246,5 @@ loop = asyncio.new_event_loop()
 asyncio.ensure_future(run(), loop=loop)
 #
 # @tasks.loop(seconds=60)
-#async def update_stats()
+# async def update_stats()
 loop.run_forever()

@@ -61,14 +61,23 @@ class Error(commands.Cog):
             reinvokable = isinstance(
                 error, (commands.MissingPermissions, commands.BotMissingPermissions)
             ) and await self.bot.is_owner(ctx.author)
-            #if reinvokable:
-                #return await ctx.reinvoke()
-            reinvokable = isinstance(error, (commands.MissingPermissions, commands.BotMissingPermissions))
+            # if reinvokable:
+            # return await ctx.reinvoke()
+            reinvokable = isinstance(
+                error, (commands.MissingPermissions, commands.BotMissingPermissions)
+            )
             try:
-                description = str.format(self.bot.errors[type(error)], ctx=ctx, error=error)
+                description = str.format(
+                    self.bot.errors[type(error)], ctx=ctx, error=error
+                )
             except KeyError:
                 if reinvokable:
-                    description = str.format(self.bot.errors[type(error)], ctx=ctx, error=error, missing_perms=f"{', '.join(error.missing_permissions)}")
+                    description = str.format(
+                        self.bot.errors[type(error)],
+                        ctx=ctx,
+                        error=error,
+                        missing_perms=f"{', '.join(error.missing_permissions)}",
+                    )
             print(description, file=sys.stderr)
         else:
             ignored = (

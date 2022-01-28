@@ -2,10 +2,12 @@ import discord
 from discord.ext import commands
 import asyncio
 import typing
+
 #
 
+
 class PaginatorButton(discord.ui.View):
-    def __init__(self, text : str = None, pages : typing.List[discord.Embed] = None):
+    def __init__(self, text: str = None, pages: typing.List[discord.Embed] = None):
         super().__init__()
         self.value = None
         self.pages = pages
@@ -15,18 +17,26 @@ class PaginatorButton(discord.ui.View):
     # When the confirm button is pressed, set the inner value to `True` and
     # stop the View from listening to more input.
     # We also send the user an ephemeral message that we're confirming their choice.
-    @discord.ui.button(style=discord.ButtonStyle.green, emoji="<:oahx_left:859143802005356615>")
-    async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
-        await interaction.response.edit_message('Confirming', ephemeral=True)
+    @discord.ui.button(
+        style=discord.ButtonStyle.green, emoji="<:oahx_left:859143802005356615>"
+    )
+    async def confirm(
+        self, button: discord.ui.Button, interaction: discord.Interaction
+    ):
+        await interaction.response.edit_message("Confirming", ephemeral=True)
         self.value = True
         self.stop()
 
     # This one is similar to the confirmation button except sets the inner value to `False`
-    @discord.ui.button(style=discord.ButtonStyle.grey, emoji='<:oahx_stop:859143862089023528>')
+    @discord.ui.button(
+        style=discord.ButtonStyle.grey, emoji="<:oahx_stop:859143862089023528>"
+    )
     async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
-        await interaction.response.send_message('Cancelling', ephemeral=True)
+        await interaction.response.send_message("Cancelling", ephemeral=True)
         self.value = False
         self.stop()
+
+
 class PaginationError(Exception):
     def __init__(self, message):
         super().__init__(message)
@@ -88,7 +98,10 @@ class OahxPaginator:
         if self.pages and self.text == None:
             self.total_pages = len(self.pages)
             self.current_page = 1
-            self.message = await ctx.send(embed=self.pages[self.current_page - 1], view=PaginatorButton(text=self.text, pages = self.pages))
+            self.message = await ctx.send(
+                embed=self.pages[self.current_page - 1],
+                view=PaginatorButton(text=self.text, pages=self.pages),
+            )
             while True:
                 try:
                     reaction, user = await ctx.bot.wait_for(
