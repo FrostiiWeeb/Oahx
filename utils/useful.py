@@ -19,7 +19,6 @@ class tasks:
         self.ab_loop : asyncio.AbstractEventLoop = asyncio.get_running_loop()
 
     async def wait_run(self, loop : Loop, coro, executor : bool = False):
-        loop.timeout = int(loop.timeout.to_seconds())
         if executor:
             time = datetime.utcnow() + __import__("datetime").timedelta(seconds=loop.timeout)
             await discord.utils.sleep_until(time)
@@ -57,7 +56,7 @@ class tasks:
             time = converter.convert("{} hours".format(time_))
 
         def wrapper(func: typing.Callable) -> typing.Callable:
-            self.loops.add(Loop(func, func.__name__, timeout=time))
+            self.loops.add(Loop(func, func.__name__, timeout=time.to_seconds()))
 
         return wrapper
 
