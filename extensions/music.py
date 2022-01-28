@@ -29,7 +29,7 @@ class Music(commands.Cog):
         self.pomice = pomice.NodePool()
     
     async def start_nodes(self):
-        await self.pomice.create_node(bot=self.bot, host='127.0.0.1', port='2333', 
+        await self.pomice.create_node(bot=self._fake_bot, host='127.0.0.1', port='2333', 
                                      password='youshallnotpass', identifier='MAIN')
         print(f"Node is ready!")
 
