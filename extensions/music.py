@@ -11,6 +11,16 @@ class Music(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
         self.pomice = bot.pomice
+	
+    async def create_node_pomice(self):
+        await self.bot.pomice.create_node(
+            bot=self.bot,
+            host="us.server.openrobot.xyz",
+            port="2993",
+            password="lirena",
+            identifier="oahx",
+        )
+        print("Created a Pomice Node")
 
     @commands.command(name="join", aliases=["connect"])
     async def join(

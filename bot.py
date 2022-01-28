@@ -56,18 +56,6 @@ os.environ["JISHAKU_HIDE"] = "True"
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
     bot.ipc.start()
-    async def create_node_pomice():
-        await bot.wait_until_ready()
-        await bot.pomice.create_node(
-            bot=bot,
-            host="us.server.openrobot.xyz",
-            port="2993",
-            password="lirena",
-            identifier="oahx",
-        )
-        print("Created a Pomice Node")
-
-    await create_node_pomice()
     await metadata.create_all()
     bot.prefixes = Prefixes
     bot.snipes = Snipes
@@ -246,6 +234,7 @@ class Oahx(commands.AutoShardedBot):
 
     async def on_ready(self):
         self.session = aiohttp.ClientSession(loop=self.loop)
+        await self.cogs["Music"].create_node_pomice()
         print(
             "Logged in! \n"
             f"{'-' * 20}\n"
