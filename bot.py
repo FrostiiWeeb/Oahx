@@ -56,10 +56,9 @@ os.environ["JISHAKU_HIDE"] = "True"
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
     bot.ipc.start()
-
+    bot.pomice = pomice.NodePool()
     async def create_node_pomice():
         await bot.wait_until_ready()
-        bot.pomice = pomice.NodePool()
         await bot.pomice.create_node(
             bot=bot,
             host="us.server.openrobot.xyz",
