@@ -12,13 +12,14 @@ import discord
 from discord.ext import commands
 import slate
 import slate.obsidian
+import yarl
 
 url_rx = re.compile(r'https?://(?:www\.)?.+')
 
 
 class Music(commands.Cog):
 
-    def __init__(self, bot: MyBot) -> None:
+    def __init__(self, bot: commands.Bot) -> None:
     
         self.bot = bot
         self.slate = slate.obsidian.NodePool()
