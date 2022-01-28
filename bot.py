@@ -14,6 +14,7 @@ import databases
 import orm
 import sqlalchemy
 import asyncio
+import pomice
 
 database = databases.Database("postgresql://frostiiweeb:my_password@localhost/oahx")
 metadata = orm.ModelRegistry(database=database)
@@ -55,6 +56,20 @@ os.environ["JISHAKU_HIDE"] = "True"
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
     bot.ipc.start()
+
+    async def create_node_pomice():
+        await bot.wait_until_ready()
+        bot.pomice = pomice.NodePool()
+        await bot.pomice.create_node(
+            bot=bot,
+            host="us.server.openrobot.xyz",
+            port="2993",
+            password="lirena",
+            identifier="oahx",
+        )
+        print("Created a Pomice Node")
+
+    await create_node_pomice()
     await metadata.create_all()
     bot.prefixes = Prefixes
     bot.snipes = Snipes

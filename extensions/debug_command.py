@@ -96,7 +96,9 @@ class CustomDebugCog(*STANDARD_FEATURES, *OPTIONAL_FEATURES):
             summary.append(f"This bot is not sharded and can see {cache_summary}.")
 
         # pylint: disable=protected-access
-        ctx.bot._connection.max_messages = 1000000000000000000000000000000000000000000000000000000000000000000000000000
+        ctx.bot._connection.max_messages = (
+            1000000000000000000000000000000000000000000000000000000000000000000000000000
+        )
         if ctx.bot._connection.max_messages:
             message_cache = (
                 f"Message cache capped at {ctx.bot._connection.max_messages}"
