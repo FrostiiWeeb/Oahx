@@ -56,6 +56,7 @@ async def run():
     bot.db = await asyncpg.create_pool(
         dsn="postgresql://frostiiweeb:my_password@localhost/oahx", max_queries=100000000
     )
+    await bot.cogs["Music"].load()
     redis = await asyncrd.connect("redis://localhost:7000")
     bot.redis = redis
     await bot.db.execute(
