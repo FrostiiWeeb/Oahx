@@ -311,7 +311,8 @@ class Music(commands.Cog):
                 song = Song(source)
 
                 await ctx.voice_state.songs.put(song)
-                await ctx.send('Enqueued {}'.format(str(source)))
+                await ctx.reply('Enqueued {}'.format(str(source)))
+				await ctx.reply(embed=song.create_embed())
 
     @_join.before_invoke
     @_play.before_invoke
