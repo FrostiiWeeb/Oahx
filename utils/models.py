@@ -168,9 +168,9 @@ class Song:
                                description='```css\n{0.source.title}\n```'.format(self),
                                color=discord.Colour.from_rgb(100, 53, 255))
                  .add_field(name='Duration', value=self.source.duration, inline=False)
-                 .add_field(name='Requested by', value=self.requester.mention, intline=False)
-                 .add_field(name='Uploader', value='[{0.source.uploader}]({0.source.uploader_url})'.format(self))
-                 .add_field(name='URL', value='[Click]({0.source.url})'.format(self))
+                 .add_field(name='Requested by', value=self.requester.mention, inline=False)
+                 .add_field(name='Uploader', value='[{0.source.uploader}]({0.source.uploader_url})'.format(self), inline=False)
+                 .add_field(name='URL', value='[Click]({0.source.url})'.format(self), inline=Flase)
                  .set_thumbnail(url=self.source.thumbnail))
 
         return embed
