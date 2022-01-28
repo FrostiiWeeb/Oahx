@@ -4,6 +4,7 @@ from functools import wraps
 from durations import Duration as DurationConvertion
 from argparse import ArgumentParser
 import threading, typing, asyncio
+from datetime import datetime
 
 class Loop():
     def __init__(self, callback : typing.Callable, name : str, timeout : int) -> None:
@@ -17,13 +18,16 @@ class tasks:
         self.loops = set()
         self.loop : asyncio.AbstractEventLoop = asyncio.get_running_loop()
 
-    async def wait_run(self, loop : Loop, coro : typing.Coroutine, executor : bool = False):
+    async def wait_run(self, loop : Loop, coro, executor : bool = False):
         if executor:
-            while not self.event.wait(loop.timeout):
-                await self.loop.run_in_executor(None, coro)
+            time = datetime.utcnow() + __import__("datetime").timedelta(seconds=loop.timeout)
+            await discord.utils.sleep_until(time)
+            await self.loop.run_in_executor(None, coro)
+            await self.wait_run(loop, coro, executor=executor)
         else:
-            while not self.event.wait(loop.timeout):
-                await coro
+            time = datetime.utcnow() + __import__("datetime").timedelta(seconds=loop.timeout)
+            await discord.utils.sleep_until(time)
+            await coro()
 
     async def start_loop(self, name : str, executor : bool = False):
         for l in self.loops:
@@ -51,7 +55,7 @@ class tasks:
             time = converter.convert("{} hours".format(time_))
 
         def wrapper(func: typing.Callable) -> typing.Callable:
-            self.loops.add(Loop(func(), func.__name__, timeout=time))
+            self.loops.add(Loop(func, func.__name__, timeout=time))
 
         return wrapper
 
