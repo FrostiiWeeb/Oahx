@@ -21,7 +21,7 @@ class FakeBot():
 		self.user = discord.user.ClientUser(state=discord.state.ConnectionState(dispatch=bot.dispatch, handlers=[], hooks=[], http=bot.http, loop=bot.loop), data={'id': '844213992955707452', 'username': 'Oahx', 'avatar': '68ce329c58840bcd9bd3ee9061542c43', 'discriminator': '7757', 'public_flags': 0, 'bot': True, 'banner': None, 'banner_color': None, 'accent_color': None})
 
 	def add_listener(self, *args, **kwargs):
-		return self.bot.add_listener(**args, **kwargs)
+		return self.bot.add_listener(*args, **kwargs)
 class Music(commands.Cog):
     
     def __init__(self, bot) -> None:
