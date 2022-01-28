@@ -56,7 +56,6 @@ os.environ["JISHAKU_HIDE"] = "True"
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
     bot.ipc.start()
-    bot.pomice = pomice.NodePool()
     async def create_node_pomice():
         await bot.wait_until_ready()
         await bot.pomice.create_node(
@@ -142,6 +141,7 @@ class Oahx(commands.AutoShardedBot):
         self.owner_maintenance = False
         self.tasks = tasks()
         self.embed = CustomEmbed
+        self.pomice = pomice.NodePool()
         self.owner_ids = {
             746807014658801704,
             733370212199694467,
