@@ -5,13 +5,23 @@ from durations import Duration as DurationConvertion
 from argparse import ArgumentParser
 import threading, typing
 
+class Loop():
+    def __init__(self, callback : typing.Callable, name : str) -> None:
+        self.callback : typing.Callable = callback
 
+class Set(dict):
+    def __init__(self) -> None:
+        pass
 class tasks:
     def __init__(self) -> None:
         self.event = threading.Event()
+        self.loops = Set()
 
-    @classmethod
-    def loop(cls, seconds: int = None, minutes: int = None, hours: int = None):
+    def start_loop(self, name : str, executor : bool = False):
+        ...
+
+    def loop(self, seconds: int = None, minutes: int = None, hours: int = None, name : str = None):
+        cls = self
         converter = TimeConverter()
         time_ = seconds or minutes or hours
         if seconds:
@@ -21,9 +31,8 @@ class tasks:
         elif hours:
             time = converter.convert("{} hours".format(time_))
 
-        async def wrapper(func: typing.Callable) -> typing.Callable:
-            while not cls.event.wait(time):
-                await func()
+        def wrapper(func: typing.Callable) -> typing.Callable:
+            self.loops.add(Loop(func(), func.__name__))
 
         return wrapper
 
