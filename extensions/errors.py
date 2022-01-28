@@ -8,6 +8,7 @@ from discord.ext.commands import command
 from discord.ext.commands import Cog
 from extensions.contacts import NumberNotFound, ConnectionError
 from extensions.economy import NotInDB
+from utils.models import *
 
 
 class ErrorEmbed(discord.Embed):
@@ -45,7 +46,9 @@ class Error(commands.Cog):
             ConnectionError: "{error.msg}",
             NotInDB: "{error}",
             discord.HTTPException: None,
-            commands.CommandOnCooldown: None,
+            commands.CommandOnCooldown: "{ctx.command.name} is on cooldown, please wait.",
+            VoiceError: "{error.msg}",
+            YTDLError: "{error.msg}",
         }
 
     @commands.Cog.listener()
