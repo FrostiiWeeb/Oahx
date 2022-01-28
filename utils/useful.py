@@ -44,20 +44,25 @@ class tasks:
         self.ab_loop.create_task(self.start_loop(*args, **kwargs))
                     
 
-    def loop(self, seconds: int = None, minutes: int = None, hours: int = None, name : str = None):
+    def loop(self, seconds: int = None, minutes: int = None, hours: int = None, days : int = None, name : str = None):
         cls = self
         converter = TimeConverter()
-        time_ = seconds or minutes or hours
-        time = ""
+        time = 0
         if seconds:
-            time += converter.convert(", {} seconds".format(time_))
-        elif minutes:
-            time += converter.convert(", {} minutes".format(time_))
-        elif hours:
-            time += converter.convert(", {} hours".format(time_))
+            _time = converter.convert(", {} seconds".format(seconds))
+            time += _time.to_seconds()
+        if minutes:
+            _time = converter.convert(", {} minutes".format(minutes))
+            time += _time.to_seconds()
+        if hours:
+            _time = converter.convert(", {} hours".format(hours))
+            time += _time.to_seconds()
+        if hours:
+            _time = converter.convert(", {} hours".format(hours))
+            time += _time.to_seconds()
 
         def wrapper(func: typing.Callable) -> typing.Callable:
-            self.loops.add(Loop(func, func.__name__, timeout=time.to_seconds()))
+            self.loops.add(Loop(func, func.__name__, timeout=time))
 
         return wrapper
 
