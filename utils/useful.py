@@ -6,6 +6,12 @@ from argparse import ArgumentParser
 import threading, typing, asyncio
 from datetime import datetime
 
+class Task:
+    def __init__(self, id : int) -> None:
+        self.id = id
+
+    def stop(self):
+        self.stopped = True
 class Loop():
     def __init__(self, callback : typing.Callable, name : str, timeout : int) -> None:
         self.callback : typing.Callable = callback
@@ -17,17 +23,23 @@ class tasks:
         self.event = threading.Event()
         self.loops = set()
         self.ab_loop : asyncio.AbstractEventLoop = asyncio.get_running_loop()
+        self.running_tasks : typing.Set[Task] = set()
+        self.current_task_id : int = 0
 
     async def wait_run(self, loop : Loop, coro, executor : bool = False):
         if executor:
             time = datetime.utcnow() + __import__("datetime").timedelta(seconds=loop.timeout)
-            await discord.utils.sleep_until(time)
             await self.ab_loop.run_in_executor(None, coro)
+            self.current_task_id += 1
+            self.running_tasks.add(Task(id=self.current_task_id))
+            await discord.utils.sleep_until(time)
             await self.wait_run(loop, coro, executor=executor)
         else:
             time = datetime.utcnow() + __import__("datetime").timedelta(seconds=loop.timeout)
-            await discord.utils.sleep_until(time)
             await coro()
+            self.current_task_id += 1
+            self.running_tasks.add(Task(id=self.current_task_id))
+            await discord.utils.sleep_until(time)
             await self.wait_run(loop, coro, executor=executor)
 
     async def start_loop(self, name : str, executor : bool = False):
