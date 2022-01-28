@@ -10,95 +10,56 @@ import re
 
 import discord
 from discord.ext import commands
-import slate
-import slate.obsidian
 import yarl
+import pomice
 
-url_rx = re.compile(r'https?://(?:www\.)?.+')
+URL_REG = re.compile(r'https?://(?:www\.)?.+')
 
 
 class Music(commands.Cog):
-
-    def __init__(self, bot: commands.Bot) -> None:
     
+    def __init__(self, bot) -> None:
         self.bot = bot
-        self.slate = slate.obsidian.NodePool()
+        
+        self.pomice = pomice.NodePool()
+    
+    async def start_nodes(self):
+        await self.pomice.create_node(bot=self.bot, host='127.0.0.1', port='2333', 
+                                     password='youshallnotpass', identifier='MAIN')
+        print(f"Node is ready!")
 
-    async def load(self) -> None:
 
-        await self.slate.create_node(
-            bot=self.bot,
-            identifier="ObsidianNode01",
-            host="127.0.0.1",
-            port="3030",
-            password="",
-        )
+        
+    @commands.command(name='join', aliases=['connect'])
+    async def join(self, ctx: commands.Context, *, channel: discord.VoiceChannel = None) -> None:
+        
+        if not channel:
+            channel = getattr(ctx.author.voice, 'channel', None)
+            if not channel:
+                raise commands.CheckFailure('You must be in a voice channel to use this command'
+                                            'without specifying the channel argument.')
 
-        print("Slate is connected!")
+        
+        await ctx.author.voice.channel.connect(cls=pomice.Player)
+        await ctx.send(f'Joined the voice channel `{channel}`')
+        
+    @commands.command(name='play')
+    async def play(self, ctx, *, search: str) -> None:
+        
+        if not ctx.voice_client:
+            await ctx.invoke(self.join) 
 
-    async def cog_command_error(self, ctx: commands.Context, error: Exception) -> None:
-        await ctx.send(str(error))
+        player = ctx.voice_client        
 
-    @commands.command(name="join")
-    async def join(self, ctx: commands.Context) -> None:
-
-        if ctx.voice_client and ctx.voice_client.is_connected():
-            raise commands.CommandError(
-                f"I am already connected to {ctx.voice_client.channel.mention}."
-            )
-
-        if not ctx.author.voice or not ctx.author.voice.channel:
-            raise commands.CommandError(
-                "You must be connected to a voice channel to use this command."
-            )
-
-        await ctx.author.voice.channel.connect(cls=slate.obsidian.Player)
-        await ctx.send(f"Joined the voice channel {ctx.voice_client.channel.mention}.")
-
-    @commands.command(name="play")
-    async def play(self, ctx: commands.Context, *, search: str) -> None:
-
-        if ctx.voice_client is None or ctx.voice_client.is_connected() is False:
-            await ctx.invoke(self.join)
-
-        url = yarl.URL(search)
-        if url.scheme and url.host:
-            source = slate.Source.NONE
+        results = await player.get_tracks(query=f'{search}')
+        
+        if not results:
+            raise commands.CommandError('No results were found for that search term.')
+        
+        if isinstance(results, pomice.Playlist):
+            await player.play(track=results.tracks[0])
         else:
-            source = slate.Source.YOUTUBE
-
-        try:
-            result = await ctx.voice_client._node.search(search, source=source, ctx=ctx)
-        except slate.NoResultsFound:
-            raise commands.CommandError(
-                "No results were found for your search."
-            )
-        except slate.HTTPError:
-            raise commands.CommandError(
-                "There was an error while searching for results."
-            )
-
-        await ctx.voice_client.play(result.tracks[0])
-        await ctx.send(f"Now playing: **{result.tracks[0].title}** by **{result.tracks[0].author}**")
-
-    @commands.command(name="disconnect")
-    async def disconnect(self, ctx: commands.Context) -> None:
-
-        if not ctx.voice_client or not ctx.voice_client.is_connected():
-            raise commands.CommandError(
-                "I am not connected to any voice channels."
-            )
-        if not ctx.author.voice or not ctx.author.voice.channel:
-            raise commands.CommandError(
-                "You must be connected to a voice channel to use this command."
-            )
-        if ctx.author.voice.channel.id != ctx.voice_client.channel.id:
-            raise commands.CommandError(
-                f"You must be connected to {ctx.voice_client.channel.mention} to use this command."
-            )
-
-        await ctx.send(f"Left {ctx.voice_client.channel.mention}.")
-        await ctx.voice_client.disconnect()
+            await player.play(track=results[0])
 
 def setup(bot):
     bot.add_cog(Music(bot))
