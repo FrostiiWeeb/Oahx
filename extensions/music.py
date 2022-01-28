@@ -319,10 +319,7 @@ class Music(commands.Cog):
             await ctx.invoke(self._join)
 
         async with ctx.typing():
-            try:
-                source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop)
-            except YTDLError as e:
-                raise YTDLError(e)
+            source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop)
 
             song = Song(source)
 
