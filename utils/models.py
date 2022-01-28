@@ -170,7 +170,7 @@ class Song:
                  .add_field(name='Duration', value=self.source.duration, inline=False)
                  .add_field(name='Requested by', value=self.requester.mention, inline=False)
                  .add_field(name='Uploader', value='[{0.source.uploader}]({0.source.uploader_url})'.format(self), inline=False)
-                 .add_field(name='URL', value='[Click]({0.source.url})'.format(self), inline=Flase)
+                 .add_field(name='URL', value='[Click]({0.source.url})'.format(self), inline=False)
                  .set_thumbnail(url=self.source.thumbnail))
 
         return embed
