@@ -15,12 +15,17 @@ import pomice
 
 URL_REG = re.compile(r'https?://(?:www\.)?.+')
 
-
+class FakeBot():
+	def __init__(self, bot) -> None:
+		self.bot = bot
+		self.user = discord.user.ClientUser(state=discord.state.ConnectionState(dispatch=bot.dispatch, handlers=[], hooks=[], http=bot.http, loop=bot.loop), data={'id': '844213992955707452', 'username': 'Oahx', 'avatar': '68ce329c58840bcd9bd3ee9061542c43', 'discriminator': '7757', 'public_flags': 0, 'bot': True, 'banner': None, 'banner_color': None, 'accent_color': None})
 class Music(commands.Cog):
     
     def __init__(self, bot) -> None:
         self.bot = bot
+        self._fake_bot = FakeBot(bot=bot)
         
+		
         self.pomice = pomice.NodePool()
     
     async def start_nodes(self):
