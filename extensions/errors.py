@@ -49,6 +49,7 @@ class Error(commands.Cog):
             commands.CommandOnCooldown: "{ctx.command.name} is on cooldown, please wait.",
             VoiceError: "{error.msg}",
             YTDLError: "{error.msg}",
+            commands.CommandError: "{error}",
         }
 
     @commands.Cog.listener()
