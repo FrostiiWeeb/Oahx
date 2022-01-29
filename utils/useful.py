@@ -83,14 +83,34 @@ class tasks:
         if hours:
             _time = converter.convert(", {} hours".format(hours))
             time += _time.to_seconds()
-        if hours:
-            _time = converter.convert(", {} hours".format(hours))
+        if days:
+            _time = converter.convert(", {} hours".format(days))
             time += _time.to_seconds()
 
         def wrapper(func: typing.Callable) -> typing.Callable:
             self.loops.add(Loop(func, func.__name__, timeout=time))
 
         return wrapper
+
+import pomice
+
+class Queue(asyncio.Queue):
+    def __init__(self, player : pomice.Player, playlist : pomice.Playlist) -> None:
+        super().__init__(loop=asyncio.get_running_loop())
+        self.playlist : pomice.Player = playlist
+        self.player = player
+        self.tracks = [track for track in self.playlist]
+        self.current_track = next(self.tracks)
+
+    async def next(self):
+        await self.player.play(track=self.current_track)
+class Player(pomice.Player):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.queue : Queue = None
+
+    async def next(self):
+        return await self.queue.next()
 
 
 async def get_prefix(bot, message):

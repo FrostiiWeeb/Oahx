@@ -28,6 +28,18 @@ class Music(commands.Cog):
 		print(f"Node is ready!")
 		self.bot.dispatch("node_ready", node=self.pomice.nodes.get("Node 1"))
 
+	@commands.command(name="leave", aliases=["disconnect", "dc"])
+	async def leave(self, ctx: commands.Context) -> None:
+        
+		channel = getattr(ctx.author.voice, "channel", None)
+		if not channel:
+			raise commands.CommandError(
+                    "You must be in a voice channel to use this command"
+                )
+			
+		await ctx.voice_client.disconnect()
+		await ctx.send(f"Disconnected the voice channel `{channel}`")
+
 	@commands.command(name="join", aliases=["connect"])
 	async def join(
         self, ctx: commands.Context, *, channel: discord.TextChannel = None
@@ -36,7 +48,7 @@ class Music(commands.Cog):
         
 			channel = getattr(ctx.author.voice, "channel", None)
 			if not channel:
-				raise commands.CheckFailure(
+				raise commands.CommandError(
                     "You must be in a voice channel to use this command"
                     "without specifying the channel argument."
                 )

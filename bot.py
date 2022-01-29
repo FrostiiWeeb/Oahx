@@ -15,10 +15,10 @@ import orm
 import sqlalchemy
 import asyncio
 import pomice
+from utils.mounting import Mount
 
 database = databases.Database("postgresql://frostiiweeb:my_password@localhost/oahx")
 metadata = orm.ModelRegistry(database=database)
-
 
 class Prefixes(orm.Model):
     tablename = "prefixes"
@@ -116,7 +116,8 @@ class Oahx(commands.AutoShardedBot):
             **kwargs,
         )
         import wavelink
-
+        self.__users = {}
+        self.mounter = Mount(self)
         self.wavelink = wavelink.NodePool()
         self.pomice = pomice.NodePool()
         self.__extensions = [
