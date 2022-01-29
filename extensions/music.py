@@ -1,3 +1,4 @@
+from ast import _identifier
 import wavelink
 import discord
 import re
@@ -16,7 +17,7 @@ class Music(commands.Cog):
         await self.wavelink.create_node(bot=self.bot,
                                             host='127.0.0.1',
                                             port=1983,
-                                            password='oahx_lavalink')
+                                            password='oahx_lavalink', identifier="Oahx Player 1")
 
     @commands.Cog.listener()
     async def on_wavelink_node_ready(self, node: wavelink.Node):
