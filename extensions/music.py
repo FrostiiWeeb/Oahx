@@ -1,4 +1,3 @@
-
 import wavelink
 import discord
 import re
@@ -12,18 +11,20 @@ class Music(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
         self.wavelink = bot.wavelink
-	
+
     async def connect_nodes(self):
-        await self.wavelink.create_node(bot=self.bot,
-                                            host='127.0.0.1',
-                                            port=1983,
-                                            password='oahx_lavalink', identifier="Oahx Player 1")
+        await self.wavelink.create_node(
+            bot=self.bot,
+            host="127.0.0.1",
+            port=1983,
+            password="oahx_lavalink",
+            identifier="Oahx Player 1",
+        )
 
     @commands.Cog.listener()
     async def on_wavelink_node_ready(self, node: wavelink.Node):
         """Event fired when a node has finished connecting."""
-        print(f'Node: <{node.identifier}> is ready!')
-
+        print(f"Node: <{node.identifier}> is ready!")
 
     @commands.command(name="join", aliases=["connect"])
     async def join(
@@ -45,10 +46,14 @@ class Music(commands.Cog):
     async def play(self, ctx, *, search: wavelink.YouTubeTrack) -> None:
 
         if not ctx.voice_client:
-            await ctx.invoke(self.join)
+            vc: wavelink.Player = await ctx.author.voice.channel.connect(
+                cls=wavelink.Player
+            )
+        else:
+            vc = ctx.voice_client
 
-        player = ctx.voice_client
-        await player.play(search)
+        await vc.play(search)
+
 
 def setup(bot):
-	bot.add_cog(Music(bot))
+    bot.add_cog(Music(bot))

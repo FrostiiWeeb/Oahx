@@ -116,6 +116,7 @@ class Oahx(commands.AutoShardedBot):
             **kwargs,
         )
         import wavelink
+
         self.wavelink = wavelink.NodePool()
         self.__extensions = [
             f"extensions.{item[:-3]}" for item in os.listdir("./extensions")
