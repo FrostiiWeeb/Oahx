@@ -16,8 +16,8 @@ class Music(commands.Cog):
         await self.bot.pomice.create_node(
             bot=self.bot,
             host="us.server.openrobot.xyz",
-            port="2993",
-            password="lirena",
+            port="1983",
+            password="oahx_lavalink",
             identifier="oahx",
         )
         print("Created a Pomice Node")
