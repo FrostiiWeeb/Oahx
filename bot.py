@@ -160,6 +160,8 @@ class Oahx(commands.AutoShardedBot):
             if cog != "extensions.__pycach"
         ]
         self.cache = Cache(self.loop)
+        import wavelink
+        self.wavelink = wavelink.NodePool()
         self.cache.insert("prefixes", {})
         self.bot_id = 844213992955707452
         self.mentions = [f"<@{self.bot_id}>", f"<@!{self.bot_id}>"]
@@ -234,7 +236,7 @@ class Oahx(commands.AutoShardedBot):
 
     async def on_ready(self):
         self.session = aiohttp.ClientSession(loop=self.loop)
-        await self.cogs["Music"].create_node_pomice()
+        await self.cogs["Music"].connect_nodes()
         print(
             "Logged in! \n"
             f"{'-' * 20}\n"

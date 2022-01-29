@@ -1,4 +1,4 @@
-import pomice
+import wavelink
 import discord
 import re
 
@@ -10,17 +10,19 @@ URL_REG = re.compile(r"https?://(?:www\.)?.+")
 class Music(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
-        self.pomice = bot.pomice
+        self.wavelink = bot.wavelink
 	
-    async def create_node_pomice(self):
-        await self.bot.pomice.create_node(
-            bot=self.bot,
-            host="127.0.0.1",
-            port="1983",
-            password="oahx_lavalink",
-            identifier="oahx",
-        )
-        print("Created a Pomice Node")
+    async def connct_nodes(self):
+        await self.wavelink.create_node(bot=self.bot,
+                                            host='127.0.0.1',
+                                            port=1983,
+                                            password='oahx_lavalink')
+
+    @commands.Cog.listener()
+    async def on_wavelink_node_ready(self, node: wavelink.Node):
+        """Event fired when a node has finished connecting."""
+        print(f'Node: <{node.identifier}> is ready!')
+
 
     @commands.command(name="join", aliases=["connect"])
     async def join(
