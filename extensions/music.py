@@ -21,7 +21,7 @@ class Music(commands.Cog):
 		await self.pomice.create_node(
             bot=self.bot,
             host="127.0.0.1",
-            port="1983",
+            port="1987",
             password="oahx_lavalink",
             identifier="Node 1",
         )
