@@ -54,7 +54,7 @@ class Music(commands.Cog):
 		if isinstance(results, .Playlist):
 			await player.play(track=results.tracks[0])
 		"""
-        await player.play(track=search)
+        await player.play(search)
 
 
 def setup(bot):
