@@ -42,7 +42,7 @@ class Music(commands.Cog):
         await ctx.send(f"Joined the voice channel `{channel}`")
 
     @commands.command(name="play")
-    async def play(self, ctx, *, search: str) -> None:
+    async def play(self, ctx, *, search: wavelink.YouTubeTrack) -> None:
 
         if not ctx.voice_client:
             await ctx.invoke(self.join)
