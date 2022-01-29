@@ -37,7 +37,7 @@ class Music(commands.Cog):
                     "without specifying the channel argument."
                 )
 
-        await ctx.author.voice.channel.connect(cls=pomice.Player)
+        await ctx.author.voice.channel.connect(cls=wavelink.Player)
         await ctx.send(f"Joined the voice channel `{channel}`")
 
     @commands.command(name="play")
@@ -47,16 +47,7 @@ class Music(commands.Cog):
             await ctx.invoke(self.join)
 
         player = ctx.voice_client
-
-        results = await player.get_tracks(query=f"{search}")
-
-        if not results:
-            raise commands.CommandError("No results were found for that search term.")
-
-        if isinstance(results, pomice.Playlist):
-            await player.play(track=results.tracks[0])
-        else:
-            await player.play(track=results[0])
+        await player.play(search)
 
 def setup(bot):
 	bot.add_cog(Music(bot))
