@@ -115,6 +115,8 @@ class Oahx(commands.AutoShardedBot):
             *args,
             **kwargs,
         )
+        import wavelink
+        self.wavelink = wavelink.NodePool()
         self.__extensions = [
             f"extensions.{item[:-3]}" for item in os.listdir("./extensions")
         ]
@@ -160,8 +162,6 @@ class Oahx(commands.AutoShardedBot):
             if cog != "extensions.__pycach"
         ]
         self.cache = Cache(self.loop)
-        import wavelink
-        self.wavelink = wavelink.NodePool()
         self.cache.insert("prefixes", {})
         self.bot_id = 844213992955707452
         self.mentions = [f"<@{self.bot_id}>", f"<@!{self.bot_id}>"]
