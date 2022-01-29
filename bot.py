@@ -118,6 +118,7 @@ class Oahx(commands.AutoShardedBot):
         import wavelink
 
         self.wavelink = wavelink.NodePool()
+        self.pomice = pomice.NodePool()
         self.__extensions = [
             f"extensions.{item[:-3]}" for item in os.listdir("./extensions")
         ]
@@ -237,7 +238,7 @@ class Oahx(commands.AutoShardedBot):
 
     async def on_ready(self):
         self.session = aiohttp.ClientSession(loop=self.loop)
-        await self.cogs["Music"].connect_nodes()
+        await self.cogs["Music"].start_nodes()
         print(
             "Logged in! \n"
             f"{'-' * 20}\n"
