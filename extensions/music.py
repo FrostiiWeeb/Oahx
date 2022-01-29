@@ -1,4 +1,4 @@
-import wavelink
+import pomice
 import discord
 import re
 
@@ -10,21 +10,23 @@ URL_REG = re.compile(r"https?://(?:www\.)?.+")
 class Music(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
-        self.wavelink = bot.wavelink
 
-    async def connect_nodes(self):
-        await self.wavelink.create_node(
+        self.pomice = bot.pomice
+
+	@commands.Cog.listener("on_node_ready")
+	async def node_ready(self, node):
+		pass
+
+    async def start_nodes(self):
+        await self.pomice.create_node(
             bot=self.bot,
             host="127.0.0.1",
-            port=1983,
+            port="1983",
             password="oahx_lavalink",
-            identifier="Oahx Player 1",
+            identifier="Node 1",
         )
-
-    @commands.Cog.listener()
-    async def on_wavelink_node_ready(self, node: wavelink.Node):
-        """Event fired when a node has finished connecting."""
-        print(f"Node: <{node.identifier}> is ready!")
+        print(f"Node is ready!")
+        self.bot.dispatch("node_ready", node=self.pomice.nodes.get("Node 1").identifier)
 
     @commands.command(name="join", aliases=["connect"])
     async def join(
@@ -39,20 +41,26 @@ class Music(commands.Cog):
                     "without specifying the channel argument."
                 )
 
-        await ctx.author.voice.channel.connect(cls=wavelink.Player)
+        await ctx.author.voice.channel.connect(cls=pomice.Player)
         await ctx.send(f"Joined the voice channel `{channel}`")
 
     @commands.command(name="play")
-    async def play(self, ctx, *, search: wavelink.YouTubeTrack) -> None:
+    async def play(self, ctx, *, search: str) -> None:
 
         if not ctx.voice_client:
-            vc: wavelink.Player = await ctx.author.voice.channel.connect(
-                cls=wavelink.Player
-            )
-        else:
-            vc = ctx.voice_client
+            await ctx.invoke(self.join)
 
-        await vc.play(search)
+        player = ctx.voice_client
+
+        results = await player.get_tracks(query=f"{search}")
+
+        if not results:
+            raise commands.CommandError("No results were found for that search term.")
+
+        if isinstance(results, pomice.Playlist):
+            await player.play(track=results.tracks[0])
+        else:
+            await player.play(track=results[0])
 
 
 def setup(bot):
