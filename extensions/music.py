@@ -12,7 +12,7 @@ class Music(commands.Cog):
         self.bot = bot
         self.wavelink = bot.wavelink
 	
-    async def connct_nodes(self):
+    async def connect_nodes(self):
         await self.wavelink.create_node(bot=self.bot,
                                             host='127.0.0.1',
                                             port=1983,
