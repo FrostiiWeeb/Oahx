@@ -15,7 +15,7 @@ class Music(commands.Cog):
     async def create_node_pomice(self):
         await self.bot.pomice.create_node(
             bot=self.bot,
-            host="us.server.openrobot.xyz",
+            host="127.0.0.1",
             port="1983",
             password="oahx_lavalink",
             identifier="oahx",
