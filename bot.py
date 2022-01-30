@@ -72,7 +72,7 @@ class Alone(commands.Bot):
             if message.content == "alone help":
                 return await message.channel.send("Hello! I am ALone Bot. I was mounted on Oahx by FrostiiWeeb.")
 
-subbot = Alone(command_prefix="alone ")
+subbot = Alone(command_prefix="alone ", intents=discord.Intents.all())
 
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
