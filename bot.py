@@ -88,6 +88,7 @@ async def run():
     bot.mounter.mount(subbot)
     @bot.command()
     async def switch(ctx, bot : str):
+        await database.connect()
         bots = ["oahx", "alone"]
         if bot == bots[0]:
             await ctx.bot.whichbot.objects.create(user_id=ctx.author.id, bot=1)
