@@ -1,4 +1,4 @@
-from distutils import command
+
 import discord, asyncpg, asyncio, datetime, os, time, copy, re
 from discord.ext import commands
 
