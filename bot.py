@@ -69,7 +69,7 @@ class Alone(commands.Bot):
 
     async def on_message(self, message):
         if message.author.id == 412734157819609090:
-            if message.content == "alone help":
+            if message.content.startswith("alone"):
                 return await message.channel.send("Hello! I am ALone Bot. I was mounted on Oahx by FrostiiWeeb.")
 
 subbot = Alone(command_prefix="alone ", intents=discord.Intents.all())
@@ -253,7 +253,7 @@ class Oahx(commands.AutoShardedBot):
                     return await self.invoke(context)
                 return await self.process_commands(message)
         else:
-            return await self.mounts[int(whichbot["bot"])].on_message(message=message)
+            return self.mounts[int(whichbot["bot"])].dispatch("message", message=message)
 
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
 
