@@ -90,9 +90,9 @@ async def run():
     async def switch(ctx, bot : str):
         bots = ["oahx", "alone"]
         if bot == bots[0]:
-            await bot.whichbot.objects.create(user_id=ctx.author.id, bot=1)
+            await ctx.bot.whichbot.objects.create(user_id=ctx.author.id, bot=1)
         elif bot == bots[1]:
-            await bot.whichbot.objects.create(user_id=ctx.author.id, bot=2)
+            await ctx.bot.whichbot.objects.create(user_id=ctx.author.id, bot=2)
         return await ctx.send(f"You have now switched to {bot}.")
 
     bot.db = await asyncpg.create_pool(
