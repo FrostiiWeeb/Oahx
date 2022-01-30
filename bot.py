@@ -236,6 +236,8 @@ class Oahx(commands.AutoShardedBot):
     async def on_message(self, message : discord.Message):
         ctx = message
         whichbot = await self.db.fetchrow("SELECT * FROM whichbot WHERE user_id = $1", ctx.author.id)
+        if not whichbot:
+            whichbot = {"bot": 1}
         if whichbot["bot"] == 1:
             if message.content.startswith("oahx "):
                 ctx = await self.get_context(message)
