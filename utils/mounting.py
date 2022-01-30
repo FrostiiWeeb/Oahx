@@ -12,17 +12,12 @@ class Mount():
 		self.bot = bot
 		self.mounts = {}
 		self.mount_ = 0
-
-	async def _activate(self, mount_id : int):
-		bot : commands.Bot = self.mounts.get(str(mount_id))
-		self.bot._enabled = False
-		bot.enabled = True
-		...
+		bot.mounts = {}
 		
 	
 	def _mount(self, bot : commands.Bot):
-		self.mounts[str(self.mount_)] = bot
-		self.mounts[str(self.mount_)].activate = self._activate
+		self.mounts[self.mount_] = bot
+		self.bot.mounts[self.mount_] = bot
 		self.bot.mounts = self.mounts
 		self.mount_ += 1
 			

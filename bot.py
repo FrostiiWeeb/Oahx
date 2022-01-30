@@ -1,3 +1,4 @@
+from distutils import command
 import discord, asyncpg, asyncio, datetime, os, time, copy, re
 from discord.ext import commands
 
@@ -47,21 +48,52 @@ class EditSnipes(orm.Model):
         "after_content": orm.String(max_length=2000),
     }
 
+class WhichBot(orm.Model):
+    tablename = "whichbot"
+    registry = metadata
+
+    fields = {
+        "user_id": orm.BigInteger(primary_key=True),
+        "bot": orm.Integer()
+    }
+
 
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
 os.environ["JISHAKU_HIDE"] = "True"
 
 
+class Alone(commands.Bot):
+    def __init__(self, command_prefix, help_command=commands.DefaultHelpCommand(), description=None, **options):
+        super().__init__(command_prefix, help_command, description, **options)
+
+    async def on_message(self, message):
+        if message.author.id == 412734157819609090:
+            if message.content == "alone help":
+                return await message.channel.send("Hello! I am ALone Bot. I was mounted on Oahx by FrostiiWeeb.")
+
+subbot = Alone(command_prefix="alone ")
+
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
     bot.ipc.start()
+    import orm
     await metadata.create_all()
     bot.prefixes = Prefixes
     bot.snipes = Snipes
     bot.editsnipes = EditSnipes
+    bot.whichbot = WhichBot
     bot.orm = database
     bot.meta_orm = metadata
+    bot.mounter.mount(subbot)
+    @bot.command()
+    async def switch(ctx, bot : str):
+        bots = ["oahx", "alone"]
+        if bot == bots[0]:
+            await bot.whichbot.objects.create(user_id=ctx.author.id, bot=1)
+        elif bot == bots[1]:
+            await bot.whichbot.objects.create(user_id=ctx.author.id, bot=2)
+        return await ctx.send(f"You have now switched to {bot}.")
 
     bot.db = await asyncpg.create_pool(
         dsn="postgresql://frostiiweeb:my_password@localhost/oahx", max_queries=100000000
@@ -132,6 +164,7 @@ class Oahx(commands.AutoShardedBot):
         self.colour = discord.Colour.from_rgb(100, 53, 255)
         self.maintenance = False
         self.owner_maintenance = False
+        self.mounter = Mount(self)
         self.tasks = tasks()
         self.embed = CustomEmbed
         self.pomice = pomice.NodePool()
@@ -158,6 +191,7 @@ class Oahx(commands.AutoShardedBot):
         }
         self.beta_commands = []
         self.exts = set()
+        self.mounts = {}
         self.processing = Processing
         [
             self.load_extension(cog)
@@ -199,19 +233,23 @@ class Oahx(commands.AutoShardedBot):
             channel = await super().fetch_user(user_id)
         return user
 
-    async def on_message(self, message: discord.Message):
-        if message.content.startswith("oahx "):
-            ctx = await self.get_context(message)
-            try:
-                await ctx.command.callback()
-            except:
-                pass
-        if message.content in self.mentions:
-            alt_message: discord.Message = copy.copy(message)
-            alt_message.content += " prefix"
-            context = await self.get_context(alt_message)
-            await self.invoke(context)
-        await self.process_commands(message)
+    async def on_message(self, message : discord.Message):
+        ctx = message
+        whichbot = await self.db.fetchrow("SELECT * FROM whichbot WHERE user_id = $1", ctx.author.id)
+        if whichbot["bot"] == 1:
+            if message.content.startswith("oahx "):
+                ctx = await self.get_context(message)
+                try:
+                    return await ctx.command.callback()
+                except:
+                    pass
+                if message.content in self.mentions:
+                    alt_message: discord.Message = copy.copy(message)
+                    alt_message.content += " prefix"
+                    context = await self.get_context(alt_message)
+                    return await self.invoke(context)
+                return await self.process_commands(message)
+        return await self.mounts[int(whichbot["bot"])].on_message(message=message)
 
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
 
