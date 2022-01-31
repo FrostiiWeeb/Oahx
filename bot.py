@@ -262,8 +262,8 @@ class Oahx(commands.AutoShardedBot):
                 ctx = await self.get_context(message)
                 try:
                     return await ctx.command.callback()
-                except:
-                    pass
+                except Exception as e:
+                    raise commands.CommandError(e) from e
                 if message.content in self.mentions:
                     alt_message: discord.Message = copy.copy(message)
                     alt_message.content += " prefix"
@@ -271,7 +271,6 @@ class Oahx(commands.AutoShardedBot):
                     return await self.invoke(context)
                 return await self.process_commands(message)
         else:
-            print("yes")
             return self.mounts[int(whichbot["bot"])-1].dispatch("message", message=message)
 
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
