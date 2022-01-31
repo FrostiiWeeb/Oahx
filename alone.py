@@ -6,7 +6,7 @@ import asyncio
 from utils.models import Client
 
 
-class BaseAlone(Client, commands.Bot):
+class BaseAlone(commands.Bot, Client):
 	pass
 class Alone(BaseAlone):
 	def __init__(self, command_prefix, help_command=None, description=None, mount = None, **options):
