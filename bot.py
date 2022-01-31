@@ -63,16 +63,14 @@ os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
 os.environ["JISHAKU_HIDE"] = "True"
 
 
-class Alone(discord.Client):
-    def __init__(self, description=None, **options):
-        super().__init__(description=description, **options)
+class Alone(commands.Bot):
+    def __init__(self, command_prefix, help_command=commands.MinimalHelpCommand(), description=None, mounts : dict = None, **options):
+        super().__init__(command_prefix, help_command, description, **options)
 
     async def on_message(self, message : discord.Message):
         if message.author.id in [746807014658801704]:
             if message.content.startswith("alone"):
                 return await message.channel.send("Hello! I am ALone Bot. I was mounted on Oahx by FrostiiWeeb.")
-
-subbot = Alone(intents=discord.Intents.all())
 
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
@@ -86,9 +84,25 @@ async def run():
     bot.orm = database
     bot.meta_orm = metadata
     bot.mounter.mount(bot)
+    subbot = Alone("alone ", mounts=bot.mounts, intents=discord.Intents.all())
     bot.mounter.mount(subbot)
+    @subbot.command()
+    async def switch(ctx, bot_name : str):
+        await database.connect()
+        bots = ["oahx", "alone"]
+        if bot == bots[0]:
+            try:
+                await bot.db.execute("INSERT INTO whichbot(user_id, bot) VALUES ($1, $2)", ctx.message.author.id, 1)
+            except:
+                await bot.db.execute("UPDATE whichbot SET user_id = $1, bot = $2 WHERE user_id = $3", ctx.message.author.id, 1, ctx.message.author.id)
+        elif bot == bots[1]:
+            try:
+                await bot.db.execute("INSERT INTO whichbot(user_id, bot) VALUES ($1, $2)", ctx.message.author.id, 2)
+            except:
+                await bot.db.execute("UPDATE whichbot SET user_id = $1, bot = $2 WHERE user_id = $3", ctx.message.author.id, 2, ctx.message.author.id)
+        return await ctx.reply(f"You have now switched to {bot_name}.")
     @bot.command()
-    async def switch(ctx : CoolContext, bot : str):
+    async def switch(ctx : CoolContext, bot_name : str):
         await database.connect()
         bots = ["oahx", "alone"]
         if bot == bots[0]:
@@ -101,7 +115,7 @@ async def run():
                 await ctx.bot.db.execute("INSERT INTO whichbot(user_id, bot) VALUES ($1, $2)", ctx.message.author.id, 2)
             except:
                 await ctx.bot.db.execute("UPDATE whichbot SET user_id = $1, bot = $2 WHERE user_id = $3", ctx.message.author.id, 2, ctx.message.author.id)
-        return await ctx.send(f"You have now switched to {bot}.")
+        return await ctx.reply(f"You have now switched to {bot_name}.")
 
     bot.db = await asyncpg.create_pool(
         dsn="postgresql://frostiiweeb:my_password@localhost/oahx", max_queries=100000000
