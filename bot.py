@@ -81,7 +81,11 @@ class Alone(commands.Bot):
 
     async def on_message(self, message : discord.Message):
         if message.content.startswith("alone"):
-            await message.channel.send("Hello! I am Alone Bot. I was mounted on Oahx by FrostiiWeeb.")
+            ctx = await self.get_context(message, cls=CoolContext)
+            try:
+                await ctx.command.callback()
+            except:
+                pass
         return await self.process_commands(message)
 
 async def run():
