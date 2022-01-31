@@ -69,6 +69,7 @@ async def run():
     bot.ipc.start()
     subbot = Alone(command_prefix="a!", mount=bot, help_command=commands.MinimalHelpCommand(), intents=discord.Intents.all())
     import orm
+    await subbot.login("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")
     subbot.load_extension("jishaku")
     await metadata.create_all()
     bot.prefixes = Prefixes
