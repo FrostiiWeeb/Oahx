@@ -58,11 +58,10 @@ class Alone(commands.Bot):
     def __init__(self, command_prefix, help_command=commands.MinimalHelpCommand(), description=None, mounts : dict = None, **options):
         super().__init__(command_prefix, help_command, description, intents=discord.Intents(members=True, presences=True), **options)
         self.help_command = None
-        self.commands_funcs = [Command(self.help_command_command(), name="help")]
+        self.commands_funcs = [Command(self.help_command_command, name="help")]
         for command in self.commands_funcs:
             self.add_command(command)
 
-    @commands.command(name="help")
     async def help_command_command(self, ctx):
         return await ctx.send("help worked")
 
