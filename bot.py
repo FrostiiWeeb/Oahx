@@ -259,6 +259,8 @@ class Oahx(commands.AutoShardedBot):
         return user
 
     async def on_message(self, message : discord.Message):
+        if message.author.id == self.user.id:
+            return
         ctx = message
         whichbot = await self.db.fetchrow("SELECT * FROM whichbot WHERE user_id = $1", ctx.author.id)
         if not whichbot:
