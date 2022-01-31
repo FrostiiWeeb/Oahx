@@ -83,17 +83,13 @@ class Alone(commands.Bot):
         if message.author.id in {746807014658801704, 412734157819609090}:
             if message.content.startswith("alone"):
                 await message.channel.send("Hello! I am Alone Bot. I was mounted on Oahx by FrostiiWeeb.")
-                ctx = await self.get_context(message, cls=CoolContext)
-                try:
-                    await ctx.command.callback()
-                except:
-                    pass
+            return await self.process_commands(message)
 
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
     bot.ipc.start()
     subbot = Alone(command_prefix="alone ", mount=bot, intents=discord.Intents.all())
-    print(subbot.user)
+    subbot.add_cog(Example(bot))
     import orm
     await metadata.create_all()
     bot.prefixes = Prefixes
