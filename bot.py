@@ -68,7 +68,7 @@ class Alone(discord.Client):
         super().__init__(description=description, **options)
 
     async def on_message(self, message : discord.Message):
-        if message.author.id in (746807014658801704):
+        if message.author.id in [746807014658801704]:
             if message.content.startswith("alone"):
                 return await message.channel.send("Hello! I am ALone Bot. I was mounted on Oahx by FrostiiWeeb.")
 
