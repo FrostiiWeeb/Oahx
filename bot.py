@@ -80,8 +80,8 @@ class Alone(commands.Bot):
                 ctx = await self.get_context(message)
                 try:
                     return await ctx.command.callback()
-                except:
-                    pass
+                except Exception as e:
+                    raise commands.CommandError(e) from e
 
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
