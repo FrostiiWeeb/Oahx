@@ -263,6 +263,7 @@ class Oahx(commands.AutoShardedBot):
                     return await self.invoke(context)
                 return await self.process_commands(message)
         else:
+            print(self.mounts)
             return self.mounts[int(whichbot["bot"])-1].dispatch("message", message=message)
 
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
