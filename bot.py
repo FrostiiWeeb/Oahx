@@ -273,11 +273,10 @@ class Oahx(commands.AutoShardedBot):
         ctx = message
         whichbot = await self.db.fetchrow("SELECT * FROM whichbot WHERE user_id = $1", ctx.author.id)
         if not whichbot:
-            whichbot = {"bot": 1}
+            await self.db.execute("INSERT INTO whichbot(user_id, bot) VALUES ($1, $2)", ctx.author.id, 1)
+        whichbot = await self.db.fetchrow("SELECT * FROM whichbot WHERE user_id = $1", ctx.author.id)
         if whichbot["bot"] == 1:
             if message.content.startswith("oahx ") or message.author.id in self.owner_ids:
-                if message.content.startswith("alone"):
-                    return
                 ctx = await self.get_context(message)
                 try:
                     return await ctx.command.callback()
