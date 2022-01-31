@@ -62,37 +62,12 @@ os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
 os.environ["JISHAKU_HIDE"] = "True"
 
-class Example(commands.Cog):
-    def __init__(self, bot) -> None:
-        self.bot = bot
-        
-    @commands.command()
-    async def help(self, ctx):
-        return await ctx.send("command help invoked")
 
-class Alone(commands.Bot):
-    def __init__(self, command_prefix, help_command=None, description=None, mount = None, **options):
-        super().__init__(command_prefix, help_command, description, **options)
-        self._bot : commands.Bot = mount
-
-    @property
-    def user(self):
-        return self._bot.user
-
-    async def on_message(self, message : discord.Message):
-        if message.content.startswith("alone"):
-            ctx = await self.get_context(message, cls=CoolContext)
-            try:
-                return await ctx.command.callback()
-            except:
-                pass
-        return await self.process_commands(message)
-
+from alone import Alone
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
     bot.ipc.start()
-    subbot = Alone(command_prefix="alone ", mount=bot, intents=discord.Intents.all())
-    subbot.add_cog(Example(bot))
+    subbot = Alone(command_prefix="alone ", mount=bot, help_command=commands.MinimalHelpCommand(), intents=discord.Intents.all())
     import orm
     await metadata.create_all()
     bot.prefixes = Prefixes
