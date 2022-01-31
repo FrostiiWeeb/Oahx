@@ -63,16 +63,16 @@ os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
 os.environ["JISHAKU_HIDE"] = "True"
 
 
-class Alone(commands.Bot):
-    def __init__(self, command_prefix, help_command=commands.DefaultHelpCommand(), description=None, **options):
-        super().__init__(command_prefix, help_command, description, **options)
+class Alone(discord.Client):
+    def __init__(self, description=None, **options):
+        super().__init__(description, **options)
 
-    async def on_message(self, message):
+    async def on_message(self, message : discord.Message):
         if message.author.id in (746807014658801704):
             if message.content.startswith("alone"):
                 return await message.channel.send("Hello! I am ALone Bot. I was mounted on Oahx by FrostiiWeeb.")
 
-subbot = Alone(command_prefix="alone ", intents=discord.Intents.all())
+subbot = Alone(intents=discord.Intents.all())
 
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
