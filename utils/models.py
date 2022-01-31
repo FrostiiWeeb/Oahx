@@ -1,3 +1,4 @@
+from __future__ import annotations
 import typing, discord, asyncio, itertools, functools, random
 from discord.ext import commands
 import youtube_dl
@@ -66,8 +67,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWAREdiscord.
 """
-
-from __future__ import annotations
 
 import asyncio
 import logging
