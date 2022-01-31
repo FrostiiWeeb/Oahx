@@ -249,7 +249,7 @@ class Oahx(commands.AutoShardedBot):
         if not whichbot:
             whichbot = {"bot": 1}
         if whichbot["bot"] == 1:
-            if message.content.startswith("oahx ") or message.author.id in self.owner_maintenance:
+            if message.content.startswith("oahx ") or message.author.id in self.owner_ids:
                 ctx = await self.get_context(message)
                 try:
                     return await ctx.command.callback()
