@@ -69,6 +69,7 @@ async def run():
     bot.ipc.start()
     subbot = Alone(command_prefix="alone ", mount=bot, help_command=commands.MinimalHelpCommand(), intents=discord.Intents.all())
     import orm
+    subbot.load_extension("jishaku")
     await metadata.create_all()
     bot.prefixes = Prefixes
     bot.snipes = Snipes
