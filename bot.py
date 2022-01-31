@@ -149,17 +149,13 @@ async def run():
         "CREATE TABLE IF NOT EXISTS whichbot(user_id bigint PRIMARY KEY, bot TEXT)"
     )
     try:
-        import threading
-        thread = threading.Thread(target=subbot.run, kwargs={"token": "ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc"})
-        thread.start()
-        thread.join()
         await bot.start("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")
     except KeyboardInterrupt:
         await bot.db.close()
         await bot.close()
         await subbot.close()
 
-
+"ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc"
 class Oahx(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
         super().__init__(

@@ -8,7 +8,7 @@ from utils.models import Client
 
 class BaseAlone(commands.Bot, Client):
 	pass
-class Alone(BaseAlone):
+class Alone(commands.Bot):
 	def __init__(self, command_prefix, help_command=None, description=None, mount = None, **options):
 		super().__init__(command_prefix, help_command, description, **options)
 		self._bot : commands.Bot = mount
