@@ -62,15 +62,32 @@ os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
 os.environ["JISHAKU_HIDE"] = "True"
 
+class Example(commands.Cog):
+    def __init__(self, bot) -> None:
+        self.bot = bot
+        
+    @commands.command()
+    async def help(self, ctx):
+        return await ctx.send("command help invoked")
 
-class Alone(discord.Client):
-    def __init__(self, description=None, **options):
-        super().__init__(description=description, **options)
+class Alone(commands.Bot):
+    def __init__(self, command_prefix, help_command=None, description=None, mount = None, **options):
+        super().__init__(command_prefix, help_command, description, **options)
+        self._bot : commands.Bot = mount
+
+    @property
+    def user(self):
+        return self._bot.user
 
     async def on_message(self, message : discord.Message):
-        if message.author.id in (746807014658801704):
+        if message.author.id in {746807014658801704, 412734157819609090}:
             if message.content.startswith("alone"):
-                return await message.channel.send("Hello! I am ALone Bot. I was mounted on Oahx by FrostiiWeeb.")
+                await message.channel.send("Hello! I am Alone Bot. I was mounted on Oahx by FrostiiWeeb.")
+                ctx = await self.get_context(message)
+                try:
+                    await ctx.command.callback()
+                except:
+                    pass
 
 subbot = Alone(intents=discord.Intents.all())
 
