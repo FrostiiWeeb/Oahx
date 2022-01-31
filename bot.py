@@ -83,7 +83,7 @@ class Alone(commands.Bot):
         if message.content.startswith("alone"):
             ctx = await self.get_context(message, cls=CoolContext)
             try:
-                await ctx.command.callback()
+                return await ctx.command.callback()
             except:
                 pass
         return await self.process_commands(message)
