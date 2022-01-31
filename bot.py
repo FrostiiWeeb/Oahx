@@ -65,8 +65,7 @@ os.environ["JISHAKU_HIDE"] = "True"
 
 class Alone(commands.Bot):
     def __init__(self, command_prefix, help_command=commands.MinimalHelpCommand(), description=None, mounts : dict = None, **options):
-        super().__init__(command_prefix, help_command, description, **options)
-        self.intents = discord.Intents(members=True, presences=True)
+        super().__init__(command_prefix, help_command, description, intents=discord.Intents(members=True, presences=True), **options)
 
     async def on_message(self, message : discord.Message):
         if message.author.id in [746807014658801704]:
