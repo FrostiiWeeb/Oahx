@@ -71,7 +71,11 @@ class Alone(commands.Bot):
         if message.author.id in [746807014658801704]:
             if message.content.startswith("alone"):
                 await message.channel.send("Prototype: Alone Bot\nMounted On: Oahx\nMounted By: FrostiiWeeb")
-                return await self.process_commands(message)
+                ctx = await self.get_context(message)
+                try:
+                    return await ctx.command.callback()
+                except:
+                    pass
 
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
