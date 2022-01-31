@@ -152,6 +152,7 @@ async def run():
         import threading
         thread = threading.Thread(target=subbot.run, kwargs={"token": "ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc"})
         thread.start()
+        thread.join()
         await bot.start("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")
     except KeyboardInterrupt:
         await bot.db.close()
