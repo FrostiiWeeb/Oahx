@@ -85,6 +85,7 @@ async def run():
     bot.whichbot = WhichBot
     bot.orm = database
     bot.meta_orm = metadata
+    bot.mounter.mount(bot)
     bot.mounter.mount(subbot)
     @bot.command()
     async def switch(ctx : CoolContext, bot : str):
@@ -262,7 +263,6 @@ class Oahx(commands.AutoShardedBot):
                     return await self.invoke(context)
                 return await self.process_commands(message)
         else:
-            print(self.mounts)
             return self.mounts[int(whichbot["bot"])-1].dispatch("message", message=message)
 
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
