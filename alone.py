@@ -11,6 +11,10 @@ class Alone(commands.Bot):
 		self.http = HTTPClient()
 		self.user_pay = None
 
+	@property
+	def user(self):
+		return self._bot._connection.user
+
 	async def get_user(self):
 		if self.user_pay:
 			self._user = discord.user.ClientUser(state="online", data=self.user_pay)
