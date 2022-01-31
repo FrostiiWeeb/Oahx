@@ -15,7 +15,6 @@ import databases
 import orm
 import sqlalchemy
 import asyncio
-from discord.ext.commands import Command
 import pomice
 from utils.mounting import Mount
 
@@ -49,29 +48,31 @@ class EditSnipes(orm.Model):
         "after_content": orm.String(max_length=2000),
     }
 
+class WhichBot(orm.Model):
+    tablename = "whichbot"
+    registry = metadata
+
+    fields = {
+        "user_id": orm.BigInteger(primary_key=True),
+        "bot": orm.Integer()
+    }
+
 
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
 os.environ["JISHAKU_HIDE"] = "True"
 
-class Alone(commands.Bot):
-    def __init__(self, command_prefix, help_command=commands.MinimalHelpCommand(), description=None, mounts : dict = None, **options):
-        super().__init__(command_prefix, help_command, description, intents=discord.Intents(members=True, presences=True), **options)
-        self.help_command = None
-        self.commands_funcs = [Command(self.help_command_command, name="help")]
-        for command in self.commands_funcs:
-            self.add_command(command)
 
-    async def help_command_command(self, ctx):
-        return await ctx.send("help worked")
-
-    async def get_context(self, message: discord.Message, *, cls = CoolContext):
-        return await super().get_context(message, cls=cls)
+class Alone(discord.Client):
+    def __init__(self, description=None, **options):
+        super().__init__(description=description, **options)
 
     async def on_message(self, message : discord.Message):
-        if message.author.id in [746807014658801704]:
+        if message.author.id in (746807014658801704):
             if message.content.startswith("alone"):
-                return await message.channel.send("Prototype: Alone Bot\nMounted On: Oahx\nMounted By: FrostiiWeeb")
+                return await message.channel.send("Hello! I am ALone Bot. I was mounted on Oahx by FrostiiWeeb.")
+
+subbot = Alone(intents=discord.Intents.all())
 
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
@@ -81,28 +82,12 @@ async def run():
     bot.prefixes = Prefixes
     bot.snipes = Snipes
     bot.editsnipes = EditSnipes
+    bot.whichbot = WhichBot
     bot.orm = database
     bot.meta_orm = metadata
-    bot.mounter.mount(bot)
-    subbot = Alone("alone ", mounts={})
     bot.mounter.mount(subbot)
-    @subbot.command()
-    async def switch(ctx, bot_name : str):
-        await database.connect()
-        bots = ["oahx", "alone"]
-        if bot == bots[0]:
-            try:
-                await bot.db.execute("INSERT INTO whichbot(user_id, bot) VALUES ($1, $2)", ctx.message.author.id, 1)
-            except:
-                await bot.db.execute("UPDATE whichbot SET user_id = $1, bot = $2 WHERE user_id = $3", ctx.message.author.id, 1, ctx.message.author.id)
-        elif bot == bots[1]:
-            try:
-                await bot.db.execute("INSERT INTO whichbot(user_id, bot) VALUES ($1, $2)", ctx.message.author.id, 2)
-            except:
-                await bot.db.execute("UPDATE whichbot SET user_id = $1, bot = $2 WHERE user_id = $3", ctx.message.author.id, 2, ctx.message.author.id)
-        return await ctx.reply(f"You have now switched to {bot_name}.")
     @bot.command()
-    async def switch(ctx : CoolContext, bot_name : str):
+    async def switch(ctx : CoolContext, bot : str):
         await database.connect()
         bots = ["oahx", "alone"]
         if bot == bots[0]:
@@ -115,7 +100,7 @@ async def run():
                 await ctx.bot.db.execute("INSERT INTO whichbot(user_id, bot) VALUES ($1, $2)", ctx.message.author.id, 2)
             except:
                 await ctx.bot.db.execute("UPDATE whichbot SET user_id = $1, bot = $2 WHERE user_id = $3", ctx.message.author.id, 2, ctx.message.author.id)
-        return await ctx.reply(f"You have now switched to {bot_name}.")
+        return await ctx.send(f"You have now switched to {bot}.")
 
     bot.db = await asyncpg.create_pool(
         dsn="postgresql://frostiiweeb:my_password@localhost/oahx", max_queries=100000000
@@ -259,21 +244,17 @@ class Oahx(commands.AutoShardedBot):
         return user
 
     async def on_message(self, message : discord.Message):
-        if message.author.id == self.user.id:
-            return
         ctx = message
         whichbot = await self.db.fetchrow("SELECT * FROM whichbot WHERE user_id = $1", ctx.author.id)
         if not whichbot:
-            await self.db.execute("INSERT INTO whichbot(user_id, bot) VALUES ($1, $2)", ctx.author.id, 1)
-        whichbot = await self.db.fetchrow("SELECT * FROM whichbot WHERE user_id = $1", ctx.author.id)
-        print(whichbot)
+            whichbot = {"bot": 1}
         if whichbot["bot"] == 1:
-            if message.content.startswith("oahx ") or message.author.id in self.owner_ids:
+            if message.content.startswith("oahx "):
                 ctx = await self.get_context(message)
                 try:
                     return await ctx.command.callback()
-                except Exception as e:
-                    raise commands.CommandError(e) from e
+                except:
+                    pass
                 if message.content in self.mentions:
                     alt_message: discord.Message = copy.copy(message)
                     alt_message.content += " prefix"
@@ -281,7 +262,7 @@ class Oahx(commands.AutoShardedBot):
                     return await self.invoke(context)
                 return await self.process_commands(message)
         else:
-            return self.mounts[int(whichbot["bot"])-1].dispatch("message", message=message)
+            return self.mounts[int(whichbot["bot"])].dispatch("message", message=message)
 
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
 
