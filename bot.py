@@ -65,10 +65,6 @@ os.environ["JISHAKU_HIDE"] = "True"
 class Alone(commands.Bot):
     def __init__(self, command_prefix, help_command=commands.MinimalHelpCommand(), description=None, mounts : dict = None, **options):
         super().__init__(command_prefix, help_command, description, intents=discord.Intents(members=True, presences=True), **options)
-        
-    @property
-    def user(self):
-        return self.mounts[0].user
 
     async def get_context(self, message: discord.Message, *, cls = CoolContext):
         return await super().get_context(message, cls=cls)
