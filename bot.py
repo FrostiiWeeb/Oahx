@@ -99,6 +99,21 @@ async def run():
     bot.meta_orm = metadata
     bot.mounter.mount(bot)
     bot.mounter.mount(subbot)
+    @subbot.command()
+    async def switch(ctx, bot : str):
+        await database.connect()
+        bots = ["oahx", "alone"]
+        if bot == bots[0]:
+            try:
+                await ctx.bot._bot.db.execute("INSERT INTO whichbot(user_id, bot) VALUES ($1, $2)", ctx.message.author.id, 1)
+            except:
+                await ctx.bot._bot.db.execute("UPDATE whichbot SET user_id = $1, bot = $2 WHERE user_id = $3", ctx.message.author.id, 1, ctx.message.author.id)
+        elif bot == bots[1]:
+            try:
+                await ctx.bot._bot.db.execute("INSERT INTO whichbot(user_id, bot) VALUES ($1, $2)", ctx.message.author.id, 2)
+            except:
+                await ctx.bot._bot.db.execute("UPDATE whichbot SET user_id = $1, bot = $2 WHERE user_id = $3", ctx.message.author.id, 2, ctx.message.author.id)
+        return await ctx.send(f"You have now switched to {bot}.")
     @bot.command()
     async def switch(ctx : CoolContext, bot : str):
         await database.connect()
@@ -275,7 +290,6 @@ class Oahx(commands.AutoShardedBot):
                     return await self.invoke(context)
                 return await self.process_commands(message)
         else:
-            print(self.mounts)
             return self.mounts[int(whichbot["bot"])-1].dispatch("message", message=message)
 
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
