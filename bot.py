@@ -83,7 +83,7 @@ class Alone(commands.Bot):
         if message.author.id in {746807014658801704, 412734157819609090}:
             if message.content.startswith("alone"):
                 await message.channel.send("Hello! I am Alone Bot. I was mounted on Oahx by FrostiiWeeb.")
-                ctx = await self.get_context(message)
+                ctx = await self.get_context(message, cls=CoolContext)
                 try:
                     await ctx.command.callback()
                 except:
