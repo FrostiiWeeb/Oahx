@@ -89,11 +89,10 @@ class Alone(commands.Bot):
                 except:
                     pass
 
-subbot = Alone(intents=discord.Intents.all())
-
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
     bot.ipc.start()
+    subbot = Alone(command_prefix="alone ", mount=bot, intents=discord.Intents.all())
     import orm
     await metadata.create_all()
     bot.prefixes = Prefixes
