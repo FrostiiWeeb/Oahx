@@ -89,7 +89,7 @@ async def run():
     bot.orm = database
     bot.meta_orm = metadata
     bot.mounter.mount(bot)
-    subbot = Alone("alone ", mounts=bot.mounts, intents=discord.Intents.all())
+    subbot = Alone("alone ", mounts=bot.mounts)
     bot.mounter.mount(subbot)
     @subbot.command()
     async def switch(ctx, bot_name : str):
