@@ -87,13 +87,19 @@ async def run():
     bot.meta_orm = metadata
     bot.mounter.mount(subbot)
     @bot.command()
-    async def switch(ctx, bot : str):
+    async def switch(ctx : CoolContext, bot : str):
         await database.connect()
         bots = ["oahx", "alone"]
         if bot == bots[0]:
-            await ctx.bot.whichbot.objects.create(user_id=ctx.author.id, bot=1)
+            try:
+                await ctx.bot.db.execute("INSERT INTO whichbot(user_id, bot) VALUES ($1, $2)", ctx.message.author.id, 1)
+            except:
+                await ctx.bot.db.execute("UPDATE whichbot SET user_id = $1, bot = $2 WHERE user_id = $3", ctx.message.author.id, 1, ctx.message.author.id)
         elif bot == bots[1]:
-            await ctx.bot.whichbot.objects.create(user_id=ctx.author.id, bot=2)
+            try:
+                await ctx.bot.db.execute("INSERT INTO whichbot(user_id, bot) VALUES ($1, $2)", ctx.message.author.id, 2)
+            except:
+                await ctx.bot.db.execute("UPDATE whichbot SET user_id = $1, bot = $2 WHERE user_id = $3", ctx.message.author.id, 2, ctx.message.author.id)
         return await ctx.send(f"You have now switched to {bot}.")
 
     bot.db = await asyncpg.create_pool(
@@ -130,6 +136,9 @@ async def run():
     )
     await bot.db.execute(
         "CREATE TABLE IF NOT EXISTS cooldown_guild(guild_id bigint, command TEXT PRIMARY KEY)"
+    )
+    await bot.db.execute(
+        "CREATE TABLE IF NOT EXISTS whichbot(user_id bigint PRIMARY KEY, bot TEXT)"
     )
     try:
         await bot.start("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")
@@ -240,7 +249,7 @@ class Oahx(commands.AutoShardedBot):
         if not whichbot:
             whichbot = {"bot": 1}
         if whichbot["bot"] == 1:
-            if message.content.startswith("oahx "):
+            if message.content.startswith("oahx ") or message.author.id in self.owner_maintenance:
                 ctx = await self.get_context(message)
                 try:
                     return await ctx.command.callback()
