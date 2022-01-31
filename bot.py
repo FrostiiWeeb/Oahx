@@ -48,15 +48,6 @@ class EditSnipes(orm.Model):
         "after_content": orm.String(max_length=2000),
     }
 
-class WhichBot(orm.Model):
-    tablename = "whichbot"
-    registry = metadata
-
-    fields = {
-        "user_id": orm.BigInteger(primary_key=True),
-        "bot": orm.Integer()
-    }
-
 
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
@@ -65,6 +56,7 @@ os.environ["JISHAKU_HIDE"] = "True"
 class Alone(commands.Bot):
     def __init__(self, command_prefix, help_command=commands.MinimalHelpCommand(), description=None, mounts : dict = None, **options):
         super().__init__(command_prefix, help_command, description, intents=discord.Intents(members=True, presences=True), **options)
+
 
     async def get_context(self, message: discord.Message, *, cls = CoolContext):
         return await super().get_context(message, cls=cls)
@@ -87,7 +79,6 @@ async def run():
     bot.prefixes = Prefixes
     bot.snipes = Snipes
     bot.editsnipes = EditSnipes
-    bot.whichbot = WhichBot
     bot.orm = database
     bot.meta_orm = metadata
     bot.mounter.mount(bot)
