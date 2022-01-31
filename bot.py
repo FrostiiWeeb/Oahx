@@ -67,6 +67,9 @@ class Alone(commands.Bot):
     def __init__(self, command_prefix, help_command=commands.MinimalHelpCommand(), description=None, mounts : dict = None, **options):
         super().__init__(command_prefix, help_command, description, intents=discord.Intents(members=True, presences=True), **options)
 
+    async def get_context(self, message: discord.Message, *, cls = CoolContext):
+        return await super().get_context(message, cls=cls)
+
     async def on_message(self, message : discord.Message):
         if message.author.id in [746807014658801704]:
             if message.content.startswith("alone"):
