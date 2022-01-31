@@ -65,7 +65,7 @@ os.environ["JISHAKU_HIDE"] = "True"
 
 class Alone(discord.Client):
     def __init__(self, description=None, **options):
-        super().__init__(description, **options)
+        super().__init__(description=description, **options)
 
     async def on_message(self, message : discord.Message):
         if message.author.id in (746807014658801704):
