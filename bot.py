@@ -64,12 +64,7 @@ class Alone(commands.Bot):
     async def on_message(self, message : discord.Message):
         if message.author.id in [746807014658801704]:
             if message.content.startswith("alone"):
-                await message.channel.send("Prototype: Alone Bot\nMounted On: Oahx\nMounted By: FrostiiWeeb")
-                ctx = await self.get_context(message)
-                try:
-                    return await ctx.command.callback()
-                except Exception as e:
-                    raise commands.CommandError(e) from e
+                return await message.channel.send("Prototype: Alone Bot\nMounted On: Oahx\nMounted By: FrostiiWeeb")
 
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
@@ -82,7 +77,7 @@ async def run():
     bot.orm = database
     bot.meta_orm = metadata
     bot.mounter.mount(bot)
-    subbot = Alone("alone ", mounts=bot.mounts)
+    subbot = Alone("alone ", mounts={})
     bot.mounter.mount(subbot)
     @subbot.command()
     async def switch(ctx, bot_name : str):
