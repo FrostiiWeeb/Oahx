@@ -67,7 +67,7 @@ from alone import Alone
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
     bot.ipc.start()
-    subbot = Alone(command_prefix="alone ", mount=bot, help_command=commands.MinimalHelpCommand(), intents=discord.Intents.all())
+    subbot = Alone(command_prefix="a!", mount=bot, help_command=commands.MinimalHelpCommand(), intents=discord.Intents.all())
     import orm
     subbot.load_extension("jishaku")
     await metadata.create_all()
