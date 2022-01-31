@@ -85,7 +85,7 @@ async def run():
     bot.whichbot = WhichBot
     bot.orm = database
     bot.meta_orm = metadata
-    bot.mounter.bot.mounts[0] = bot
+    bot.mounter.mount(bot)
     bot.mounter.mount(subbot)
     @bot.command()
     async def switch(ctx : CoolContext, bot : str):
