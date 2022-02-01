@@ -5,12 +5,20 @@ from discord.http import HTTPClient
 import asyncio
 from utils.models import Client
 from discord.ext.commands.view import StringView
+from copy import copy
+from extensions.debug_command import CustomDebugCog
 
 class Alone(commands.Bot):
 	def __init__(self, command_prefix, help_command=None, description=None, mount = None, **options):
 		super().__init__(command_prefix, help_command, description, **options)
 		self._bot : commands.Bot = mount
 		self.owner_ids = self._bot.owner_ids
+		self.add_cog(CustomDebugCog(bot=self._bot))
+		
+
+	async def exec_cmd(self, ctx : CoolContext, id : int, command):
+		_author = copy(ctx.author)
+
 
 	@property
 	def user(self):
