@@ -71,7 +71,6 @@ async def run():
     import orm
     subbot.http = discord.http.HTTPClient()
     await subbot.http.static_login("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")
-    subbot.load_extension("jishaku")
     await metadata.create_all()
     bot.prefixes = Prefixes
     bot.snipes = Snipes
