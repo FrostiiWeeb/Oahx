@@ -86,7 +86,7 @@ class Alone(commands.Bot):
 		return ctx
 		
 	async def on_message(self, message : discord.Message):
-		if message.content.startswith("alone "):
+		if message.content.startswith("!a"):
 			ctx = await self.get_context(message, cls=CoolContext)
 			try:
 				return await ctx.command.callback()
