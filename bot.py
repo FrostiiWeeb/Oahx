@@ -67,7 +67,7 @@ from alone import Alone
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
     bot.ipc.start()
-    subbot = Alone(command_prefix="!a", mount=bot, help_command=commands.MinimalHelpCommand(), intents=discord.Intents.all())
+    subbot = Alone(command_prefix="!a", mount=bot, help_command=commands.MinimalHelpCommand(), intents=discord.Intents(members=True, presences=True))
     import orm
     subbot.http = discord.http.HTTPClient()
     await subbot.http.static_login("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")
