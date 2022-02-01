@@ -46,7 +46,7 @@ class Alone(commands.Bot):
             ``cls`` parameter.
         """
 		view = StringView(message.content)
-		ctx = cls(prefix=None, view=view, bot=self._bot, message=message)
+		ctx = cls(prefix=None, view=view, bot=self, message=message)
 		if message.author.id == 844213992955707452:  # type: ignore
 			return ctx
 			
