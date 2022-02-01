@@ -10,6 +10,7 @@ class Alone(commands.Bot):
 	def __init__(self, command_prefix, help_command=None, description=None, mount = None, **options):
 		super().__init__(command_prefix, help_command, description, **options)
 		self._bot : commands.Bot = mount
+		self.owner_ids = self._bot.owner_ids
 
 	@property
 	def user(self):
