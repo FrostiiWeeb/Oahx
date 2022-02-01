@@ -29,10 +29,10 @@ class CustomDebugCog(*STANDARD_FEATURES, *OPTIONAL_FEATURES):
         This command on its own gives a status brief.
         All other functionality is within its subcommands.
         """
-
+        _bot = ctx.bot._bot
+        ctx.bot = _bot
         summary = [
             f"Jishaku v{package_version('jishaku')}, discord.py `{package_version('discord.py')}`, `Python {sys.version}`",
-            f"Redis DB and PostgreSQL: {ctx.bot.redis}, {ctx.bot.db}" f"\n",
         ]
 
         # detect if [procinfo] feature is installed
