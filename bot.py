@@ -188,6 +188,7 @@ class Oahx(commands.AutoShardedBot):
         self.client = ipc.Client(secret_key="oahx_ipc", port=7870)
         self.colour = discord.Colour.from_rgb(100, 53, 255)
         self.maintenance = False
+        self._bot = self
         self.owner_maintenance = False
         self.mounter = Mount(self)
         self.tasks = tasks()
