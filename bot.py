@@ -153,7 +153,6 @@ async def run():
     except KeyboardInterrupt:
         await bot.db.close()
         await bot.close()
-        await subbot.close()
 
 "ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc"
 class Oahx(commands.AutoShardedBot):

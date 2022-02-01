@@ -4,10 +4,6 @@ from utils.CustomContext import CoolContext
 from discord.http import HTTPClient
 import asyncio
 from utils.models import Client
-
-
-class BaseAlone(commands.Bot, Client):
-	pass
 class Alone(commands.Bot):
 	def __init__(self, command_prefix, help_command=None, description=None, mount = None, **options):
 		super().__init__(command_prefix, help_command, description, **options)
@@ -15,4 +11,10 @@ class Alone(commands.Bot):
 		
 		
 	async def on_message(self, message : discord.Message):
+		if message.content.startswith("a!"):
+			ctx = await self.get_context(message, cls=CoolContext)
+			try:
+				return await ctx.command.callback()
+			except:
+				pass
 		return await self.process_commands(message)
