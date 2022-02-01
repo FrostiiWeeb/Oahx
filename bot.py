@@ -102,6 +102,7 @@ async def run():
         """
         Allows you to switch between bots: {alone, oahx}
         """
+        bot = bot.lower()
         await database.connect()
         bots = ["oahx", "alone"]
         if bot == bots[0]:
