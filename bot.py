@@ -83,6 +83,7 @@ async def run():
     bot.mounter.mount(subbot)
     @subbot.command()
     async def switch(ctx, bot : str):
+        bot = bot.lower()
         await database.connect()
         bots = ["oahx", "alone"]
         if bot == bots[0]:
@@ -95,9 +96,12 @@ async def run():
                 await ctx.bot._bot.db.execute("INSERT INTO whichbot(user_id, bot) VALUES ($1, $2)", ctx.message.author.id, 2)
             except:
                 await ctx.bot._bot.db.execute("UPDATE whichbot SET user_id = $1, bot = $2 WHERE user_id = $3", ctx.message.author.id, 2, ctx.message.author.id)
-        return await ctx.send(f"You have now switched to {bot}.")
+        return await ctx.reply(f"You have now switched to {bot}.")
     @bot.command()
     async def switch(ctx : CoolContext, bot : str):
+        """
+        Allows you to switch between bots: {alone, oahx}
+        """
         await database.connect()
         bots = ["oahx", "alone"]
         if bot == bots[0]:
