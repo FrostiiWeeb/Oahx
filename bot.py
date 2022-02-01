@@ -83,6 +83,9 @@ async def run():
     bot.mounter.mount(subbot)
     @subbot.command()
     async def switch(ctx, bot : str):
+        """
+        Allows you to switch between bots: {alone, oahx}
+        """
         bot = bot.lower()
         await database.connect()
         bots = ["oahx", "alone"]
