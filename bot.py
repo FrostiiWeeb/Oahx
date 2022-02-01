@@ -69,6 +69,8 @@ async def run():
     bot.ipc.start()
     subbot = Alone(command_prefix="!a", mount=bot, help_command=commands.MinimalHelpCommand(), intents=discord.Intents.all())
     import orm
+    subbot.http = discord.http.HTTPClient()
+    await subbot.http.static_login("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")
     subbot.load_extension("jishaku")
     await metadata.create_all()
     bot.prefixes = Prefixes
@@ -153,8 +155,6 @@ async def run():
     except KeyboardInterrupt:
         await bot.db.close()
         await bot.close()
-
-"ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc"
 class Oahx(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
         super().__init__(
