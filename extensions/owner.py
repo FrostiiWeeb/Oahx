@@ -123,6 +123,7 @@ class Owner(commands.Cog):
                 pass
 
     @dev.group(name="git", invoke_without_command=True)
+    @commands.is_owner()
     async def git(self, ctx: CoolContext):
         message = """
         `git` subcommands:
@@ -133,6 +134,7 @@ class Owner(commands.Cog):
             await embed.send(ctx.channel)
 
     @git.command(name="sync", aliases=["pull", "s"])
+    @commands.is_owner()
     async def git_pull(self, ctx: CoolContext):
         import subprocess
 
