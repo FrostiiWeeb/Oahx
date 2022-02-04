@@ -1,11 +1,23 @@
 import discord, asyncio
 from discord.ext import commands
 import aiohttp
+from utils import Confirmation
 
 
 class CoolContext(commands.Context):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+    async def prompt(self, description : str, embed : bool = True):
+        if embed:
+            async with self.bot.embed(description=description) as emb:
+                view = Confirmation(self)
+                await emb.send(self.channel, view=view)
+            return view.value
+        view = Confirmation(self)
+        await self.send(description, view=view)
+        return view.value
+        
 
     async def fancy_send(self, text: str, speed: int = 1, *args, **kwargs):
         full_text = f"{text[0]}"
