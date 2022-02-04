@@ -1877,11 +1877,13 @@ class Confirmation(discord.ui.View):
     async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
         await interaction.response.send_message(self.sending)
         self.value = True
+        button.disabled = True
         self.stop()
 
     # This one is similar to the confirmation button except sets the inner value to `False`
     @discord.ui.button(label='No', style=discord.ButtonStyle.red, emoji="<:status_dnd:596576774364856321>")
     async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
         await interaction.response.send_message(self.cancelled)
+        button.disabled = True
         self.value = False
         self.stop()
