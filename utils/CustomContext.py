@@ -13,9 +13,11 @@ class CoolContext(commands.Context):
             async with self.bot.embed(description=description) as emb:
                 view = Confirmation(self)
                 await emb.send(self.channel, view=view)
-            return view.value
+                await view.wait()
+                return view.value
         view = Confirmation(self)
         await self.send(description, view=view)
+        await view.wait()
         return view.value
         
 
