@@ -107,8 +107,9 @@ class DropdownView(discord.ui.View):
 
     @discord.ui.button(label="Trash", style=discord.ButtonStyle.red, emoji="🗑️")
     async def delete(self, button: discord.ui.Button, interaction: discord.Interaction):
-        button.value = "Yo"
+        button.value = "Stopped"
         # Make sure to update the message with our updated selves
+        await interaction.response.edit_message("STOPPED", view=self)
         self.clear_items()
         await interaction.message.delete()
 

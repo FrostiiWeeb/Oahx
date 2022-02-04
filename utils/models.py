@@ -1864,11 +1864,12 @@ class Song:
         return embed
 
 class Confirmation(discord.ui.View):
-    def __init__(self, sending : str, not_sending : str):
+    def __init__(self, ctx : commands.Context, sending : str, not_sending : str):
         super().__init__()
         self.value = None
         self.sending = sending
         self.cancelled = not_sending
+        self.context = ctx
 
     # When the confirm button is pressed, set the inner value to `True` and
     # stop the View from listening to more input.
@@ -1887,3 +1888,14 @@ class Confirmation(discord.ui.View):
         button.disabled = True
         self.value = False
         self.stop()
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user and interaction.user.id in (
+            self.context.bot.owner_ids,
+            self.context.author.id,
+        ):
+            return True
+        await interaction.response.send_message(
+            "This command wasn't ran by you, sorry!", ephemeral=True
+        )
+        return False
