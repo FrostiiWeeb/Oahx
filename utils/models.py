@@ -1862,3 +1862,26 @@ class Song:
         )
 
         return embed
+
+class Confirmation(discord.ui.View):
+    def __init__(self, sending : str, not_sending : str):
+        super().__init__()
+        self.value = None
+        self.sending = sending
+        self.cancelled = not_sending
+
+    # When the confirm button is pressed, set the inner value to `True` and
+    # stop the View from listening to more input.
+    # We also send the user an ephemeral message that we're confirming their choice.
+    @discord.ui.button(label='Yes', style=discord.ButtonStyle.green, emoji="<:status_online:596576749790429200>")
+    async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
+        await interaction.response.send_message(self.sending)
+        self.value = True
+        self.stop()
+
+    # This one is similar to the confirmation button except sets the inner value to `False`
+    @discord.ui.button(label='No', style=discord.ButtonStyle.red, emoji="<:status_dnd:596576774364856321>")
+    async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
+        await interaction.response.send_message(self.cancelled)
+        self.value = False
+        self.stop()
