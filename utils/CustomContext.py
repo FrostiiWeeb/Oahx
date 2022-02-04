@@ -1,7 +1,7 @@
 import discord, asyncio
 from discord.ext import commands
 import aiohttp
-from utils import Confirmation
+from .models import Confirmation
 
 
 class CoolContext(commands.Context):
