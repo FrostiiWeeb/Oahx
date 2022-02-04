@@ -10,7 +10,7 @@ class CoolContext(commands.Context):
 
     async def prompt(self, description : str, embed : bool = True):
         if embed:
-            async with self.bot.embed(description=description) as emb:
+            async with self.bot._bot.embed(description=description) as emb:
                 view = Confirmation(self)
                 await emb.send(self.channel, view=view)
                 await view.wait()
