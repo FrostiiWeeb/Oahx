@@ -180,11 +180,6 @@ class Oahx(commands.AutoShardedBot):
         )
         import wavelink
         self.__users = {}
-Replying to xelor
-ON
-￼
-Message #testing
-
         self.mounter = Mount(self)
         self.wavelink = wavelink.NodePool()
         self.pomice = pomice.NodePool()
