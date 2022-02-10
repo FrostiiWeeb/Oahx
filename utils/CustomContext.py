@@ -8,6 +8,10 @@ class CoolContext(commands.Context):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+    async def wait_for(self, event_name : str, check = None):
+        @self.bot.event
+                        
+
     async def prompt(self, description : str, embed : bool = True):
         if embed:
             async with self.bot._bot.embed(description=description) as emb:

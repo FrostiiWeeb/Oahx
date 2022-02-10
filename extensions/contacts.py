@@ -67,10 +67,8 @@ class ConnectionError(Exception):
 class Contacts(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.phone_mute = False
-        self.me_mute = False
-        self.calls = []
-        self.contact_book = {}
+        self.mutes = {}
+        self.calls = {}
 
     async def try_channel(self, channel):
         channel_data = self.bot.get_channel(channel)
@@ -369,6 +367,41 @@ class Contacts(commands.Cog):
                     title="Missed call...", description="You did not answer."
                 ) as embed:
                     return await embed.send(channel_data)
+
+    @phone.command(name="newcall", brief="Call Someone by their phone number!")
+    @commands.max_concurrency(1, per=BucketType.channel, wait=False)
+    async def _call(self, ctx, number : str):
+        if number == "*661":
+            channel = await self.try_channel(854670283457429524)
+            return await self.call_support(ctx, channel)
+        if number == "991":
+            channel = await self.try_channel(854670283457429524)
+            return await self.call_support(ctx, channel)
+        try:
+            author = await self.db.fetchrow("SELECT * FROM numbers WHERE id = $1", ctx.author.id)
+            talking_to = await self.bot.db.fetchrow(
+                "SELECT * FROM numbers WHERE number = '%s'" % number
+            )
+        except:
+            return await ctx.send(
+                embed=PhoneEmbed(
+                    'The number you provided was not found or you dont have a number. create a number using "oahx phone create"'
+                )
+            )
+        if author["channel_id"] == talking_to["channel_id"]:
+            return await ctx.send(
+                        embed=PhoneEmbed(
+                            f"You people are talking in the same channel."
+                        )
+                    )
+        self.calls[ctx.channel.id] = Call(await self.try_channel(talking_to["channel_id"]), recipients=[ctx.author, await self.bot.try_user(talking_to["id"])])
+        call : Call = self.calls[ctx.channel.id]
+        await call.respond(ctx, message=f"You are talking with `{str(call.recipients[1])}` today.")
+        await call.respond(ctx, user="e", message=f"You are talking with `{str(call.recipients[0])}` today.")
+        def check(message):
+            return str(message.author) == str(call.recipients[1]) and message.channel.id == talking_to["channel_id"] or str(message.author) == str(call.recipients[0]) and message.channel.id == author["channel_id"]
+        
+        
 
     @phone.command(name="call", brief="Call Someone by their phone number!")
     @commands.max_concurrency(1, per=BucketType.channel, wait=False)

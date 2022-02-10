@@ -6,7 +6,6 @@ from argparse import ArgumentParser
 import threading, typing, asyncio
 from datetime import datetime
 
-
 class Task:
     def __init__(self, id: int) -> None:
         self.id = id

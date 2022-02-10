@@ -9,6 +9,16 @@
             "autorestart": true,
             "max_restarts": 1000000,
             "interpreter": "python3",
-        }
+        },
+        {
+        "name": "node",
+        "script": "/usr/bin/java",
+        "args": ["-jar", "Lavalink.jar"],
+        "instances": "1",
+        "wait_ready": true,
+        "autorestart": true,
+        "max_restarts": 1000000,
+        "interpreter": "",
+    }
     ]
 }
