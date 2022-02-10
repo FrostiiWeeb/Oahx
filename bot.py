@@ -122,12 +122,6 @@ async def run():
     bot.db = await asyncpg.create_pool(
         dsn="postgresql://frostiiweeb:my_password@localhost/oahx", max_queries=100000000
     )
-    bot.api_db = await asyncpg.create_pool(
-        dsn="postgresql://frostiiweeb:my_password@localhost/api", max_queries=100000000
-    )
-    bot.chat_db = await asyncpg.create_pool(
-        dsn="postgresql://frostiiweeb:my_password@localhost/chat", max_queries=100000000
-    )
     redis = await asyncrd.connect("redis://localhost:7000")
     bot.redis = redis
     await bot.db.execute(
