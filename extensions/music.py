@@ -8,10 +8,19 @@ from discord.ext import commands
 URL_REG = re.compile(r"https?://(?:www\.)?.+")
 
 
+class Nodes(dict):
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+
+class Node():
+	def __init__(self, identifier):
+		self.identifier = identifier
+
 class Music(commands.Cog):
 	def __init__(self, bot) -> None:
 		self.bot = bot
 		self.pomice = bot.pomice
+		self.nodes = Nodes()
 
 	@commands.Cog.listener("on_node_ready")
 	async def node_ready(self, node):
@@ -21,12 +30,13 @@ class Music(commands.Cog):
 		await self.pomice.create_node(
             bot=self.bot,
             host="127.0.0.1",
-            port="1987",
+            port="1983",
             password="oahx_lavalink",
             identifier="Node 1",
         )
+		self.nodes["Node 1"] = Node("Node 1")
 		print(f"Node is ready!")
-		self.bot.dispatch("node_ready", node=self.pomice.nodes.get("Node 1"))
+		self.bot.dispatch("node_ready", node=self.nodes.get("Node 1"))
 
 	@commands.command(name="leave", aliases=["disconnect", "dc"])
 	async def leave(self, ctx: commands.Context) -> None:
