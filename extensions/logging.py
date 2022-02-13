@@ -8,6 +8,7 @@ class Logging(commands.Cog):
 	def __init__(self, bot) -> None:
 		self.bot = bot
 		self.bot.db = self.bot.db
+		self.bans = {}
 
 	@commands.group(invoke_without_command=True)
 	async def logging(self, ctx : commands.Context):
@@ -23,6 +24,7 @@ class Logging(commands.Cog):
 	async def on_member_ban(self, guild: discord.Guild, user: discord.User):
 		user_name = str(user)
 		guild_id = guild.id
+		self.bans[user_name] = True
 
 		row = await self.bot.db.fetchrow("SELECT * FROM logging WHERE guild_id = $1", guild_id)
 		if not row:
@@ -39,7 +41,9 @@ class Logging(commands.Cog):
 			print(event)
 			async with self.bot.embed(title="Member Banned.", description=f"User: {user_name} `<@{user.id}>`\nReason: {event.reason}\nAction: Member Ban\nModerator: {event.user}") as emb:
 				emb.embed.set_author(name=user_name, icon_url=user.avatar.url)
-				return await emb.send(channel)
+				await emb.send(channel)
+				self.bans[user_name] = False
+				return
 		except:
 			traceback.print_exc(file=sys.stderr)
 
@@ -72,6 +76,8 @@ class Logging(commands.Cog):
 		guild : discord.Guild = member.guild
 		user_name = str(member)
 		guild_id = guild.id
+		if self.bans[user_name]:
+			return
 
 		row = await self.bot.db.fetchrow("SELECT * FROM logging WHERE guild_id = $1", guild_id)
 		if not row:
