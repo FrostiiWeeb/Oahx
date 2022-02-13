@@ -36,7 +36,7 @@ class Logging(commands.Cog):
 			return event.action is discord.AuditLogAction.ban
 		
 		try:
-			event : discord.AuditLogEntry = await guild.audit_logs(limit=1).find(predicate)
+			event : discord.AuditLogEntry = await guild.audit_logs(limit=5).find(predicate)
 			print(event)
 			async with self.bot.embed(title="Member Banned.", description=f"User: {user_name} `<@{user.id}>`\nReason: {event.reason}\nAction: Member Ban\nModerator: {event.user}") as emb:
 				emb.embed.set_author(name=user_name, icon_url=user.avatar.url)
@@ -60,7 +60,7 @@ class Logging(commands.Cog):
 			return event.action is discord.AuditLogAction.unban
 		
 		try:
-			event : discord.AuditLogEntry = await guild.audit_logs(limit=1).find(predicate)
+			event : discord.AuditLogEntry = await guild.audit_logs(limit=5).find(predicate)
 			print(event)
 			async with self.bot.embed(title="Member Unbanned.", description=f"User: {user_name} `<@{user.id}>`\nReason: {event.reason}\nAction: Member Unban\nModerator: {event.user}") as emb:
 				emb.embed.set_author(name=user_name, icon_url=user.avatar.url)
@@ -82,10 +82,10 @@ class Logging(commands.Cog):
 		on_member_unban"""
 		channel = await self.bot.try_channel(row["channel_id"])
 		def predicate(event : discord.AuditLogEntry):
-			return event.action is discord.AuditLogAction.kick and event.action
+			return event.action is discord.AuditLogAction.kick
 		
 		try:
-			event : discord.AuditLogEntry = await guild.audit_logs(limit=1).find(predicate)
+			event : discord.AuditLogEntry = await guild.audit_logs(limit=5).find(predicate)
 			async with self.bot.embed(title="Member Kicked.", description=f"User: {user_name} `<@{member.id}>`\nReason: {event.reason}\nAction: Member Kick\nModerator: {event.user}") as emb:
 				emb.embed.set_author(name=user_name, icon_url=member.avatar.url)
 				return await emb.send(channel)
