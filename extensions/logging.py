@@ -82,7 +82,7 @@ class Logging(commands.Cog):
 		on_member_unban"""
 		channel = await self.bot.try_channel(row["channel_id"])
 		def predicate(event : discord.AuditLogEntry):
-			return event.action is discord.AuditLogAction.kick
+			return event.action is discord.AuditLogAction.kick and event.action is not discord.AuditLogAction.ban
 		
 		try:
 			event : discord.AuditLogEntry = await guild.audit_logs().find(predicate)
