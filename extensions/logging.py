@@ -1,13 +1,12 @@
 import asyncpg
 from discord.ext import commands
 import discord
-from bot import Oahx
 import traceback
 import sys
 
 class Logging(commands.Cog):
 	def __init__(self, bot) -> None:
-		self.bot : Oahx = bot
+		self.bot = bot
 		self.bot.db = self.bot.db
 
 	@commands.group(invoke_without_command=True)
@@ -89,5 +88,5 @@ class Logging(commands.Cog):
 		except:
 			traceback.print_exc(file=sys.stderr)
 
-def setup(bot : Oahx):
+def setup(bot):
 	bot.add_cog(Logging(bot))
