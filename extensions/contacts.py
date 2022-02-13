@@ -414,9 +414,15 @@ class Contacts(commands.Cog):
                         return str(message.author) == str(call.recipients[0]) and message.channel.id == author["channel_id"]
                     while True:
                         message = await self.bot.wait_for("message", check=check)
-                        author_message = await self.bot.wait_for("message", check = author_check)
-                        await call.respond(ctx, message=f"{message.content}")
-                        await call.respond(ctx, user = "e", message=author_message.content)
+                        done, pending = await asyncio.wait([self.bot.wait_for("message", check=check), self.bot.wait_for("message", check=author_check)])
+
+                        message = done.pop().result()
+                        if message.author.id == author['id']:
+                            await call.respond(ctx, message=f"{message.content}")
+                        else:
+                            await call.respond(ctx, user = "e", message=message.content)
+                        for future in pending:
+                            future.cancel()
                 else:
                     await talking_to_channel.send("Call declined. Call back if you want, or not.")
                     return await author_channel.send("Call declined. Call again if you want, or not.")
