@@ -9,6 +9,15 @@ class Logging(commands.Cog):
 	def __init__(self, bot) -> None:
 		self.bot : Oahx = bot
 		self.bot.db = self.bot.db
+
+	@commands.group(invoke_without_command=True)
+	async def logging(self, ctx : commands.Context):
+		return await ctx.send_help(ctx.command)
+
+	@logging.command()
+	async def setup(self, ctx):
+		await self.bot.db.execute("INSERT INTO logging(guild_id, channel_id) VALUES ($1, $2)", ctx.guild.id, ctx.channel.id)
+		return await ctx.send("Done. Logging was setup.")
 		
 	@commands.Cog.listener()
 	async def on_member_ban(self, guild: discord.Guild, user: discord.User):
