@@ -124,6 +124,7 @@ async def run():
     )
     redis = await asyncrd.connect("redis://localhost:7000")
     bot.redis = redis
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS logging(guild_id BIGINT, channel_id BIGINT)")
     await bot.db.execute(
         "CREATE TABLE IF NOT EXISTS prefixes(guild_id bigint PRIMARY KEY, prefix TEXT)"
     )
