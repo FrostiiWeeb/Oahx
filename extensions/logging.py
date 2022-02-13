@@ -37,6 +37,7 @@ class Logging(commands.Cog):
 		
 		try:
 			event : discord.AuditLogEntry = await guild.audit_logs().find(predicate)
+			print(event)
 			async with self.bot.embed(title="Member Banned.", description=f"User: {user_name} `<@{user.id}>`\nReason: {event.reason}\nAction: Member Ban\nModerator: {event.user}") as emb:
 				emb.embed.set_author(name=user_name, icon_url=user.avatar.url)
 				return await emb.send(channel)
@@ -60,6 +61,7 @@ class Logging(commands.Cog):
 		
 		try:
 			event : discord.AuditLogEntry = await guild.audit_logs().find(predicate)
+			print(event)
 			async with self.bot.embed(title="Member Unbanned.", description=f"User: {user_name} `<@{user.id}>`\nReason: {event.reason}\nAction: Member Unban\nModerator: {event.user}") as emb:
 				emb.embed.set_author(name=user_name, icon_url=user.avatar.url)
 				return await emb.send(channel)
