@@ -14,6 +14,8 @@ class Logging(commands.Cog):
 		return await ctx.send_help(ctx.command)
 
 	@logging.command()
+	@commands.is_owner()
+	@commands.has_permissions(manage_server=True)
 	async def setup(self, ctx):
 		await self.bot.db.execute("INSERT INTO logging(guild_id, channel_id) VALUES ($1, $2)", ctx.guild.id, ctx.channel.id)
 		return await ctx.send("Done. Logging was setup.")
