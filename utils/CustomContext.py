@@ -41,8 +41,8 @@ class CoolContext(commands.Context):
             await message.edit(full_text, *args, **kwargs)
 
 
-    async def send(self, content : str = None, embed : discord.Embed = None, file : discord.File = None, files : List[discord.File] = None, view : discord.ui.View = None, delete_after : int = None, reply_to : discord.Message = None):
+    async def send(self, content : str = None, embed : discord.Embed = None, file : discord.File = None, files : List[discord.File] = None, view : discord.ui.View = None, delete_after : int = None, reply_to : discord.Message = None, *args, **kwargs):
         if embed:
             embed.colour = self.bot.colour
             embed.set_footer(text="Requested by {.author}".format(self), icon_url=self.author.avatar.url)
-        return await super().send(content, embed=embed, file=file, files=files, delete_after=delete_after, reference=reply_to, mention_author=False, view=view)
+        return await super().send(content, embed=embed, file=file, files=files, delete_after=delete_after, reference=reply_to, mention_author=False, view=view, *args, **kwargs)
