@@ -82,7 +82,7 @@ class Modal:
 		if placeholder:
 			component['placeholder'] = placeholder
 			
-		self.data.get('components').append({
+		self.data['components'].append({
             'type': 1,
             'components': [component]
         })
