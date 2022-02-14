@@ -2,7 +2,7 @@ import discord, asyncio
 from discord.ext import commands
 import aiohttp
 from .models import Confirmation
-
+from typing import *
 
 class CoolContext(commands.Context):
     def __init__(self, *args, **kwargs):
@@ -29,3 +29,9 @@ class CoolContext(commands.Context):
             full_text += letter
             await asyncio.sleep(speed)
             await message.edit(full_text, *args, **kwargs)
+
+
+    async def send(self, content : str = None, embed : discord.Embed = None, file : discord.File = None, files : List[discord.File] = None, view : discord.ui.View = None, delete_after : int = None, reply_to : discord.Message = None):
+        embed.colour = self.bot.colour
+        embed.set_footer(text="Requested by {.author}".format(self), icon_url=self.author.avatar.url)
+        return await super().send(content, embed=embed, file=file, files=file, delete_after=delete_after, reference=reply_to, mention_author=False)
