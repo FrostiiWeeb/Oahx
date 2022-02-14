@@ -9,7 +9,7 @@ class Logging(commands.Cog):
 		self.bot = bot
 		self.bot.db = self.bot.db
 		self.bans = {}
-		self.limit = 3
+		self.limit = 2
 
 	@commands.group(invoke_without_command=True)
 	async def logging(self, ctx : commands.Context):
