@@ -32,6 +32,7 @@ class CoolContext(commands.Context):
 
 
     async def send(self, content : str = None, embed : discord.Embed = None, file : discord.File = None, files : List[discord.File] = None, view : discord.ui.View = None, delete_after : int = None, reply_to : discord.Message = None):
-        embed.colour = self.bot.colour
-        embed.set_footer(text="Requested by {.author}".format(self), icon_url=self.author.avatar.url)
+        if embed:
+            embed.colour = self.bot.colour
+            embed.set_footer(text="Requested by {.author}".format(self), icon_url=self.author.avatar.url)
         return await super().send(content, embed=embed, file=file, files=file, delete_after=delete_after, reference=reply_to, mention_author=False)
