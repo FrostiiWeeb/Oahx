@@ -65,7 +65,7 @@ class Modal:
 		self.payload = []
 		self.responded = False
 
-	def input(self, type : Style, label : str, min_length, max_length, value : str, placeholder : str, required = False):
+	def input(self, type : Style, label : str, min_length = None, max_length = None, value : str = None, placeholder : str = None, required = False):
 		component = {
             'type': 4,
             'custom_id': secrets.token_urlsafe(16),
