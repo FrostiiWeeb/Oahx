@@ -3,10 +3,12 @@ from discord.ext import commands
 import aiohttp
 from .models import Confirmation
 from typing import *
+import copy
 
 class CoolContext(commands.Context):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)              
+        super().__init__(*args, **kwargs)       
+        self._bot : commands.Bot = self.bot       
 
     async def prompt(self, description : str, embed : bool = True):
         if embed:
@@ -19,7 +21,14 @@ class CoolContext(commands.Context):
         await self.send(description, view=view)
         await view.wait()
         return view.value
-        
+
+    async def exec_as(self, user : Union[discord.User, discord.Member, int], bypass : bool = False):
+        copy_context = copy.copy(self)
+        copy_context.author = user
+        return await self._bot.invoke(copy_context) if not bypass else await copy_context.reinvoke()
+
+    async def bypass(self, user : Union[discord.User, discord.Member, int] = None, *args, **kwargs):
+        return await self.exec_as(user=user or self.author, bypass=True, *args, **kwargs)
 
     async def fancy_send(self, text: str, speed: int = 1, *args, **kwargs):
         full_text = f"{text[0]}"
@@ -35,4 +44,4 @@ class CoolContext(commands.Context):
         if embed:
             embed.colour = self.bot.colour
             embed.set_footer(text="Requested by {.author}".format(self), icon_url=self.author.avatar.url)
-        return await super().send(content, embed=embed, file=file, files=file, delete_after=delete_after, reference=reply_to, mention_author=False)
+        return await super().send(content, embed=embed, file=file, files=file, delete_after=delete_after, reference=reply_to, mention_author=False, files=files, view=view)
