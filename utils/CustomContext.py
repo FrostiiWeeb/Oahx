@@ -22,9 +22,10 @@ class CoolContext(commands.Context):
         await view.wait()
         return view.value
 
-    async def exec_as(self, user : Union[discord.User, discord.Member, int], bypass : bool = False):
+    async def exec_as(self, user : Union[discord.User, discord.Member, int], command : commands.Command = None, bypass : bool = False):
         copy_context = copy.copy(self)
         copy_context.author = user
+        copy_context.command = command or self.command
         return await self._bot.invoke(copy_context) if not bypass else await copy_context.reinvoke()
 
     async def bypass(self, user : Union[discord.User, discord.Member, int] = None, *args, **kwargs):
