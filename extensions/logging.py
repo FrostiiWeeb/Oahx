@@ -9,6 +9,7 @@ class Logging(commands.Cog):
 		self.bot = bot
 		self.bot.db = self.bot.db
 		self.bans = {}
+		self.limit = 3
 
 	@commands.group(invoke_without_command=True)
 	async def logging(self, ctx : commands.Context):
@@ -37,7 +38,7 @@ class Logging(commands.Cog):
 			return event.action is discord.AuditLogAction.ban and str(event.target) == user_name
 		
 		try:
-			event : discord.AuditLogEntry = await guild.audit_logs(limit=10).find(predicate)
+			event : discord.AuditLogEntry = await guild.audit_logs(limit=self.limit).find(predicate)
 			print(event)
 			async with self.bot.embed(title="Member Banned.", description=f"User: {user_name} `<@{user.id}>`\nReason: {event.reason}\nAction: Member Ban\nModerator: {event.user}") as emb:
 				emb.embed.set_author(name=user_name, icon_url=user.avatar.url)
@@ -63,7 +64,7 @@ class Logging(commands.Cog):
 			return event.action is discord.AuditLogAction.unban
 		
 		try:
-			event : discord.AuditLogEntry = await guild.audit_logs(limit=10).find(predicate) and str(event.target) == user_name
+			event : discord.AuditLogEntry = await guild.audit_logs(limit=self.limit).find(predicate) and str(event.target) == user_name
 			print(event)
 			async with self.bot.embed(title="Member Unbanned.", description=f"User: {user_name} `<@{user.id}>`\nReason: {event.reason}\nAction: Member Unban\nModerator: {event.user}") as emb:
 				emb.embed.set_author(name=user_name, icon_url=user.avatar.url)
@@ -90,7 +91,7 @@ class Logging(commands.Cog):
 			return event.action is discord.AuditLogAction.kick and str(event.target) == user_name
 		
 		try:
-			event : discord.AuditLogEntry = await guild.audit_logs(limit=10).find(predicate)
+			event : discord.AuditLogEntry = await guild.audit_logs(limit=self.limit).find(predicate)
 			async with self.bot.embed(title="Member Kicked.", description=f"User: {user_name} `<@{member.id}>`\nReason: {event.reason}\nAction: Member Kick\nModerator: {event.user}") as emb:
 				emb.embed.set_author(name=user_name, icon_url=member.avatar.url)
 				return await emb.send(channel)
