@@ -57,7 +57,6 @@ class tasks:
             l : Loop = l
             if l.name == name:
                 l.stopped = True
-                return True
 
     async def start_loop(self, name: str, executor: bool = False):
         for l in self.loops:
