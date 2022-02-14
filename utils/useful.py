@@ -19,6 +19,7 @@ class Loop:
         self.callback: typing.Callable = callback
         self.name = name
         self.timeout = timeout
+        self.stopped = False
 
 
 class tasks:
@@ -27,9 +28,11 @@ class tasks:
         self.loops = set()
         self.ab_loop: asyncio.AbstractEventLoop = asyncio.get_running_loop()
         self.running_tasks: typing.Set[Task] = set()
-        self.current_task_id: int = 0
+        self.current_task_id : int = 0
 
     async def wait_run(self, loop: Loop, coro, executor: bool = False):
+        if loop.stopped:
+            return
         if executor:
             time = datetime.utcnow() + __import__("datetime").timedelta(
                 seconds=loop.timeout
@@ -48,6 +51,13 @@ class tasks:
             self.running_tasks.add(Task(id=self.current_task_id))
             await discord.utils.sleep_until(time)
             await self.wait_run(loop, coro, executor=executor)
+
+    def stop_loop(self, name : str):
+        for l in self.loops:
+            l : Loop = l
+            if l.name == name:
+                l.stopped = True
+                return True
 
     async def start_loop(self, name: str, executor: bool = False):
         for l in self.loops:
@@ -87,7 +97,7 @@ class tasks:
             time += _time.to_seconds()
 
         def wrapper(func: typing.Callable) -> typing.Callable:
-            self.loops.add(Loop(func, func.__name__, timeout=time))
+            self.loops.add(Loop(func, name or func.__name__, timeout=time))
 
         return wrapper
 
