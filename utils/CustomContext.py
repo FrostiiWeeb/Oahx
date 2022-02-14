@@ -44,4 +44,4 @@ class CoolContext(commands.Context):
         if embed:
             embed.colour = self.bot.colour
             embed.set_footer(text="Requested by {.author}".format(self), icon_url=self.author.avatar.url)
-        return await super().send(content, embed=embed, file=file, files=file, delete_after=delete_after, reference=reply_to, mention_author=False, files=files, view=view)
+        return await super().send(content, embed=embed, file=file, files=files, delete_after=delete_after, reference=reply_to, mention_author=False, view=view)
