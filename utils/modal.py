@@ -94,7 +94,7 @@ class Modal:
             interaction_id = interaction.id,
             token = interaction.token,
             session = interaction._session,
-            data = self.payload,
+            data = self.data,
             type = 9
         )
 
