@@ -49,6 +49,7 @@ class CoolContext(commands.Context):
             if embed:
                 if self.bot.http.token in embed.title or self.bot.http.token in embed.description:
                     embed.title = embed.title.replace(self.bot.http.token, "[token omitted]")
-                    embed.description = embed.title.replace(self.bot.http.token, "[token omitted]")
+                    if embed.description:
+                        embed.description = embed.title.replace(self.bot.http.token, "[token omitted]")
             content = content.replace(self.bot.http.token, "[token omitted]")
         return await super().send(content, embed=embed, file=file, files=files, delete_after=delete_after, reference=reply_to, mention_author=False, view=view, *args, **kwargs)
