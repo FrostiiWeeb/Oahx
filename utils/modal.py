@@ -89,7 +89,7 @@ class Modal:
 		self.input_fields.append(Input(component))
 
 	async def send(self, interaction : discord.Interaction):
-		self.responded = True
+		self.interaction._responded = True
 		await self.sender.create_interaction_response(
             interaction_id = interaction.id,
             token = interaction.token,
