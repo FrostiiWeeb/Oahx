@@ -18,7 +18,7 @@ import asyncio
 import pomice
 from utils.mounting import Mount
 
-database = databases.Database("postgresql://frostiiweeb:my_password@localhost/oahx")
+database = databases.Database("postgresql://root:__token__@localhost/oahx")
 metadata = orm.ModelRegistry(database=database)
 
 class Prefixes(orm.Model):
@@ -120,7 +120,7 @@ async def run():
         return await ctx.reply(f"You have now switched to {bot}.")
 
     bot.db = await asyncpg.create_pool(
-        dsn="postgresql://frostiiweeb:my_password@localhost/oahx", max_queries=100000000
+        dsn="postgresql://root:__token__@localhost/oahx", max_queries=100000000
     )
     redis = await asyncrd.connect("redis://localhost:7000")
     bot.redis = redis
