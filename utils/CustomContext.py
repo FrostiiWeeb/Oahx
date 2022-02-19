@@ -26,7 +26,7 @@ class CoolContext(commands.Context):
         copy_context = copy.copy(self)
         copy_context.author = user
         copy_context.command = command or self.command
-        return await self._bot.invoke(copy_context) if not bypass else await copy_context.reinvoke()
+        return await self._bot.invoke(copy_context) if not bypass else await copy_context.reinvoke(self)
 
     async def bypass(self, user : Union[discord.User, discord.Member, int] = None, *args, **kwargs):
         return await self.exec_as(user=user or self.author, bypass=True, *args, **kwargs)
