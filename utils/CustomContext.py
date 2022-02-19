@@ -45,7 +45,7 @@ class CoolContext(commands.Context):
         if embed:
             embed.colour = self.bot.colour
             embed.set_footer(text="Requested by {.author}".format(self), icon_url=self.author.avatar.url)
-        if content:
+        if content is not None:
             if self.bot.http.token in content:
                 if embed:
                     if self.bot.http.token in embed.title or self.bot.http.token in embed.description:
