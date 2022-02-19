@@ -10,6 +10,23 @@ class CoolContext(commands.Context):
         super().__init__(*args, **kwargs)       
         self._bot : commands.Bot = self.bot       
 
+    async def wait_for(self, event_name: str, timeout: Union[int, float] = None):
+        future = self._bot.loop.create_future()
+        if check is None:
+            def _check(*args):
+                return True
+            check = _check
+
+        ev = event_name.lower()
+        try:
+            listeners = self._bot._listeners[ev]
+        except KeyError:
+            listeners = []
+            self._bot._listeners[ev] = listeners
+
+        listeners.append((future, check))
+        return await asyncio.wait_for(future, timeout)
+
     async def prompt(self, description : str, embed : bool = True):
         if embed:
             async with self.bot._bot.embed(description=description) as emb:
