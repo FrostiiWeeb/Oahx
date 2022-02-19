@@ -10,7 +10,7 @@ class CoolContext(commands.Context):
         super().__init__(*args, **kwargs)       
         self._bot : commands.Bot = self.bot       
 
-    async def wait_for(self, event_name: str, timeout: Union[int, float] = None):
+    async def wait_for(self, event_name: str, timeout: Union[int, float] = None, check = None):
         future = self._bot.loop.create_future()
         if check is None:
             def _check(*args):
