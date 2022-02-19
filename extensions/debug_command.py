@@ -140,7 +140,10 @@ class CustomDebugCog(*STANDARD_FEATURES, *OPTIONAL_FEATURES):
         """
 
         arg_dict = get_var_dict_from_ctx(ctx, Flags.SCOPE_PREFIX)
-        arg_dict["ref"] = ctx.message.reference.resolved or None
+        try:
+            arg_dict["ref"] = ctx.message.reference.resolved
+        except:
+            arg_dict["ref"] = None
         arg_dict["_"] = self.last_result
 
         scope = self.scope
