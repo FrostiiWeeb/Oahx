@@ -8,7 +8,8 @@ import copy
 class CoolContext(commands.Context):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)       
-        self._bot : commands.Bot = self.bot       
+        self._bot : commands.Bot = self.bot    
+        self.advertisement = "<:CreateInvite:928388724746780723> Join our support server! <https://discord.gg/pj5YXcQCXf>"  
 
     async def wait_for(self, event_name: str, timeout: Union[int, float] = None, check = None):
         future = self._bot.loop.create_future()
@@ -70,4 +71,11 @@ class CoolContext(commands.Context):
                         if embed.description:
                             embed.description = embed.title.replace(self.bot.http.token, "[token omitted]")
                 content = content.replace(self.bot.http.token, "[token omitted]")
+        else:
+            import random
+            advertise = random.choice([True, False])
+            if advertise:
+                content = self.advertisement
+            else:
+                advertise = False
         return await super().send(content, embed=embed, file=file, files=files, delete_after=delete_after, reference=reply_to, mention_author=False, view=view, *args, **kwargs)
