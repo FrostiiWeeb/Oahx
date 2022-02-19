@@ -144,6 +144,8 @@ class CustomDebugCog(*STANDARD_FEATURES, *OPTIONAL_FEATURES):
             arg_dict["ref"] = ctx.message.reference.resolved
         except:
             arg_dict["ref"] = None
+        arg_dict["oahx"] = ctx.bot
+        arg_dict["owners"] = [await ctx.bot.try_user(id) for id in ctx.bot.owner_ids]
         arg_dict["_"] = self.last_result
 
         scope = self.scope
