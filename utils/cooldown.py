@@ -2,8 +2,6 @@ import discord
 from discord.ext import commands
 from typing import *
 import time
-from ..bot import Oahx
-
 class cooldowns:
 	def cooldown(self, seconds):
 		async def cooldown_predicate(ctx: commands.Context):
