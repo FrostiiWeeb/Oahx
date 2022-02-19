@@ -7,6 +7,13 @@ from jishaku.modules import package_version
 from jishaku.paginators import PaginatorInterface
 from jishaku.features.baseclass import Feature
 from jishaku.cog import STANDARD_FEATURES, OPTIONAL_FEATURES
+from jishaku import *
+from jishaku.features import *
+from jishaku.flags import *
+from jishaku.repl import *
+from jishaku.codeblocks import *
+from jishaku.exception_handling import ReplResponseReactor
+import jishaku
 
 try:
     import psutil
@@ -125,6 +132,32 @@ class CustomDebugCog(*STANDARD_FEATURES, *OPTIONAL_FEATURES):
 
         async with ctx.bot.embed(description="\n".join(summary)) as emb:
             await emb.send(ctx.channel)
+
+    @Feature.Command(parent="jsk", name="py", aliases=["python"])
+    async def jsk_python(self, ctx: commands.Context, *, argument: codeblock_converter):
+        """
+        Direct evaluation of Python code.
+        """
+
+        arg_dict = get_var_dict_from_ctx(ctx, Flags.SCOPE_PREFIX)
+        arg_dict["_"] = self.last_result
+
+        scope = self.scope
+
+        try:
+            async with ReplResponseReactor(ctx.message):
+                with self.submit(ctx):
+                    executor = AsyncCodeExecutor(argument.content, scope, arg_dict=arg_dict)
+                    async for send, result in AsyncSender(executor):
+                        if result is None:
+                            continue
+
+                        self.last_result = result
+
+                        send(await self.jsk_python_result_handling(ctx, result))
+
+        finally:
+            scope.clear_intersection(arg_dict)
 
 
 def setup(bot):
