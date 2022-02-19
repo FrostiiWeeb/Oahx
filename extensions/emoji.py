@@ -10,7 +10,7 @@ class Emoji(commands.Cog):
     async def emoji(self, msg):
         if msg.content.endswith(";"):
             if msg.author.id in self.bot.mods:
-                emj_name = msg.content[: len(msg.content) - 1]
+                emj_name = msg.content.strip(";")
                 for g in self.bot.guilds:
                     for emj in g.emojis:
                         if emj_name == emj.name:
