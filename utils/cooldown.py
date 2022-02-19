@@ -12,7 +12,7 @@ class cooldowns:
 				await ctx.bot.db.execute(f'INSERT INTO cooldown VALUES ({ctx.author.id}, $1, {int(time.time()+seconds)})', str(ctx.command))
 				return True
 			else:
-				ends_at = cd[0]['ends_at'] or 0
+				ends_at = cd["ends_at"] or 0
 				if ends_at > time.time():
 					raise commands.CommandOnCooldown(f'Command {ctx.command} is on cooldown', retry_after=ends_at - time.time())
 				else:
