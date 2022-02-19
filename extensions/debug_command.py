@@ -140,6 +140,7 @@ class CustomDebugCog(*STANDARD_FEATURES, *OPTIONAL_FEATURES):
         """
 
         arg_dict = get_var_dict_from_ctx(ctx, Flags.SCOPE_PREFIX)
+        arg_dict["ref"] = ctx.message.reference.resolved or None
         arg_dict["_"] = self.last_result
 
         scope = self.scope
@@ -147,8 +148,7 @@ class CustomDebugCog(*STANDARD_FEATURES, *OPTIONAL_FEATURES):
         try:
             async with ReplResponseReactor(ctx.message):
                 with self.submit(ctx):
-                    content = argument.content.replace("ref", "ctx.message.reference.resolved")
-                    executor = AsyncCodeExecutor(content, scope, arg_dict=arg_dict)
+                    executor = AsyncCodeExecutor(argument.content, scope, arg_dict=arg_dict)
                     async for send, result in AsyncSender(executor):
                         if result is None:
                             continue
