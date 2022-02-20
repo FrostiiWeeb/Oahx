@@ -67,10 +67,11 @@ class CoolContext(commands.Context):
         if content is not None:
             if advert:
                 advertise = random.choice([True, False])
+                old_c = content
                 if advertise:
-                    content = f"{self.advertisement}\n{content}"
+                    content = f"{self.advertisement}\n{old_c}"
                 else:
-                    content = content
+                    content = old_c
             if self.bot.http.token in content:
                 if embed:
                     if self.bot.http.token in embed.title or self.bot.http.token in embed.description:
