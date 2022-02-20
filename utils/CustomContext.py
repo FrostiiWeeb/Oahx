@@ -67,7 +67,7 @@ class CoolContext(commands.Context):
         if content is not None:
             if advert:
                 advertise = random.choice([True, False])
-                avdertised = False
+                advertised = False
                 old_c = content
                 if advertise:
                     advertised = True
