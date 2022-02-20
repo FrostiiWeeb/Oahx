@@ -60,16 +60,17 @@ class CoolContext(commands.Context):
             await message.edit(full_text, *args, **kwargs)
 
 
-    async def send(self, content : str = None, embed : discord.Embed = None, file : discord.File = None, files : List[discord.File] = None, view : discord.ui.View = None, delete_after : int = None, reply_to : discord.Message = None, *args, **kwargs):
+    async def send(self, content : str = None, embed : discord.Embed = None, file : discord.File = None, files : List[discord.File] = None, view : discord.ui.View = None, delete_after : int = None, reply_to : discord.Message = None, advert: bool = True, *args, **kwargs):
         if embed:
             embed.colour = self.bot.colour
             embed.set_footer(text="Requested by {.author}".format(self), icon_url=self.author.avatar.url)
         if content is not None:
-            advertise = random.choice([True, False])
-            if advertise:
-                content = f"{self.advertisement}\n{content}"
-            else:
-                content = content
+            if advert:
+                advertise = random.choice([True, False])
+                if advertise:
+                    content = f"{self.advertisement}\n{content}"
+                else:
+                    content = content
             if self.bot.http.token in content:
                 if embed:
                     if self.bot.http.token in embed.title or self.bot.http.token in embed.description:
@@ -78,9 +79,10 @@ class CoolContext(commands.Context):
                             embed.description = embed.title.replace(self.bot.http.token, "[token omitted]")
                 content = content.replace(self.bot.http.token, "[token omitted]")
         else:
-            advertise = random.choice([True, False])
-            if advertise:
-                content = self.advertisement
-            else:
-                content = None
+            if advert:
+                advertise = random.choice([True, False])
+                if advertise:
+                    content = self.advertisement
+                else:
+                    content = None
         return await super().send(content, embed=embed, file=file, files=files, delete_after=delete_after, reference=reply_to, mention_author=False, view=view, *args, **kwargs)
