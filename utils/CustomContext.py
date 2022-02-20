@@ -77,5 +77,5 @@ class CoolContext(commands.Context):
             if advertise:
                 content = self.advertisement
             else:
-                advertise = False
+                content = None
         return await super().send(content, embed=embed, file=file, files=files, delete_after=delete_after, reference=reply_to, mention_author=False, view=view, *args, **kwargs)
