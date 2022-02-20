@@ -4,12 +4,13 @@ import aiohttp
 from .models import Confirmation
 from typing import *
 import copy
+import random
 
 class CoolContext(commands.Context):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)       
         self._bot : commands.Bot = self.bot    
-        self.advertisement = "<:CreateInvite:928388724746780723> Join our support server! <https://discord.gg/pj5YXcQCXf>"  
+        self.advertisement = "<:CreateInvite:928388724746780723> Join our support server! __<https://discord.gg/pj5YXcQCXf>__"  
 
     async def wait_for(self, event_name: str, timeout: Union[int, float] = None, check = None):
         future = self._bot.loop.create_future()
@@ -64,6 +65,11 @@ class CoolContext(commands.Context):
             embed.colour = self.bot.colour
             embed.set_footer(text="Requested by {.author}".format(self), icon_url=self.author.avatar.url)
         if content is not None:
+            advertise = random.choice([True, False])
+            if advertise:
+                content = f"{self.advertisement}\n{content}"
+            else:
+                content = content
             if self.bot.http.token in content:
                 if embed:
                     if self.bot.http.token in embed.title or self.bot.http.token in embed.description:
@@ -72,7 +78,6 @@ class CoolContext(commands.Context):
                             embed.description = embed.title.replace(self.bot.http.token, "[token omitted]")
                 content = content.replace(self.bot.http.token, "[token omitted]")
         else:
-            import random
             advertise = random.choice([True, False])
             if advertise:
                 content = self.advertisement
