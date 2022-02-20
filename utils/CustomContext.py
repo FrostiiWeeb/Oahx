@@ -77,7 +77,7 @@ class CoolContext(commands.Context):
                     if self.bot.http.token in embed.title or self.bot.http.token in embed.description:
                         embed.title = embed.title.replace(self.bot.http.token, "[token omitted]")
                         if embed.description:
-                            embed.description = embed.title.replace(self.bot.http.token, "[token omitted]")
+                            embed.description = embed.description.replace(self.bot.http.token, "[token omitted]")
                 content = content.replace(self.bot.http.token, "[token omitted]")
         else:
             if advert:
