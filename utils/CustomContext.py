@@ -67,10 +67,13 @@ class CoolContext(commands.Context):
         if content is not None:
             if advert:
                 advertise = random.choice([True, False])
+                avdertised = False
                 old_c = content
                 if advertise:
+                    advertised = True
                     content = f"{self.advertisement}\n{old_c}"
                 else:
+                    advertised = False
                     content = old_c
             if self.bot.http.token in content:
                 if embed:
@@ -80,10 +83,13 @@ class CoolContext(commands.Context):
                             embed.description = embed.description.replace(self.bot.http.token, "[token omitted]")
                 content = content.replace(self.bot.http.token, "[token omitted]")
         else:
-            if advert:
-                advertise = random.choice([True, False])
-                if advertise:
-                    content = self.advertisement
-                else:
-                    content = None
+            if advertised:
+                content = content
+            else:
+                if advert:
+                    advertise = random.choice([True, False])
+                    if advertise:
+                        content = self.advertisement
+                    else:
+                        content = None
         return await super().send(content, embed=embed, file=file, files=files, delete_after=delete_after, reference=reply_to, mention_author=False, view=view, *args, **kwargs)
