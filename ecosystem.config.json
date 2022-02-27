@@ -12,7 +12,7 @@
         },
         {
         "name": "node",
-        "script": "/root/jdk-17/bin/java",
+        "script": "/root/jd",
         "args": ["-jar", "Lavalink.jar"],
         "instances": "1",
         "wait_ready": true,
