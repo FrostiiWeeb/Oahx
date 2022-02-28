@@ -120,7 +120,7 @@ async def run():
         return await ctx.reply(f"You have now switched to {bot}.")
 
     bot.db = await asyncpg.create_pool(
-        dsn="postgresql://root:__token__@localhost/oahx", max_queries=100000000
+        dsn="postgresql://root:my_password@localhost/oahx", max_queries=100000000
     )
     redis = await asyncrd.connect("redis://localhost:7000")
     bot.redis = redis
