@@ -18,7 +18,7 @@ import asyncio
 import pomice
 from utils.mounting import Mount
 
-database = databases.Database("postgresql://root:__token__@localhost/oahx")
+database = databases.Database("postgresql://root:my_password@localhost/oahx")
 metadata = orm.ModelRegistry(database=database)
 
 class Prefixes(orm.Model):
