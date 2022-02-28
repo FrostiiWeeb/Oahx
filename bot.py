@@ -307,7 +307,6 @@ class Oahx(commands.AutoShardedBot):
 
     async def on_ready(self):
         self.session = aiohttp.ClientSession(loop=self.loop)
-        await self.cogs["Music"].start_nodes()
         print(
             "Logged in! \n"
             f"{'-' * 20}\n"
