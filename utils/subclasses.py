@@ -94,12 +94,12 @@ class Processing:
 
 class CustomEmbed:
     def __init__(self, *args, **kwargs):
-        self.timestamp = kwargs.pop("timestamp", datetime.datetime.now())
+        self.timestamp = kwargs.pop("timestamp", datetime.datetime.utcnow())
         self.title = kwargs.pop("title", None)
         self.description = kwargs.pop("description", None)
         self.footer = kwargs.pop("footer", None)
         self.colour = discord.Colour.from_rgb(100, 53, 255)
-        embed = discord.Embed()
+        embed = discord.Embed
         if not self.title:
             self.embed = embed.from_dict(
                 {
