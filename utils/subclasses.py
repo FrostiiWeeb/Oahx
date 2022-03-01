@@ -94,7 +94,7 @@ class Processing:
 
 class CustomEmbed:
     def __init__(self, *args, **kwargs):
-        self.timestamp = kwargs.pop("timestamp", discord.utils.utcnow())
+        self.timestamp = kwargs.pop("timestamp", datetime.datetime.now())
         self.title = kwargs.pop("title", None)
         self.description = kwargs.pop("description", None)
         self.footer = kwargs.pop("footer", None)
