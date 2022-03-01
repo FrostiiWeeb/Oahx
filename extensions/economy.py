@@ -28,7 +28,13 @@ class PlaceButton(Button):
         view: discord.ui.View,
     ):
         super().__init__(
-            style=discord.ButtonStyle.grey, label=label, disabled=disabled, custom_id=custom_id, url=url, emoji=emoji, row=row
+            style=discord.ButtonStyle.grey,
+            label=label,
+            disabled=disabled,
+            custom_id=custom_id,
+            url=url,
+            emoji=emoji,
+            row=row,
         )
         self.__view = view
         self.ended = False
@@ -40,8 +46,7 @@ class PlaceButton(Button):
         self.__view.add_item(old_self)
         await interaction.response.edit_message(view=self.__view)
         try:
-            user = interaction.message.author
-            print(user.id)
+            user = self.__view.context.author
         except:
             return await interaction.response.send_message("You don't have a bank account!", ephemeral=True)
         try:
