@@ -14,33 +14,61 @@ import datetime
 from typing import *
 
 
-class RobButton(Button):
-    def __init__(self, *, style = ..., label: Optional[str] = None, disabled: bool = False, custom_id: Optional[str] = None, url: Optional[str] = None, emoji: Optional[Union[str, discord.Emoji, discord.PartialEmoji]] = None, row: Optional[int] = None, view: discord.ui.View = None):
-        super().__init__(style=style, label=label, disbaled=disabled, custom_id=custom_id, url=url, emoji=emoji, row=row)
-        self.users_joined: List[] = []
+class PlaceButton(Button):
+    def __init__(
+        self,
+        *,
+        style=...,
+        label: Optional[str] = None,
+        disabled: bool = False,
+        custom_id: Optional[str] = None,
+        url: Optional[str] = None,
+        emoji: Optional[Union[str, discord.Emoji, discord.PartialEmoji]] = None,
+        row: Optional[int] = None,
+        view: discord.ui.View = discord.ui.View,
+    ):
+        super().__init__(
+            style=style, label=label, disbaled=disabled, custom_id=custom_id, url=url, emoji=emoji, row=row
+        )
         self.view = view
         self.ended = False
 
     async def callback(self, interaction: discord.Interaction):
-        if interaction.message.author in self.users_joined:
-            return await interaction.response.send_message("You already joined..", ephemeral=True)
-        self.users_joined.append(interaction.message.author)
-        self.ended = True
-        if self.ended:
-            return await interaction.response.send_message("You have joined the heist!", ephemeral=True)
-        await discord.utils.sleep_until(datetime.datetime.utcnow() + datetime.timedelta(seconds=self.view.end_after))
-        money_gotten = random.randrange(self.view.bank_record['bank'])
-        records = []
-        for u in self.users_joined:
-            records.append((await self.view.context.bot.db.fetchrow("SELECT * FROM economy WHERE user_id = $1", u.id)))
-        
-class RobView(View):
-    def __init__(self, *, timeout: Optional[float] = 180, bank_record = None, context = None):
+        for item in self.view.children:
+            item.disabled = True
+        await interaction.response.edit_message(view=self.view)
+        try:
+            user = interaction.message.author
+        except:
+            return await interaction.response.send_message("You don't have a bank account!", ephemeral=True)
+        try:
+            record = await self.view.context.bot.db.fetchrow("SELECT * FROM economy WHERE user_id = $1", user.id)
+        except:
+            return await interaction.response.send_message("You don't have a bank account!", ephemeral=True)
+        money_given = random.randrange(1000, 3000)
+        await self.view.context.bot.db.execute(
+            "UPDATE economy SET wallet = $1 WHERE user_id = $2", record["wallet"] + money_given, user.id
+        )
+        return await interaction.response.send_message(
+            embed=discord.Embed(
+                colour=self.view.context.bot.colour,
+                title=f"Searched {self.label}",
+                description=f"You found {money_given:,}...",
+            )
+        )
+
+
+class SearchView(View):
+    def __init__(self, *, timeout: Optional[float] = 180, bank_record=None, context=None):
         super().__init__(timeout=timeout)
         self.end_after = 20
         self.bank_record = bank_record
         self.context = context
-        self.add_item(RobButton(label="JOIN THE HEIST!", custom_id="rob_button", view=self))
+        self.robbable_places = ["bedroom", "closet", "school"]
+        for i in range(len(self.robbable_places)):
+            place = random.choice(self.robbable_places)
+            self.robbable_places.remove(place)
+            self.add_item(PlaceButton(label=place))
 
 
 class NotInDB(Exception):
@@ -152,7 +180,7 @@ class Economy(commands.Cog):
                 return await emb.send(ctx.channel)
 
     @commands.command()
-    @commands.cooldown(1, 20, commands.BucketType.user)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def beg(self, ctx):
         money = random.randint(1, 201)
         give_money = random.choice([True, False, True, False])
@@ -191,6 +219,7 @@ class Economy(commands.Cog):
             raise NotInDB()
 
     @commands.command()
+    @commands.cooldown(1, 20, commands.BucketType.user)
     async def rob(self, ctx: commands.Context, user: Union[discord.Member, int]):
         if user == ctx.author:
             return await ctx.send("You wanted to steal from yourself? Nahhhh that won't happen.")
@@ -222,6 +251,10 @@ class Economy(commands.Cog):
             "UPDATE economy SET wallet = $1 WHERE user_id = $2", user_record["wallet"] - money_to_rob, user.id
         )
         return await ctx.send(f"You got away with {self.bot.emoji_dict['coin']}{money_to_rob}...")
+
+    @commands.command(name="search")
+    async def search(self, ctx: commands.Context):
+        return await ctx.send("**`Where do you wanna search?`**", view=SearchView(context=ctx))
 
 
 def setup(bot):
