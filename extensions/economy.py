@@ -8,6 +8,39 @@ from discord.ext import commands
 import datetime
 from discord.ext import commands
 from bot import Oahx
+from discord.ui import Button, View
+from datetime import datetime
+import datetime
+from typing import *
+
+
+class RobButton(Button):
+    def __init__(self, *, style = ..., label: Optional[str] = None, disabled: bool = False, custom_id: Optional[str] = None, url: Optional[str] = None, emoji: Optional[Union[str, discord.Emoji, discord.PartialEmoji]] = None, row: Optional[int] = None, view: discord.ui.View = None):
+        super().__init__(style=style, label=label, disbaled=disabled, custom_id=custom_id, url=url, emoji=emoji, row=row)
+        self.users_joined: List[] = []
+        self.view = view
+        self.ended = False
+
+    async def callback(self, interaction: discord.Interaction):
+        if interaction.message.author in self.users_joined:
+            return await interaction.response.send_message("You already joined..", ephemeral=True)
+        self.users_joined.append(interaction.message.author)
+        self.ended = True
+        if self.ended:
+            return await interaction.response.send_message("You have joined the heist!", ephemeral=True)
+        await discord.utils.sleep_until(datetime.datetime.utcnow() + datetime.timedelta(seconds=self.view.end_after))
+        money_gotten = random.randrange(self.view.bank_record['bank'])
+        records = []
+        for u in self.users_joined:
+            records.append((await self.view.context.bot.db.fetchrow("SELECT * FROM economy WHERE user_id = $1", u.id)))
+        
+class RobView(View):
+    def __init__(self, *, timeout: Optional[float] = 180, bank_record = None, context = None):
+        super().__init__(timeout=timeout)
+        self.end_after = 20
+        self.bank_record = bank_record
+        self.context = context
+        self.add_item(RobButton(label="JOIN THE HEIST!", custom_id="rob_button", view=self))
 
 
 class NotInDB(Exception):
