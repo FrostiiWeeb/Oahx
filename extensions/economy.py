@@ -11,9 +11,9 @@ from bot import Oahx
 
 
 class NotInDB(Exception):
-    def __init__(self, message="You havent created a bank account yet."):
-        super().__init__("You havent created a bank account yet.")
-        self.msg = "You havent created a bank account yet."
+    def __init__(self, message="You have not created a bank account yet."):
+        super().__init__(message)
+        self.msg = message
 
 
 class Economy(commands.Cog):
@@ -156,6 +156,39 @@ class Economy(commands.Cog):
         except Exception as e:
             print(e)
             raise NotInDB()
+
+    @commands.command()
+    async def rob(self, ctx: commands.Context, user: Union[discord.Member, int]):
+        if user == ctx.author:
+            return await ctx.send("You wanted to steal from yourself? Nahhhh that won't happen.")
+        try:
+            user_record = await self.bot.db.fetchrow("SELECT * FROM economy WHERE user_id = $1", user.id)
+            author_record = await self.bot.db.fetchrow("SELECT * FROM economy WHERE user_id = $1", ctx.author.id)
+        except:
+            raise NotInDB("You or the user has not created a bank account.")
+        if user_record["wallet"] < 500:
+            return await ctx.send("They don't have more than 500 in their wallet, not worth it man...")
+        if author_record["wallet"] < 500:
+            return await ctx.send("You must have 500+ in your wallet to rob.")
+        money_to_rob = random.randrange(int(user_record["wallet"]))
+        robbed = random.choice([True, False, True, False])
+        if not robbed:
+            await self.bot.db.execute(
+                "UPDATE economy SET wallet = $1 WHERE user_id = $2", user_record["wallet"] + 250, user.id
+            )
+            await self.bot.db.execute(
+                "UPDATE economy SET wallet = $1 WHERE user_id = $2", author_record["wallet"] - 250, ctx.author.id
+            )
+            return await ctx.reply(
+                f"Your robbery failed, and got caught by the police.. you payed the user {self.bot.emoji_dict['coin']}250."
+            )
+        await self.bot.db.execute(
+            "UPDATE economy SET wallet = $1 WHERE user_id = $2", author_record["wallet"] + money_to_rob, ctx.author.id
+        )
+        await self.bot.db.execute(
+            "UPDATE economy SET wallet = $1 WHERE user_id = $2", user_record["wallet"] - money_to_rob, user.id
+        )
+        return await ctx.send(f"You got away with {self.bot.emoji_dict['coin']}{money_to_rob}...")
 
 
 def setup(bot):
