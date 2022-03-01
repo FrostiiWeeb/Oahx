@@ -41,6 +41,7 @@ class PlaceButton(Button):
         await interaction.response.edit_message(view=self.__view)
         try:
             user = interaction.message.author
+            print(user.id)
         except:
             return await interaction.response.send_message("You don't have a bank account!", ephemeral=True)
         try:
