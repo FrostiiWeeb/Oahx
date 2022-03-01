@@ -94,7 +94,7 @@ class Economy(commands.Cog):
         final_money = int(withdrawed_money)
         async with self.bot.db.acquire() as c:
             bank = await c.fetchrow("SELECT bank FROM economy WHERE user_id = $1", ctx.author.id)
-            new_bank = final_money - bank["bank"]
+            new_bank = bank["bank"] - final_money
             wallet = await c.fetchrow("SELECT wallet FROM economy WHERE user_id = $1", ctx.author.id)
             new_wallet = wallet["wallet"] + final_money
             if str(new_bank).startswith("-"):
