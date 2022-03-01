@@ -180,7 +180,7 @@ class Economy(commands.Cog):
                 "UPDATE economy SET wallet = $1 WHERE user_id = $2", author_record["wallet"] - 250, ctx.author.id
             )
             return await ctx.reply(
-                f"Your robbery failed, and got caught by the police.. you payed the user {self.bot.emoji_dict['coin']}250."
+                f"Your robbery failed, and got caught by the police.. you paid the user {self.bot.emoji_dict['coin']}250."
             )
         await self.bot.db.execute(
             "UPDATE economy SET wallet = $1 WHERE user_id = $2", author_record["wallet"] + money_to_rob, ctx.author.id
