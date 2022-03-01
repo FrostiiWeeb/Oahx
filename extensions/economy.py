@@ -47,15 +47,15 @@ class PlaceButton(Button):
             record = await self.view.context.bot.db.fetchrow("SELECT * FROM economy WHERE user_id = $1", user.id)
         except:
             return await interaction.response.send_message("You don't have a bank account!", ephemeral=True)
-        money_given = random.randrange(1000, 3000)
+        money_given = random.randrange(100, 3000)
         await self.view.context.bot.db.execute(
             "UPDATE economy SET wallet = $1 WHERE user_id = $2", record["wallet"] + money_given, user.id
         )
         return await interaction.response.send_message(
             embed=discord.Embed(
-                colour=self.view.context.bot.colour,
+                colour=self.__view.context.bot.colour,
                 title=f"Searched {self.label}",
-                description=f"You found {money_given:,}...",
+                description=f"You found {self.__view.context.bot.emoji_dict['emoji']}{money_given:,}...",
             )
         )
 
