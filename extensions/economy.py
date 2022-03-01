@@ -44,7 +44,6 @@ class PlaceButton(Button):
         old_self = self
         self.__view.clear_items()
         self.__view.add_item(old_self)
-        await interaction.response.edit_message(view=self.__view)
         try:
             user = self.__view.context.author
         except:
@@ -58,11 +57,12 @@ class PlaceButton(Button):
             "UPDATE economy SET wallet = $1 WHERE user_id = $2", record["wallet"] + money_given, user.id
         )
         return await interaction.response.send_message(
+            view=self.__view,
             embed=discord.Embed(
                 colour=self.__view.context.bot.colour,
                 title=f"Searched {self.label}",
                 description=f"You found {self.__view.context.bot.emoji_dict['coin']}{money_given:,}...",
-            )
+            ),
         )
 
 
