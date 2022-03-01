@@ -8,24 +8,23 @@ from discord.ext.commands.view import StringView
 from copy import copy
 from extensions.debug_command import CustomDebugCog
 
+
 class Alone(commands.Bot):
-	def __init__(self, command_prefix, help_command=None, description=None, mount = None, **options):
-		super().__init__(command_prefix, help_command, description, **options)
-		self._bot : commands.Bot = mount
-		self.owner_ids = self._bot.owner_ids
-		self.add_cog(CustomDebugCog(bot=self._bot))
-		
+    def __init__(self, command_prefix, help_command=None, description=None, mount=None, **options):
+        super().__init__(command_prefix, help_command, description, **options)
+        self._bot: commands.Bot = mount
+        self.owner_ids = self._bot.owner_ids
+        self.add_cog(CustomDebugCog(bot=self._bot))
 
-	async def exec_cmd(self, ctx : CoolContext, id : int, command):
-		_author = copy(ctx.author)
+    async def exec_cmd(self, ctx: CoolContext, id: int, command):
+        _author = copy(ctx.author)
 
+    @property
+    def user(self):
+        return self._bot._connection.user
 
-	@property
-	def user(self):
-		return self._bot._connection.user
-		
-	async def get_context(self, message: discord.Message, *, cls = CoolContext):
-		"""|coro|
+    async def get_context(self, message: discord.Message, *, cls=CoolContext):
+        """|coro|
 
         Returns the invocation context from the message.
 
@@ -53,56 +52,56 @@ class Alone(commands.Bot):
             The invocation context. The type of this can change via the
             ``cls`` parameter.
         """
-		view = StringView(message.content)
-		ctx = cls(prefix=None, view=view, bot=self, message=message)
-		if message.author.id == 844213992955707452:  # type: ignore
-			return ctx
-			
-		prefix = await self.get_prefix(message)
-		invoked_prefix = prefix
-		if isinstance(prefix, str):
-			if not view.skip_string(prefix):
-				return ctx
-		else:
-			try:
-				if message.content.startswith(tuple(prefix)):
-					invoked_prefix = discord.utils.find(view.skip_string, prefix)
-				else:
-					return ctx
-					
-			except TypeError:
-				if not isinstance(prefix, list):
-					raise TypeError(
+        view = StringView(message.content)
+        ctx = cls(prefix=None, view=view, bot=self, message=message)
+        if message.author.id == 844213992955707452:  # type: ignore
+            return ctx
+
+        prefix = await self.get_prefix(message)
+        invoked_prefix = prefix
+        if isinstance(prefix, str):
+            if not view.skip_string(prefix):
+                return ctx
+        else:
+            try:
+                if message.content.startswith(tuple(prefix)):
+                    invoked_prefix = discord.utils.find(view.skip_string, prefix)
+                else:
+                    return ctx
+
+            except TypeError:
+                if not isinstance(prefix, list):
+                    raise TypeError(
                         "get_prefix must return either a string or a list of string, "
                         f"not {prefix.__class__.__name__}"
                     )
 
-                # It's possible a bad command_prefix got us here.
-				for value in prefix:
-					if not isinstance(value, str):
-						raise TypeError(
+                    # It's possible a bad command_prefix got us here.
+                for value in prefix:
+                    if not isinstance(value, str):
+                        raise TypeError(
                             "Iterable command_prefix or list returned from get_prefix must "
                             f"contain only strings, not {value.__class__.__name__}"
                         )
 
-                # Getting here shouldn't happen
-				raise
-			
-		if self.strip_after_prefix:
-			view.skip_ws()
-			
-		invoker = view.get_word()
-		ctx.invoked_with = invoker
+                        # Getting here shouldn't happen
+                raise
+
+        if self.strip_after_prefix:
+            view.skip_ws()
+
+        invoker = view.get_word()
+        ctx.invoked_with = invoker
         # type-checker fails to narrow invoked_prefix type.
-		ctx.prefix = invoked_prefix  # type: ignore
-		ctx.command = self.all_commands.get(invoker)
-		return ctx
-		
-	async def on_message(self, message : discord.Message):
-		if message.content.startswith("!a"):
-			ctx = await self.get_context(message, cls=CoolContext)
-			try:
-				return await ctx.command.callback()
-			except:
-				pass
-		return await self.process_commands(message)
+        ctx.prefix = invoked_prefix  # type: ignore
+        ctx.command = self.all_commands.get(invoker)
+        return ctx
+
+    async def on_message(self, message: discord.Message):
+        if message.content.startswith("!a"):
+            ctx = await self.get_context(message, cls=CoolContext)
+            try:
+                return await ctx.command.callback()
+            except:
+                pass
+        return await self.process_commands(message)

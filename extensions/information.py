@@ -25,9 +25,7 @@ class Information(commands.Cog):
                 centre = "`"
             description += f"{head}{prefix}{centre}help`\n"
 
-        embed: discord.Embed = discord.Embed(
-            colour=6567423, title="Prefix Oahx", description=description
-        )
+        embed: discord.Embed = discord.Embed(colour=6567423, title="Prefix Oahx", description=description)
 
         await ctx.send(embed=embed)
 
@@ -42,9 +40,7 @@ class Information(commands.Cog):
         """
         # Insert the prefix into the database
         await self.bot.redis.hset("prefixes", ctx.guild.name, prefix)
-        async with ctx.bot.embed(
-            title=None, description=f"New prefix: **{prefix}**"
-        ) as emb:
+        async with ctx.bot.embed(title=None, description=f"New prefix: **{prefix}**") as emb:
             await emb.send(ctx.channel)
 
 

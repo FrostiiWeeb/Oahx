@@ -258,9 +258,7 @@ class Bot(commands.Bot):
         Global commands will take up to an hour to update. Guild specific commands will update immediately.
         """
         if not self.application_id:
-            raise RuntimeError(
-                "sync_commands must be called after `run`, `start` or `login`"
-            )
+            raise RuntimeError("sync_commands must be called after `run`, `start` or `login`")
 
         for cog in self.cogs.values():
             if not isinstance(cog, ApplicationCog):
@@ -298,9 +296,7 @@ class Context(Generic[BotT, CogT]):
     - interaction: [``discord.Interaction``](https://discordpy.readthedocs.io/en/master/api.html#discord.Interaction)
     - - The interaction tied to this context."""
 
-    def __init__(
-        self, bot: BotT, command: Command[CogT], interaction: discord.Interaction
-    ):
+    def __init__(self, bot: BotT, command: Command[CogT], interaction: discord.Interaction):
         self.bot = bot
         self.command = command
         self.interaction = interaction
@@ -358,9 +354,7 @@ class Context(Generic[BotT, CogT]):
     ) -> Coroutine[Any, Any, Union[discord.InteractionMessage, discord.WebhookMessage]]:
         ...
 
-    async def send(
-        self, content=MISSING, **kwargs
-    ) -> Union[discord.InteractionMessage, discord.WebhookMessage]:
+    async def send(self, content=MISSING, **kwargs) -> Union[discord.InteractionMessage, discord.WebhookMessage]:
         """
         Responds to the given interaction. If you have responded already, this will use the follow-up webhook instead.
         Parameters ``embed`` and ``embeds`` cannot be specified together.
@@ -447,24 +441,18 @@ class SlashCommand(Command[CogT]):
 
         self.name: str = kwargs.get("name", func.__name__)
 
-        self.description: str = (
-            kwargs.get("description") or func.__doc__ or "No description provided"
-        )
+        self.description: str = kwargs.get("description") or func.__doc__ or "No description provided"
 
         self.guild_id: int | None = kwargs.get("guild_id")
 
         self.parameters = self._build_parameters()
-        self._parameter_descriptions: dict[str, str] = defaultdict(
-            lambda: "No description provided"
-        )
+        self._parameter_descriptions: dict[str, str] = defaultdict(lambda: "No description provided")
 
     def _build_arguments(self, interaction, state):
         if "options" not in interaction.data:
             return {}
 
-        resolved = _parse_resolved_data(
-            interaction, interaction.data.get("resolved"), state
-        )
+        resolved = _parse_resolved_data(interaction, interaction.data.get("resolved"), state)
         result = {}
         for option in interaction.data["options"]:
             value = option["value"]
@@ -494,9 +482,7 @@ class SlashCommand(Command[CogT]):
 
         for k, v in self.func._param_desc_.items():
             if k not in self.parameters:
-                raise TypeError(
-                    f"@describe used to describe a non-existant parameter `{k}`"
-                )
+                raise TypeError(f"@describe used to describe a non-existant parameter `{k}`")
 
             self._parameter_descriptions[k] = v
 
@@ -512,9 +498,7 @@ class SlashCommand(Command[CogT]):
                 ann = param.annotation
 
                 if ann is param.empty:
-                    raise TypeError(
-                        f"missing type annotation for parameter `{param.name}` for command `{self.name}`"
-                    )
+                    raise TypeError(f"missing type annotation for parameter `{param.name}` for command `{self.name}`")
 
                 if isinstance(ann, str):
                     ann = eval(ann)
@@ -544,9 +528,7 @@ class SlashCommand(Command[CogT]):
                     args = get_args(ann)
 
                     if not all(issubclass(k, discord.abc.GuildChannel) for k in args):
-                        raise TypeError(
-                            f"Union parameter types only supported on *Channel types"
-                        )
+                        raise TypeError(f"Union parameter types only supported on *Channel types")
 
                     if len(args) != 3:
                         filtered = [channel_filter[i] for i in args]
@@ -594,9 +576,7 @@ class UserCommand(ContextMenuCommand[CogT]):
     _type = 2
 
 
-def _parse_resolved_data(
-    interaction: discord.Interaction, data, state: discord.state.ConnectionState
-):
+def _parse_resolved_data(interaction: discord.Interaction, data, state: discord.state.ConnectionState):
     if not data:
         return {}
 
@@ -609,9 +589,7 @@ def _parse_resolved_data(
         for id, d in resolved_users.items():
             member_data = resolved_members[id]
             member_data["user"] = d
-            member = discord.Member(
-                data=member_data, guild=interaction.guild, state=state
-            )
+            member = discord.Member(data=member_data, guild=interaction.guild, state=state)
             resolved[int(id)] = member
 
     resolved_channels = data.get("channels")
@@ -649,9 +627,7 @@ class ApplicationCog(commands.Cog, Generic[BotT]):
         self.bot: BotT = bot
         self._commands: dict[str, Command]
 
-    async def slash_command_error(
-        self, ctx: Context[BotT, Self], error: Exception
-    ) -> None:
+    async def slash_command_error(self, ctx: Context[BotT, Self], error: Exception) -> None:
         print("Error occured in command", ctx.command.name, file=sys.stderr)
         traceback.print_exception(type(error), error, error.__traceback__)
 

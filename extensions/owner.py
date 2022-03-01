@@ -40,14 +40,10 @@ class Owner(commands.Cog):
 
         return True
 
-    @commands.group(
-        hidden=True, invoke_without_command=True, brief="Some developer commands!"
-    )
+    @commands.group(hidden=True, invoke_without_command=True, brief="Some developer commands!")
     @commands.is_owner()
     async def dev(self, ctx):
-        await ctx.send(
-            "Hey! These are the dev commands:\n```oahx dev maintenance (m)\oahx dev eval (e)\n```"
-        )
+        await ctx.send("Hey! These are the dev commands:\n```oahx dev maintenance (m)\oahx dev eval (e)\n```")
 
     @dev.command(hidden=True, brief="Evaluate some code!")
     async def eval(self, ctx, *, code: codeblock_converter):
@@ -66,9 +62,7 @@ class Owner(commands.Cog):
             "wrapper": __import__("discord.wrapper"),
         }
         result = await aexec(code.content, local_vars)
-        paginator = OahxPaginator(
-            text=f"```py\n{result}\n```", colour=self.bot.colour, title="Evaluated"
-        )
+        paginator = OahxPaginator(text=f"```py\n{result}\n```", colour=self.bot.colour, title="Evaluated")
         await paginator.paginate(custom_context)
 
     @dev.command(hidden=True, help="Confirm to use maintenance mode.", aliases=["cf"])
@@ -104,9 +98,7 @@ class Owner(commands.Cog):
         thing = tabulate(stuff, tablefmt="psql", headers="keys")
         await ctx.send(f"```\n{thing}\n```")
 
-    @dev.command(
-        help="Turn on or off maintenance mode.", aliases=["maintenance"], hidden=True
-    )
+    @dev.command(help="Turn on or off maintenance mode.", aliases=["maintenance"], hidden=True)
     @commands.is_owner()
     async def m(self, ctx):
         if ctx.author.id in self.bot.owner_ids:
@@ -140,9 +132,7 @@ class Owner(commands.Cog):
 
         @run_in_async_loop
         def process():
-            sub = subprocess.run(
-                ["git", "pull"], check=False, capture_output=True, text=True
-            )
+            sub = subprocess.run(["git", "pull"], check=False, capture_output=True, text=True)
             return sub
 
         @run_in_async_loop
@@ -158,11 +148,7 @@ class Owner(commands.Cog):
         result = await process()
         output = result.stdout
         code = result.returncode
-        [
-            self.bot.reload_extension(cog)
-            for cog in self.bot.owner_cogs
-            if cog != "extensions.__pycach"
-        ]
+        [self.bot.reload_extension(cog) for cog in self.bot.owner_cogs if cog != "extensions.__pycach"]
         async with self.bot.embed(
             title=f"Return Code: {str(code)}",
             description=f"```py\n{output}\n```\nReloaded all extensions.",

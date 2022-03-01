@@ -11,9 +11,7 @@ class Trash(discord.ui.Button):
         super().__init__(label="Trash", row=1, emoji="🗑️")
 
     async def callback(self, interaction: discord.Interaction):
-        await interaction.response.edit_message(
-            "_Original message deleted_", embed=None
-        )
+        await interaction.response.edit_message("_Original message deleted_", embed=None)
 
 
 class Dropdown(discord.ui.Select):
@@ -21,12 +19,8 @@ class Dropdown(discord.ui.Select):
         self.context = ctx
         self.help = help
         options = [
-            discord.SelectOption(
-                label="Home", description="The main menu.", value="Home"
-            ),
-            discord.SelectOption(
-                label="Misc", description="All the misc commands.", value="Misc"
-            ),
+            discord.SelectOption(label="Home", description="The main menu.", value="Home"),
+            discord.SelectOption(label="Misc", description="All the misc commands.", value="Misc"),
             discord.SelectOption(
                 label="Information",
                 description="All the commands for bot info.",
@@ -52,9 +46,7 @@ class Dropdown(discord.ui.Select):
                 description="All the commands for moderation.",
                 value="Moderation",
             ),
-            discord.SelectOption(
-                label="Tags", description="All the commands for tags.", value="Tags"
-            ),
+            discord.SelectOption(label="Tags", description="All the commands for tags.", value="Tags"),
         ]
         super().__init__(
             placeholder="Where do you wanna go",
@@ -80,9 +72,7 @@ class Dropdown(discord.ui.Select):
         filtered = await self.help.filter_commands(commands, sort=True)
         command_signatures = [self.help.get_command_signature(c) for c in filtered]
         commands = "\n".join(command_signatures)
-        pages = discord.Embed(
-            title=self.values[0], description=commands, colour=self.context.bot.colour
-        )
+        pages = discord.Embed(title=self.values[0], description=commands, colour=self.context.bot.colour)
         await interaction.response.edit_message(embed=pages)
 
 
@@ -96,12 +86,8 @@ class DropdownView(discord.ui.View):
         supportinv = f"https://discord.gg/nHc2qRtNsU"
         botinv = "https://discord.com/api/oauth2/authorize?client_id=844213992955707452&permissions=8&scope=bot%20applications.commands"
         self.add_item(Dropdown(ctx, help))
-        self.b1 = discord.ui.Button(
-            label="Bot Invite", url=botinv, style=discord.ButtonStyle.blurple
-        )
-        self.b2 = discord.ui.Button(
-            label="Support", url=supportinv, style=discord.ButtonStyle.green
-        )
+        self.b1 = discord.ui.Button(label="Bot Invite", url=botinv, style=discord.ButtonStyle.blurple)
+        self.b2 = discord.ui.Button(label="Support", url=supportinv, style=discord.ButtonStyle.green)
         self.add_item(self.b1)
         self.add_item(self.b2)
 
@@ -119,9 +105,7 @@ class DropdownView(discord.ui.View):
             self.context.author.id,
         ):
             return True
-        await interaction.response.send_message(
-            "This command wasnt ran by you, sorry!", ephemeral=True
-        )
+        await interaction.response.send_message("This command wasnt ran by you, sorry!", ephemeral=True)
         return False
 
     async def on_timeout(self):
@@ -163,10 +147,7 @@ class MyHelpCommand(commands.HelpCommand):
                 [
                     c.name
                     if c.parent
-                    else "\n".join(
-                        self.get_command_signature(g, group_main=g.full_parent_name)
-                        for g in c.commands
-                    )
+                    else "\n".join(self.get_command_signature(g, group_main=g.full_parent_name) for g in c.commands)
                     for c in cog.get_commands()
                 ]
             ),
@@ -176,27 +157,18 @@ class MyHelpCommand(commands.HelpCommand):
         await channel.send(embed=embed)
 
     async def send_group_help(self, group):
-        embed = discord.Embed(
-            title=group.qualified_name, colour=self.context.bot.colour
-        )
+        embed = discord.Embed(title=group.qualified_name, colour=self.context.bot.colour)
         embed.add_field(name="Help", value="A command, yeah")
         embed.add_field(
             name="Sub-commands",
-            value="\n".join(
-                [
-                    self.get_command_signature(g, group_main=g.full_parent_name)
-                    for g in group.commands
-                ]
-            ),
+            value="\n".join([self.get_command_signature(g, group_main=g.full_parent_name) for g in group.commands]),
             inline=False,
         )
         channel = self.get_destination()
         await channel.send(embed=embed)
 
     async def send_command_help(self, command):
-        embed = discord.Embed(
-            title=self.get_command_signature(command), colour=self.context.bot.colour
-        )
+        embed = discord.Embed(title=self.get_command_signature(command), colour=self.context.bot.colour)
         embed.description = command.brief
         alias = command.aliases
         if alias:

@@ -14,9 +14,7 @@ class Misc(commands.Cog):
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
         await database.connect()
         print(before, after)
-        self.last_snipe = SnipedMessage(
-            after.author, before, snipe_before=before.content, snipe_after=after.content
-        )
+        self.last_snipe = SnipedMessage(after.author, before, snipe_before=before.content, snipe_after=after.content)
         await self.bot.editsnipes.objects.create(
             message_id=before.id,
             before_content=before.content,
@@ -38,9 +36,7 @@ class Misc(commands.Cog):
         exe = None
         err = False
         try:
-            exe = await self.bot.snipes.objects.get(
-                pk=snipe_id or self.last_snipe.message.id
-            )
+            exe = await self.bot.snipes.objects.get(pk=snipe_id or self.last_snipe.message.id)
         except:
             exe = self.last_snipe
             err = True
@@ -66,9 +62,7 @@ class Misc(commands.Cog):
         shard_id = ctx.guild.shard_id
         shard = self.bot.get_shard(shard_id)
         shard_ping = round(shard.latency * 1000)
-        shard_servers = len(
-            [guild for guild in self.bot.guilds if guild.shard_id == shard_id]
-        )
+        shard_servers = len([guild for guild in self.bot.guilds if guild.shard_id == shard_id])
         async with ctx.bot.embed(
             title="About Oahx",
             description=f"Hello! Im Oahx, made by `jotte, FrostiiWeeb, MrArkon, NotFahad`, this message is stuff about me.\n\n```\nGuilds: {len(ctx.bot.guilds)}\nUsers: {len(ctx.bot.users)}\nShard [{shard_id}] Guilds: {shard_servers}\n```",
@@ -84,9 +78,7 @@ class Misc(commands.Cog):
         shard_id = ctx.guild.shard_id
         shard = self.bot.get_shard(shard_id)
         shard_ping = round(shard.latency * 1000)
-        shard_servers = len(
-            [guild for guild in self.bot.guilds if guild.shard_id == shard_id]
-        )
+        shard_servers = len([guild for guild in self.bot.guilds if guild.shard_id == shard_id])
         msg = await ctx.send(f":ping_pong:...")
         embed = discord.Embed(
             colour=discord.Colour.blurple(),
@@ -104,9 +96,7 @@ class Misc(commands.Cog):
         ) as e:
             await e.send(ctx.channel)
 
-    @commands.command(
-        name="credit", aliases=["crdit"], brief="This might be a surprise, again."
-    )
+    @commands.command(name="credit", aliases=["crdit"], brief="This might be a surprise, again.")
     async def suscr(self, ctx):
         async with ctx.bot.embed(
             title="Uhhhh",

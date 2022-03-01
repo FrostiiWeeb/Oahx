@@ -17,13 +17,9 @@ class Fun(commands.Cog):
 
         try:
             start = time.perf_counter()
-            msg = await ctx.send(
-                embed=discord.Embed(title="Get the :cookie:!", description="Go!")
-            )
+            msg = await ctx.send(embed=discord.Embed(title="Get the :cookie:!", description="Go!"))
             await msg.add_reaction("🍪")
-            reaction, user = await self.bot.wait_for(
-                "reaction_add", timeout=20.0, check=check
-            )
+            reaction, user = await self.bot.wait_for("reaction_add", timeout=20.0, check=check)
             if str(reaction.emoji) == "🍪":
                 end = time.perf_counter()
                 embed = discord.Embed(

@@ -6,6 +6,7 @@ from argparse import ArgumentParser
 import threading, typing, asyncio
 from datetime import datetime
 
+
 class Task:
     def __init__(self, id: int) -> None:
         self.id = id
@@ -28,33 +29,29 @@ class tasks:
         self.loops = set()
         self.ab_loop: asyncio.AbstractEventLoop = asyncio.get_running_loop()
         self.running_tasks: typing.Set[Task] = set()
-        self.current_task_id : int = 0
+        self.current_task_id: int = 0
 
     async def wait_run(self, loop: Loop, coro, executor: bool = False):
         if loop.stopped:
             return
         if executor:
-            time = datetime.utcnow() + __import__("datetime").timedelta(
-                seconds=loop.timeout
-            )
+            time = datetime.utcnow() + __import__("datetime").timedelta(seconds=loop.timeout)
             await self.ab_loop.run_in_executor(None, coro)
             self.current_task_id += 1
             self.running_tasks.add(Task(id=self.current_task_id))
             await discord.utils.sleep_until(time)
             await self.wait_run(loop, coro, executor=executor)
         else:
-            time = datetime.utcnow() + __import__("datetime").timedelta(
-                seconds=loop.timeout
-            )
+            time = datetime.utcnow() + __import__("datetime").timedelta(seconds=loop.timeout)
             await coro()
             self.current_task_id += 1
             self.running_tasks.add(Task(id=self.current_task_id))
             await discord.utils.sleep_until(time)
             await self.wait_run(loop, coro, executor=executor)
 
-    def stop_loop(self, name : str):
+    def stop_loop(self, name: str):
         for l in self.loops:
-            l : Loop = l
+            l: Loop = l
             if l.name == name:
                 l.stopped = True
 
@@ -100,22 +97,26 @@ class tasks:
 
         return wrapper
 
+
 import pomice
 
+
 class Queue(asyncio.Queue):
-    def __init__(self, player : pomice.Player, playlist : pomice.Playlist) -> None:
+    def __init__(self, player: pomice.Player, playlist: pomice.Playlist) -> None:
         super().__init__(loop=asyncio.get_running_loop())
-        self.playlist : pomice.Player = playlist
+        self.playlist: pomice.Player = playlist
         self.player = player
         self.tracks = [track for track in self.playlist]
         self.current_track = next(self.tracks)
 
     async def next(self):
         await self.player.play(track=self.current_track)
+
+
 class Player(pomice.Player):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.queue : Queue = None
+        self.queue: Queue = None
 
     async def next(self):
         return await self.queue.next()

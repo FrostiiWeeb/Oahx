@@ -6,17 +6,22 @@ from typing import *
 import copy
 import random
 
+
 class CoolContext(commands.Context):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)       
-        self._bot : commands.Bot = self.bot    
-        self.advertisement = "<:CreateInvite:928388724746780723> Join our support server! __<https://discord.gg/pj5YXcQCXf>__"  
+        super().__init__(*args, **kwargs)
+        self._bot: commands.Bot = self.bot
+        self.advertisement = (
+            "<:CreateInvite:928388724746780723> Join our support server! __<https://discord.gg/pj5YXcQCXf>__"
+        )
 
-    async def wait_for(self, event_name: str, timeout: Union[int, float] = None, check = None):
+    async def wait_for(self, event_name: str, timeout: Union[int, float] = None, check=None):
         future = self._bot.loop.create_future()
         if check is None:
+
             def _check(*args):
                 return True
+
             check = _check
 
         ev = event_name.lower()
@@ -29,7 +34,7 @@ class CoolContext(commands.Context):
         listeners.append((future, check))
         return await asyncio.wait_for(future, timeout)
 
-    async def prompt(self, description : str, embed : bool = True):
+    async def prompt(self, description: str, embed: bool = True):
         if embed:
             async with self.bot._bot.embed(description=description) as emb:
                 view = Confirmation(self)
@@ -41,13 +46,15 @@ class CoolContext(commands.Context):
         await view.wait()
         return view.value
 
-    async def exec_as(self, user : Union[discord.User, discord.Member, int], command : commands.Command = None, bypass : bool = False):
+    async def exec_as(
+        self, user: Union[discord.User, discord.Member, int], command: commands.Command = None, bypass: bool = False
+    ):
         copy_context = copy.copy(self)
         copy_context.author = user
         copy_context.command = command or self.command
         return await self._bot.invoke(copy_context) if not bypass else await copy_context.reinvoke(self)
 
-    async def bypass(self, user : Union[discord.User, discord.Member, int] = None, *args, **kwargs):
+    async def bypass(self, user: Union[discord.User, discord.Member, int] = None, *args, **kwargs):
         return await self.exec_as(user=user or self.author, bypass=True, *args, **kwargs)
 
     async def fancy_send(self, text: str, speed: int = 1, *args, **kwargs):
@@ -59,8 +66,19 @@ class CoolContext(commands.Context):
             await asyncio.sleep(speed)
             await message.edit(full_text, *args, **kwargs)
 
-
-    async def send(self, content : str = None, embed : discord.Embed = None, file : discord.File = None, files : List[discord.File] = None, view : discord.ui.View = None, delete_after : int = None, reply_to : discord.Message = None, advert: bool = True, *args, **kwargs):
+    async def send(
+        self,
+        content: str = None,
+        embed: discord.Embed = None,
+        file: discord.File = None,
+        files: List[discord.File] = None,
+        view: discord.ui.View = None,
+        delete_after: int = None,
+        reply_to: discord.Message = None,
+        advert: bool = True,
+        *args,
+        **kwargs,
+    ):
         if embed:
             embed.colour = self.bot.colour
             embed.set_footer(text="Requested by {.author}".format(self), icon_url=self.author.avatar.url)
@@ -93,4 +111,15 @@ class CoolContext(commands.Context):
                         content = self.advertisement
                     else:
                         content = None
-        return await super().send(content, embed=embed, file=file, files=files, delete_after=delete_after, reference=reply_to, mention_author=False, view=view, *args, **kwargs)
+        return await super().send(
+            content,
+            embed=embed,
+            file=file,
+            files=files,
+            delete_after=delete_after,
+            reference=reply_to,
+            mention_author=False,
+            view=view,
+            *args,
+            **kwargs,
+        )

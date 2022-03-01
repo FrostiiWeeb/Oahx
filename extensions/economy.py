@@ -25,9 +25,7 @@ class Economy(commands.Cog):
         accounts = await ctx.bot.db.fetch("SELECT * FROM economy")
         for rec in accounts:
             if rec["user_id"] == ctx.author.id:
-                async with ctx.bot.embed(
-                    title="Error", description="You already have an account."
-                ) as emb:
+                async with ctx.bot.embed(title="Error", description="You already have an account.") as emb:
                     return await emb.send(ctx.channel)
         await self.bot.db.execute(
             "INSERT INTO economy(user_id, wallet, bank) VAlUES ($1, $2, $3)",
@@ -37,10 +35,7 @@ class Economy(commands.Cog):
         )
         async with self.bot.processing(ctx):
             await asyncio.sleep(3)
-            async with ctx.bot.embed(
-                title="Bank",
-                description=f"You have created an account!"
-            ) as emb:
+            async with ctx.bot.embed(title="Bank", description=f"You have created an account!") as emb:
                 return await emb.send(ctx.channel)
 
     @commands.command(aliases=["bal"], brief="Get the balance of a user!")
@@ -48,9 +43,7 @@ class Economy(commands.Cog):
         user = user or ctx.author
 
         try:
-            data = await self.bot.db.fetchrow(
-                "SELECT * FROM economy WHERE user_id = $1", user.id
-            )
+            data = await self.bot.db.fetchrow("SELECT * FROM economy WHERE user_id = $1", user.id)
 
             wallet = int(data["wallet"])
             bank = int(data["bank"])
@@ -70,13 +63,9 @@ class Economy(commands.Cog):
         deposited_money = money.strip(",")
         final_money = int(deposited_money)
         async with self.bot.db.acquire() as c:
-            bank = await c.fetchrow(
-                "SELECT bank FROM economy WHERE user_id = $1", ctx.author.id
-            )
+            bank = await c.fetchrow("SELECT bank FROM economy WHERE user_id = $1", ctx.author.id)
             new_bank = final_money + bank["bank"]
-            wallet = await c.fetchrow(
-                "SELECT wallet FROM economy WHERE user_id = $1", ctx.author.id
-            )
+            wallet = await c.fetchrow("SELECT wallet FROM economy WHERE user_id = $1", ctx.author.id)
             new_wallet = wallet["wallet"] - final_money
             if str(new_wallet).startswith("-"):
                 await ctx.send(
@@ -104,13 +93,9 @@ class Economy(commands.Cog):
         withdrawed_money = money.strip(",")
         final_money = int(withdrawed_money)
         async with self.bot.db.acquire() as c:
-            bank = await c.fetchrow(
-                "SELECT bank FROM economy WHERE user_id = $1", ctx.author.id
-            )
+            bank = await c.fetchrow("SELECT bank FROM economy WHERE user_id = $1", ctx.author.id)
             new_bank = final_money - bank["bank"]
-            wallet = await c.fetchrow(
-                "SELECT wallet FROM economy WHERE user_id = $1", ctx.author.id
-            )
+            wallet = await c.fetchrow("SELECT wallet FROM economy WHERE user_id = $1", ctx.author.id)
             new_wallet = wallet["wallet"] + final_money
             if str(new_bank).startswith("-"):
                 await ctx.send(
@@ -138,24 +123,26 @@ class Economy(commands.Cog):
     async def beg(self, ctx):
         money = random.randint(1, 201)
         give_money = random.choice([True, False, True, False])
-        phrases = ["Im too poor", "Imagine begging lmao get a job kid", '"I only give money to my developers"\n - Oahx 2022', "Give me your phone first"]
+        phrases = [
+            "Im too poor",
+            "Imagine begging lmao get a job kid",
+            '"I only give money to my developers"\n - Oahx 2022',
+            "Give me your phone first",
+        ]
         footers = ["he needs to beg too lol", "he's right", "why", "is this a robbery?"]
         zipped = zip(phrases, footers)
-        choice = random.choice(zipped)
+        things = []
+        for phrase, footer in zipped:
+            things.append((phrase, footer))
+        choice = random.choice(things)
         phrase, footer = choice[0], choice[1]
         try:
-            data = await self.bot.db.fetchrow(
-                "SELECT * FROM economy WHERE user_id = $1", ctx.author.id
-            )
+            data = await self.bot.db.fetchrow("SELECT * FROM economy WHERE user_id = $1", ctx.author.id)
 
             wallet = data["wallet"]
             bank = data["bank"]
             if not give_money:
-                return await ctx.send(
-                    embed=discord.Embed(
-                        title="LMAO", description=phrase, footer=footer
-                    )
-                )
+                return await ctx.send(embed=discord.Embed(title="LMAO", description=phrase, footer=footer))
             await ctx.send(
                 embed=discord.Embed(
                     description=f"You earned **{money}{self.bot.emoji_dict['coin']}**!",

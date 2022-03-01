@@ -16,16 +16,12 @@ class Moderation(discord.ext.commands.Cog):
         # automate retrieval and possible instantiation of muted role
         mute_role = discord.utils.get(guild.roles, name="Muted")
         if not mute_role:
-            mute_role = await guild.create_role(
-                name="Muted", permissions=self.muted_perms
-            )
+            mute_role = await guild.create_role(name="Muted", permissions=self.muted_perms)
             return mute_role
 
     async def do_action(self, ctx, action, author, user, reason):
         user = await self.bot.fetch_user(user)
-        return await ctx.embed(
-            description=f"**New {action}**\nUser: **{user}**\nReason: **{reason}**"
-        )
+        return await ctx.embed(description=f"**New {action}**\nUser: **{user}**\nReason: **{reason}**")
 
     @commands.command(aliases=["tm"])
     @commands.has_permissions(manage_guild=True)
@@ -48,9 +44,7 @@ class Moderation(discord.ext.commands.Cog):
     @commands.command(aliases=["b"])
     @commands.has_permissions(ban_members=True, kick_members=True)
     @commands.bot_has_permissions(ban_members=True, kick_members=True)
-    async def ban(
-        self, ctx, target: Union[discord.Member, int] = None, *, reason="Not Provided."
-    ):
+    async def ban(self, ctx, target: Union[discord.Member, int] = None, *, reason="Not Provided."):
         """
         Kicks a user
         """
@@ -68,9 +62,7 @@ class Moderation(discord.ext.commands.Cog):
     @commands.command(aliases=["b"])
     @commands.has_permissions(ban_members=True)
     @commands.bot_has_permissions(ban_members=True)
-    async def ban(
-        self, ctx, target: Union[discord.Member, int] = None, *, reason="Not Provided."
-    ):
+    async def ban(self, ctx, target: Union[discord.Member, int] = None, *, reason="Not Provided."):
         """
         Bans a user
         """
@@ -95,21 +87,15 @@ class Moderation(discord.ext.commands.Cog):
             return await ctx.send("You can't do that to yourself!")
         member = discord.Object(id=user)
         try:
-            await ctx.guild.unban(
-                member, reason=f"{ctx.author} [{ctx.author.id}] - {reason}"
-            )
+            await ctx.guild.unban(member, reason=f"{ctx.author} [{ctx.author.id}] - {reason}")
             await self.do_action(ctx, "Unban", ctx.author, user.id, reason)
         except discord.NotFound:
-            return await ctx.send(
-                embed=discord.Embed(description="That user doesn't seem to be banned.")
-            )
+            return await ctx.send(embed=discord.Embed(description="That user doesn't seem to be banned."))
 
     @commands.command(aliases=["gstart"])
     @commands.is_owner()
     async def giveaway(self, ctx):
-        await ctx.send(
-            "Let's start with this giveaway! Answer these questions within 15 seconds!"
-        )
+        await ctx.send("Let's start with this giveaway! Answer these questions within 15 seconds!")
         questions = [
             "Which channel should it be hosted in?",
             "What should be the duration of the giveaway?",
@@ -127,9 +113,7 @@ class Moderation(discord.ext.commands.Cog):
             try:
                 msg = await self.bot.wait_for("message", timeout=15.0, check=check)
             except asyncio.TimeoutError:
-                return await ctx.send(
-                    "You didn't answer in time, please be quicker next time!"
-                )
+                return await ctx.send("You didn't answer in time, please be quicker next time!")
             else:
                 answers.append(msg.content)
         try:
@@ -140,12 +124,8 @@ class Moderation(discord.ext.commands.Cog):
 
         time = await TimeConverter().convert(str(answers[1]))
         prize = answers[2]
-        await ctx.send(
-            f"The Giveaway will be in {channel.mention} and will last {answers[1]}!"
-        )
-        embed = discord.Embed(
-            title="Giveaway!", description=f"{prize}", color=ctx.bot.color
-        )
+        await ctx.send(f"The Giveaway will be in {channel.mention} and will last {answers[1]}!")
+        embed = discord.Embed(title="Giveaway!", description=f"{prize}", color=ctx.bot.color)
         embed.add_field(name="Hosted by:", value=ctx.author.mention)
         embed.set_footer(text=f"Ends {answers[1]} from now!")
         my_msg = await channel.send(embed=embed)
@@ -155,11 +135,7 @@ class Moderation(discord.ext.commands.Cog):
         users = await new_msg.reactions[0].users().flatten()
         users.pop(users.index(self.bot.user))
         winner = random.choice(users)
-        await channel.send(
-            embed=discord.Embed(
-                description=f"Congratulations! {winner.mention} won {prize}!"
-            )
-        )
+        await channel.send(embed=discord.Embed(description=f"Congratulations! {winner.mention} won {prize}!"))
 
     @commands.command()
     @commands.has_permissions(kick_members=True)

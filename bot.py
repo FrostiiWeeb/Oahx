@@ -1,4 +1,3 @@
-
 import discord, asyncpg, asyncio, datetime, os, time, copy, re
 from discord.ext import commands
 
@@ -20,6 +19,7 @@ from utils.mounting import Mount
 
 database = databases.Database("postgresql://root:my_password@localhost/oahx")
 metadata = orm.ModelRegistry(database=database)
+
 
 class Prefixes(orm.Model):
     tablename = "prefixes"
@@ -48,14 +48,12 @@ class EditSnipes(orm.Model):
         "after_content": orm.String(max_length=2000),
     }
 
+
 class WhichBot(orm.Model):
     tablename = "whichbot"
     registry = metadata
 
-    fields = {
-        "user_id": orm.BigInteger(primary_key=True),
-        "bot": orm.Integer()
-    }
+    fields = {"user_id": orm.BigInteger(primary_key=True), "bot": orm.Integer()}
 
 
 os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
@@ -64,11 +62,19 @@ os.environ["JISHAKU_HIDE"] = "True"
 
 
 from alone import Alone
+
+
 async def run():
     bot = Oahx(command_prefix=get_prefix, intents=discord.Intents.all(), db=None)
     bot.ipc.start()
-    subbot = Alone(command_prefix="!a", mount=bot, help_command=commands.MinimalHelpCommand(), intents=discord.Intents(members=True, presences=True))
+    subbot = Alone(
+        command_prefix="!a",
+        mount=bot,
+        help_command=commands.MinimalHelpCommand(),
+        intents=discord.Intents(members=True, presences=True),
+    )
     import orm
+
     subbot.http = discord.http.HTTPClient()
     await subbot.http.static_login("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")
     await metadata.create_all()
@@ -80,8 +86,9 @@ async def run():
     bot.meta_orm = metadata
     bot.mounter.mount(bot)
     bot.mounter.mount(subbot)
+
     @subbot.command()
-    async def switch(ctx, bot : str):
+    async def switch(ctx, bot: str):
         """
         Allows you to switch between bots: {alone, oahx}
         """
@@ -90,17 +97,32 @@ async def run():
         bots = ["oahx", "alone"]
         if bot == bots[0]:
             try:
-                await ctx.bot._bot.db.execute("INSERT INTO whichbot(user_id, bot) VALUES ($1, $2)", ctx.message.author.id, 1)
+                await ctx.bot._bot.db.execute(
+                    "INSERT INTO whichbot(user_id, bot) VALUES ($1, $2)", ctx.message.author.id, 1
+                )
             except:
-                await ctx.bot._bot.db.execute("UPDATE whichbot SET user_id = $1, bot = $2 WHERE user_id = $3", ctx.message.author.id, 1, ctx.message.author.id)
+                await ctx.bot._bot.db.execute(
+                    "UPDATE whichbot SET user_id = $1, bot = $2 WHERE user_id = $3",
+                    ctx.message.author.id,
+                    1,
+                    ctx.message.author.id,
+                )
         elif bot == bots[1]:
             try:
-                await ctx.bot._bot.db.execute("INSERT INTO whichbot(user_id, bot) VALUES ($1, $2)", ctx.message.author.id, 2)
+                await ctx.bot._bot.db.execute(
+                    "INSERT INTO whichbot(user_id, bot) VALUES ($1, $2)", ctx.message.author.id, 2
+                )
             except:
-                await ctx.bot._bot.db.execute("UPDATE whichbot SET user_id = $1, bot = $2 WHERE user_id = $3", ctx.message.author.id, 2, ctx.message.author.id)
+                await ctx.bot._bot.db.execute(
+                    "UPDATE whichbot SET user_id = $1, bot = $2 WHERE user_id = $3",
+                    ctx.message.author.id,
+                    2,
+                    ctx.message.author.id,
+                )
         return await ctx.reply(f"You have now switched to {bot}.")
+
     @bot.command()
-    async def switch(ctx : CoolContext, bot : str):
+    async def switch(ctx: CoolContext, bot: str):
         """
         Allows you to switch between bots: {alone, oahx}
         """
@@ -111,29 +133,33 @@ async def run():
             try:
                 await ctx.bot.db.execute("INSERT INTO whichbot(user_id, bot) VALUES ($1, $2)", ctx.message.author.id, 1)
             except:
-                await ctx.bot.db.execute("UPDATE whichbot SET user_id = $1, bot = $2 WHERE user_id = $3", ctx.message.author.id, 1, ctx.message.author.id)
+                await ctx.bot.db.execute(
+                    "UPDATE whichbot SET user_id = $1, bot = $2 WHERE user_id = $3",
+                    ctx.message.author.id,
+                    1,
+                    ctx.message.author.id,
+                )
         elif bot == bots[1]:
             try:
                 await ctx.bot.db.execute("INSERT INTO whichbot(user_id, bot) VALUES ($1, $2)", ctx.message.author.id, 2)
             except:
-                await ctx.bot.db.execute("UPDATE whichbot SET user_id = $1, bot = $2 WHERE user_id = $3", ctx.message.author.id, 2, ctx.message.author.id)
+                await ctx.bot.db.execute(
+                    "UPDATE whichbot SET user_id = $1, bot = $2 WHERE user_id = $3",
+                    ctx.message.author.id,
+                    2,
+                    ctx.message.author.id,
+                )
         return await ctx.reply(f"You have now switched to {bot}.")
 
-    bot.db = await asyncpg.create_pool(
-        dsn="postgresql://root:my_password@localhost/oahx", max_queries=100000000
-    )
+    bot.db = await asyncpg.create_pool(dsn="postgresql://root:my_password@localhost/oahx", max_queries=100000000)
     redis = await asyncrd.connect("redis://localhost:7000")
     bot.redis = redis
     await bot.db.execute("CREATE TABLE IF NOT EXISTS logging(guild_id BIGINT, channel_id BIGINT)")
-    await bot.db.execute(
-        "CREATE TABLE IF NOT EXISTS prefixes(guild_id bigint PRIMARY KEY, prefix TEXT)"
-    )
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS prefixes(guild_id bigint PRIMARY KEY, prefix TEXT)")
     await bot.db.execute(
         "CREATE TABLE IF NOT EXISTS numbers(number TEXT PRIMARY KEY, channel_id bigint, name TEXT, id bigint)"
     )
-    await bot.db.execute(
-        "CREATE TABLE IF NOT EXISTS premium_users(code TEXT PRIMARY KEY, user_id bigint, name TEXT)"
-    )
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS premium_users(code TEXT PRIMARY KEY, user_id bigint, name TEXT)")
     await bot.db.execute(
         "CREATE TABLE IF NOT EXISTS application_setup(guild_id bigint PRIMARY KEY, channel_id bigint, skill_dm boolean)"
     )
@@ -143,44 +169,33 @@ async def run():
     await bot.db.execute(
         "CREATE TABLE IF NOT EXISTS tags(user_id bigint, name text PRIMARY KEY, content text, author TEXT, timestamp BIGINT)"
     )
-    await bot.db.execute(
-        "CREATE TABLE IF NOT EXISTS economy(user_id bigint PRIMARY KEY, wallet bigint, bank bigint)"
-    )
-    await bot.db.execute(
-        "CREATE TABLE IF NOT EXISTS cooldown_channel(channel_id bigint, command TEXT PRIMARY KEY)"
-    )
-    await bot.db.execute(
-        "CREATE TABLE IF NOT EXISTS cooldown_user(user_id bigint, command TEXT PRIMARY KEY)"
-    )
-    await bot.db.execute(
-        "CREATE TABLE IF NOT EXISTS cooldown_guild(guild_id bigint, command TEXT PRIMARY KEY)"
-    )
-    await bot.db.execute(
-        "CREATE TABLE IF NOT EXISTS whichbot(user_id bigint PRIMARY KEY, bot TEXT)"
-    )
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS economy(user_id bigint PRIMARY KEY, wallet bigint, bank bigint)")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS cooldown_channel(channel_id bigint, command TEXT PRIMARY KEY)")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS cooldown_user(user_id bigint, command TEXT PRIMARY KEY)")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS cooldown_guild(guild_id bigint, command TEXT PRIMARY KEY)")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS whichbot(user_id bigint PRIMARY KEY, bot TEXT)")
     try:
         await bot.start("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")
     except KeyboardInterrupt:
         await bot.db.close()
         await bot.close()
+
+
 class Oahx(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
         super().__init__(
-            allowed_mentions=discord.AllowedMentions(
-                roles=False, users=False, replied_user=False
-            ),
+            allowed_mentions=discord.AllowedMentions(roles=False, users=False, replied_user=False),
             case_insensitive=True,
             *args,
             **kwargs,
         )
         import wavelink
+
         self.__users = {}
         self.mounter = Mount(self)
         self.wavelink = wavelink.NodePool()
         self.pomice = pomice.NodePool()
-        self.__extensions = [
-            f"extensions.{item[:-3]}" for item in os.listdir("./extensions")
-        ]
+        self.__extensions = [f"extensions.{item[:-3]}" for item in os.listdir("./extensions")]
         self.owner_cogs = self.__extensions
         self.help_command = None
         self.db = kwargs.pop("db", None)
@@ -220,18 +235,12 @@ class Oahx(commands.AutoShardedBot):
         self.exts = set()
         self.mounts = {}
         self.processing = Processing
-        [
-            self.load_extension(cog)
-            for cog in self.__extensions
-            if cog != "extensions.__pycach"
-        ]
+        [self.load_extension(cog) for cog in self.__extensions if cog != "extensions.__pycach"]
         self.cache = Cache(self.loop)
         self.cache.insert("prefixes", {})
         self.bot_id = 844213992955707452
         self.mentions = [f"<@{self.bot_id}>", f"<@!{self.bot_id}>"]
-        self.colour, self.color = discord.Colour.from_rgb(
-            100, 53, 255
-        ), discord.Colour.from_rgb(100, 53, 255)
+        self.colour, self.color = discord.Colour.from_rgb(100, 53, 255), discord.Colour.from_rgb(100, 53, 255)
         self.emoji_dict = {
             "greyTick": "<:greyTick:596576672900186113>",
             "greenTick": "<:greenTick:820316551340490752>",
@@ -260,7 +269,7 @@ class Oahx(commands.AutoShardedBot):
             channel = await super().fetch_user(user_id)
         return user
 
-    async def on_message(self, message : discord.Message):
+    async def on_message(self, message: discord.Message):
         ctx = message
         whichbot = await self.db.fetchrow("SELECT * FROM whichbot WHERE user_id = $1", ctx.author.id)
         if not whichbot:
@@ -279,7 +288,7 @@ class Oahx(commands.AutoShardedBot):
                     return await self.invoke(context)
                 return await self.process_commands(message)
         else:
-            return self.mounts[int(whichbot["bot"])-1].dispatch("message", message=message)
+            return self.mounts[int(whichbot["bot"]) - 1].dispatch("message", message=message)
 
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
 
@@ -317,7 +326,7 @@ class Oahx(commands.AutoShardedBot):
         )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
     loop = asyncio.new_event_loop()
     asyncio.ensure_future(run(), loop=loop)

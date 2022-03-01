@@ -17,20 +17,14 @@ class PaginatorButton(discord.ui.View):
     # When the confirm button is pressed, set the inner value to `True` and
     # stop the View from listening to more input.
     # We also send the user an ephemeral message that we're confirming their choice.
-    @discord.ui.button(
-        style=discord.ButtonStyle.green, emoji="<:oahx_left:859143802005356615>"
-    )
-    async def confirm(
-        self, button: discord.ui.Button, interaction: discord.Interaction
-    ):
+    @discord.ui.button(style=discord.ButtonStyle.green, emoji="<:oahx_left:859143802005356615>")
+    async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
         await interaction.response.edit_message("Confirming", ephemeral=True)
         self.value = True
         self.stop()
 
     # This one is similar to the confirmation button except sets the inner value to `False`
-    @discord.ui.button(
-        style=discord.ButtonStyle.grey, emoji="<:oahx_stop:859143862089023528>"
-    )
+    @discord.ui.button(style=discord.ButtonStyle.grey, emoji="<:oahx_stop:859143862089023528>")
     async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
         await interaction.response.send_message("Cancelling", ephemeral=True)
         self.value = False
@@ -106,9 +100,7 @@ class OahxPaginator:
                 try:
                     reaction, user = await ctx.bot.wait_for(
                         "reaction_add",
-                        check=lambda r, u: u == ctx.author
-                        and u != ctx.bot.user
-                        and not u.bot,
+                        check=lambda r, u: u == ctx.author and u != ctx.bot.user and not u.bot,
                         timeout=30.0,
                     )
                 except asyncio.TimeoutError:
@@ -148,15 +140,11 @@ class OahxPaginator:
                 try:
                     reaction, user = await ctx.bot.wait_for(
                         "reaction_add",
-                        check=lambda r, u: u == ctx.author
-                        and u != ctx.bot.user
-                        and not u.bot,
+                        check=lambda r, u: u == ctx.author and u != ctx.bot.user and not u.bot,
                         timeout=30.0,
                     )
                 except asyncio.TimeoutError:
-                    async with ctx.bot.embed(
-                        title="Error", description="You took too long to respond."
-                    ) as emb:
+                    async with ctx.bot.embed(title="Error", description="You took too long to respond.") as emb:
                         await emb.send(ctx.channel)
                         break
                 if str(reaction.emoji.name) == "oahx_stop":
@@ -168,14 +156,10 @@ class OahxPaginator:
                         pass
                     else:
                         self.current_page -= 1
-                        await self.message.edit(
-                            embed=text_wrapped[self.current_page - 1]
-                        )
+                        await self.message.edit(embed=text_wrapped[self.current_page - 1])
                 elif str(reaction.emoji.name) == "oahx_right":
                     if self.current_page - 1 == self.total_pages - 1:
                         pass
                     else:
                         self.current_page += 1
-                        await self.message.edit(
-                            embed=text_wrapped[self.current_page - 1]
-                        )
+                        await self.message.edit(embed=text_wrapped[self.current_page - 1])

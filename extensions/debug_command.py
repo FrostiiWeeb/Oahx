@@ -63,9 +63,7 @@ class CustomDebugCog(*STANDARD_FEATURES, *OPTIONAL_FEATURES):
                         pid = proc.pid
                         thread_count = proc.num_threads()
 
-                        summary.append(
-                            f"Running on PID {pid} (`{name}`) with {thread_count} thread(s)."
-                        )
+                        summary.append(f"Running on PID {pid} (`{name}`) with {thread_count} thread(s).")
                     except psutil.AccessDenied:
                         pass
 
@@ -77,9 +75,7 @@ class CustomDebugCog(*STANDARD_FEATURES, *OPTIONAL_FEATURES):
                 )
                 summary.append("")  # blank line
 
-        cache_summary = (
-            f"`{len(ctx.bot.guilds)}` guild(s) and `{len(ctx.bot.users)}` user(s)"
-        )
+        cache_summary = f"`{len(ctx.bot.guilds)}` guild(s) and `{len(ctx.bot.users)}` user(s)"
 
         # Show shard settings to summary
         if isinstance(ctx.bot, discord.AutoShardedClient):
@@ -103,13 +99,9 @@ class CustomDebugCog(*STANDARD_FEATURES, *OPTIONAL_FEATURES):
             summary.append(f"This bot is not sharded and can see {cache_summary}.")
 
         # pylint: disable=protected-access
-        ctx.bot._connection.max_messages = (
-            1000000000000000000000000000000000000000000000000000000000000000000000000000
-        )
+        ctx.bot._connection.max_messages = 1000000000000000000000000000000000000000000000000000000000000000000000000000
         if ctx.bot._connection.max_messages:
-            message_cache = (
-                f"Message cache capped at {ctx.bot._connection.max_messages}"
-            )
+            message_cache = f"Message cache capped at {ctx.bot._connection.max_messages}"
         else:
             message_cache = "Message cache is disabled"
 
@@ -119,16 +111,16 @@ class CustomDebugCog(*STANDARD_FEATURES, *OPTIONAL_FEATURES):
 
             summary.append(f"{message_cache}, {presence_intent} and {members_intent}.")
         else:
-            guild_subscriptions = f"guild subscriptions are {'enabled' if ctx.bot._connection.guild_subscriptions else 'disabled'}"
+            guild_subscriptions = (
+                f"guild subscriptions are {'enabled' if ctx.bot._connection.guild_subscriptions else 'disabled'}"
+            )
 
             summary.append(f"{message_cache} and {guild_subscriptions}.")
 
         # pylint: enable=protected-access
 
         # Show websocket latency in milliseconds
-        summary.append(
-            f"Average websocket latency: {round(ctx.bot.latency * 1000, 2)}ms"
-        )
+        summary.append(f"Average websocket latency: {round(ctx.bot.latency * 1000, 2)}ms")
 
         async with ctx.bot.embed(description="\n".join(summary)) as emb:
             await emb.send(ctx.channel)

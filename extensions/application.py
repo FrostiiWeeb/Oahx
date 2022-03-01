@@ -8,9 +8,7 @@ class Application(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.group(
-        name="application", invoke_without_command=True, breif="Application command."
-    )
+    @commands.group(name="application", invoke_without_command=True, breif="Application command.")
     async def application(self, ctx):
         pass
 
@@ -28,13 +26,9 @@ class Application(commands.Cog):
             await ctx.send(i)
             answer = await self.bot.wait_for(
                 "message",
-                check=lambda m: str(m.author) == str(ctx.author)
-                and m.channel == ctx.channel,
+                check=lambda m: str(m.author) == str(ctx.author) and m.channel == ctx.channel,
             )
-            if (
-                i
-                == "Mention a channel where the `application apply` command will be executed."
-            ):
+            if i == "Mention a channel where the `application apply` command will be executed.":
                 try:
                     print("i")
                     yes = int(answer.content[2:-1])
@@ -67,9 +61,7 @@ class Application(commands.Cog):
     @application.command(name="apply")
     @commands.has_permissions(send_messages=True)
     async def apply(self, ctx):
-        setup = await self.bot.db.fetchrow(
-            "SELECT * FROM application_setup WHERE guild_id = $1", ctx.guild.id
-        )
+        setup = await self.bot.db.fetchrow("SELECT * FROM application_setup WHERE guild_id = $1", ctx.guild.id)
         if not setup:
             async with ctx.bot.embed(
                 title="Error",
@@ -94,8 +86,7 @@ class Application(commands.Cog):
 
             answer = await self.bot.wait_for(
                 "message",
-                check=lambda msg: msg.author == ctx.author
-                and msg.channel == ctx.channel,
+                check=lambda msg: msg.author == ctx.author and msg.channel == ctx.channel,
             )
             answers.append(answer.content)
         await ctx.send("We have received your application, we will review it soon.")
@@ -138,9 +129,7 @@ class Application(commands.Cog):
         print(message)
         user = await self.bot.try_user(int(message))
         async with self.bot.db.acquire() as db:
-            guild_id = await db.fetchrow(
-                "SELECT guild_id FROM application WHERE id = $1", id
-            )
+            guild_id = await db.fetchrow("SELECT guild_id FROM application WHERE id = $1", id)
             guild = await self.bot.fetch_guild(guild_id["guild_id"])
             await user.send(
                 f"Hello! You have been accepted for staff on {guild.name}, we wanted to say: {message_accept}"
@@ -149,9 +138,7 @@ class Application(commands.Cog):
 
     @application.command(name="decline")
     @commands.guild_only()
-    async def decline(
-        self, ctx: commands.Context, id: str, *, reason: str = "No Reason Provided"
-    ):
+    async def decline(self, ctx: commands.Context, id: str, *, reason: str = "No Reason Provided"):
         if ctx.author.id != ctx.guild.owner_id:
             return await ctx.send("You do not have the valid permissions.")
         print("e")
@@ -163,9 +150,7 @@ class Application(commands.Cog):
         async with self.bot.db.acquire() as db:
             guild_id = await db.fetchrow("SELECT * FROM application WHERE id = $1", id)
             guild = await self.bot.fetch_guild(guild_id["guild_id"])
-            await user.send(
-                f"Hello! Sorry, you have been declined for staff on {guild.name} because {reason}."
-            )
+            await user.send(f"Hello! Sorry, you have been declined for staff on {guild.name} because {reason}.")
             await db.execute("DELETE FROM application WHERE id = $1", id)
         await ctx.send("Sent.")
 

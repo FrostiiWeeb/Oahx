@@ -65,9 +65,7 @@ class Tags(commands.Cog):
 
     async def get_user_tags(self, ctx, user):
         tag_list = []
-        for db in await self.bot.db.fetch(
-            "SELECT * FROM tags WHERE author = $1", str(user)
-        ):
+        for db in await self.bot.db.fetch("SELECT * FROM tags WHERE author = $1", str(user)):
             tag_list.append(db["name"])
         await TagPages(source=TagSource(ctx=ctx, data=tag_list)).start(ctx)
 
@@ -80,17 +78,13 @@ class Tags(commands.Cog):
     @commands.group(invoke_without_command=True, help="Get the content for a tag.")
     async def tag(self, ctx, *, name: str):
         try:
-            data = await self.bot.db.fetchrow(
-                "SELECT content FROM tags WHERE name = $1", str(name.lower())
-            )
+            data = await self.bot.db.fetchrow("SELECT content FROM tags WHERE name = $1", str(name.lower()))
             await ctx.send(data["content"])
         except Exception as e:
             tags = [db["name"] for db in await self.bot.db.fetch("SELECT * FROM tags")]
             matches = get_close_matches(name, tags)
             if len(matches) > 0:
-                await ctx.send(
-                    f'A tag with that name does not exist, did you mean "{matches[0]}"?'
-                )
+                await ctx.send(f'A tag with that name does not exist, did you mean "{matches[0]}"?')
             else:
                 await ctx.send("A tag with that name does not exist.")
 
@@ -105,9 +99,7 @@ class Tags(commands.Cog):
     async def claim(self, ctx, *, tag: str):
         tag = tag.lower()
         try:
-            data = await self.bot.db.fetchrow(
-                "SELECT author FROM tags WHERE name = $1", str(tag)
-            )
+            data = await self.bot.db.fetchrow("SELECT author FROM tags WHERE name = $1", str(tag))
             if not data["author"] == str(ctx.author):
                 await ctx.send("The tag owner is still here!")
             else:
@@ -122,16 +114,12 @@ class Tags(commands.Cog):
             tags = [db["name"] for db in await self.bot.db.fetch("SELECT * FROM tags")]
             matches = get_close_matches(tag, tags)
             if len(matches) > 0:
-                await ctx.send(
-                    f'A tag with that name does not exist, did you mean "{matches[0]}"?'
-                )
+                await ctx.send(f'A tag with that name does not exist, did you mean "{matches[0]}"?')
             else:
                 await ctx.send("A tag with that name does not exist.")
 
     @tag.command()
-    async def edit(
-        self, ctx, tag: TagName(lower=True), *, content: commands.clean_content
-    ):
+    async def edit(self, ctx, tag: TagName(lower=True), *, content: commands.clean_content):
         """
         Edit a tag.
         """
@@ -171,9 +159,7 @@ class Tags(commands.Cog):
         """
         tag = str(tag.lower())
         try:
-            data = await self.bot.db.fetchrow(
-                "SELECT * FROM tags WHERE name = $1", str(tag)
-            )
+            data = await self.bot.db.fetchrow("SELECT * FROM tags WHERE name = $1", str(tag))
             owner = data["author"]
             name = data["name"]
             timestamp = datetime.datetime.utcfromtimestamp(data["timestamp"])
@@ -198,25 +184,17 @@ class Tags(commands.Cog):
     async def make(self, ctx):
         db = self.bot.db
         try:
-            await ctx.send(
-                "Heyyoo! You want to make a tag, ay? Alright. Answer these questions."
-            )
+            await ctx.send("Heyyoo! You want to make a tag, ay? Alright. Answer these questions.")
             await asyncio.sleep(2)
             await ctx.send("What do you want the tag name to be?")
-            message = await self.bot.wait_for(
-                "message", check=lambda m: m.author == ctx.author
-            )
+            message = await self.bot.wait_for("message", check=lambda m: m.author == ctx.author)
         except asyncio.TimeoutError:
             return await self.too_long(ctx)
         else:
             name = message.content.lower()
         try:
-            await ctx.send(
-                f"Ayyy, the tag name will be {name}, now what do you want the tag content to be?"
-            )
-            message = await self.bot.wait_for(
-                "message", check=lambda m: m.author == ctx.author
-            )
+            await ctx.send(f"Ayyy, the tag name will be {name}, now what do you want the tag content to be?")
+            message = await self.bot.wait_for("message", check=lambda m: m.author == ctx.author)
         except asyncio.TimeoutError:
             return await self.too_long(ctx)
         else:
@@ -225,9 +203,7 @@ class Tags(commands.Cog):
             tags = [tag["name"] for tag in await db.fetch("SELECT * FROM tags")]
             if name in tags:
                 return await ctx.send(f"Heyyy mate, the tag {name} already exists.")
-            async with self.bot.embed(
-                title="Created", description="Heyyy, the tag was created."
-            ) as emb:
+            async with self.bot.embed(title="Created", description="Heyyy, the tag was created.") as emb:
                 await emb.send(ctx.channel)
             # await db.execute("DELETE FROM cooldown_channel WHERE channel_id = $1 AND command = $2", ctx.channel.id, ctx.command.name)
             await db.execute(

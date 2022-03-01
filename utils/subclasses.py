@@ -107,7 +107,7 @@ class CustomEmbed:
                     "type": "rich",
                     "description": self.description,
                     "footer": self.footer or None,
-                    "timestamp": self.timestamp
+                    "timestamp": self.timestamp,
                 }
             )
         else:
@@ -118,7 +118,7 @@ class CustomEmbed:
                     "title": self.title,
                     "description": self.description,
                     "footer": self.footer or None,
-                    "timestamp": self.timestamp
+                    "timestamp": self.timestamp,
                 }
             )
 
