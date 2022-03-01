@@ -57,7 +57,6 @@ class PlaceButton(Button):
             "UPDATE economy SET wallet = $1 WHERE user_id = $2", record["wallet"] + money_given, user.id
         )
         return await interaction.response.send_message(
-            view=self.__view,
             embed=discord.Embed(
                 colour=self.__view.context.bot.colour,
                 title=f"Searched {self.label}",
@@ -77,6 +76,15 @@ class SearchView(View):
             place = random.choice(self.robbable_places)
             self.robbable_places.remove(place)
             self.add_item(PlaceButton(label=place, view=self))
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user and interaction.user.id in (
+            self.context.bot.owner_ids,
+            self.context.author.id,
+        ):
+            return True
+        await interaction.response.send_message("This command wasnt ran by you, sorry!", ephemeral=True)
+        return False
 
 
 class NotInDB(Exception):
