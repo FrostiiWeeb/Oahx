@@ -25,7 +25,7 @@ class PlaceButton(Button):
         url: Optional[str] = None,
         emoji: Optional[Union[str, discord.Emoji, discord.PartialEmoji]] = None,
         row: Optional[int] = None,
-        view: discord.ui.View = discord.ui.View,
+        view: discord.ui.View,
     ):
         super().__init__(
             style=discord.ButtonStyle.grey, label=label, disabled=disabled, custom_id=custom_id, url=url, emoji=emoji, row=row
@@ -35,9 +35,10 @@ class PlaceButton(Button):
 
     async def callback(self, interaction: discord.Interaction):
         self.style = discord.ButtonStyle.success
-        for item in self.__view.children:
-            item.disabled = True
-        await interaction.response.edit_message(view=self.view)
+        old_self = self
+        self.__view.clear_items()
+        self.__view.add_item(old_self)
+        await interaction.response.edit_message(view=self.__view)
         try:
             user = interaction.message.author
         except:
