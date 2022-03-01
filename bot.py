@@ -238,7 +238,7 @@ class Oahx(commands.AutoShardedBot):
             "redTick": "<:redTick:820319748561829949>",
             "dpy": "<:dpy:596577034537402378>",
             "py": "<:python:286529073445076992>",
-            "coin": "<:emoji_4:904048735762395176>",
+            "coin": "<:oahx_coin:948157757037625354>",
         }
         self.add_check(self.beta_command_activated)
 

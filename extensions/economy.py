@@ -7,6 +7,7 @@ import datetime
 from discord.ext import commands
 import datetime
 from discord.ext import commands
+from bot import Oahx
 
 
 class NotInDB(Exception):
@@ -17,7 +18,7 @@ class NotInDB(Exception):
 
 class Economy(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Oahx = bot
 
     @commands.command(name="account", aliases=["acc"])
     async def cracc(self, ctx):
@@ -31,14 +32,14 @@ class Economy(commands.Cog):
         await self.bot.db.execute(
             "INSERT INTO economy(user_id, wallet, bank) VAlUES ($1, $2, $3)",
             ctx.author.id,
-            100,
+            0,
             0,
         )
         async with self.bot.processing(ctx):
             await asyncio.sleep(3)
             async with ctx.bot.embed(
                 title="Bank",
-                description=f"You have created an account! And take the extra **100{self.bot.emoji_dict['coin']}**!",
+                description=f"You have created an account!"
             ) as emb:
                 return await emb.send(ctx.channel)
 
@@ -51,14 +52,14 @@ class Economy(commands.Cog):
                 "SELECT * FROM economy WHERE user_id = $1", user.id
             )
 
-            wallet = data["wallet"]
-            bank = data["bank"]
+            wallet = int(data["wallet"])
+            bank = int(data["bank"])
+            networth = int(wallet) + int(bank)
 
             await ctx.send(
                 embed=discord.Embed(
                     title=f"{user.name}'s balance",
-                    description=f"Wallet: **{self.bot.emoji_dict['coin']}{wallet} **\nBank: **{self.bot.emoji_dict['coin']}{bank}**",
-                    colour=ctx.bot.colour,
+                    description=f"**Wallet**: {self.bot.emoji_dict['coin']} {wallet:,}\n**Bank**: {self.bot.emoji_dict['coin']} {bank:,}\n**Networth**: {self.bot.emoji_dict['coin']} {networth:,}",
                 )
             )
         except:
@@ -94,7 +95,7 @@ class Economy(commands.Cog):
             )
             async with ctx.bot.embed(
                 title="ATM",
-                description=f"ATM: Deposited **{self.bot.emoji_dict['coin']}{money}**.",
+                description=f"ATM: Deposited {self.bot.emoji_dict['coin']} {money}.",
             ) as emb:
                 return await emb.send(ctx.channel)
 
@@ -136,6 +137,12 @@ class Economy(commands.Cog):
     @commands.cooldown(1, 20, commands.BucketType.user)
     async def beg(self, ctx):
         money = random.randint(1, 201)
+        give_money = random.choice([True, False, True, False])
+        phrases = ["Im too poor", "Imagine begging lmao get a job kid", '"I only give money to my developers"\n - Oahx 2022', "Give me your phone first"]
+        footers = ["he needs to beg too lol", "he's right", "why", "is this a robbery?"]
+        zipped = zip(phrases, footers)
+        choice = random.choice(zipped)
+        phrase, footer = choice[0], choice[1]
         try:
             data = await self.bot.db.fetchrow(
                 "SELECT * FROM economy WHERE user_id = $1", ctx.author.id
@@ -143,11 +150,15 @@ class Economy(commands.Cog):
 
             wallet = data["wallet"]
             bank = data["bank"]
-
+            if not give_money:
+                return await ctx.send(
+                    embed=discord.Embed(
+                        title="LMAO", description=phrase, footer=footer
+                    )
+                )
             await ctx.send(
                 embed=discord.Embed(
                     description=f"You earned **{money}{self.bot.emoji_dict['coin']}**!",
-                    colour=ctx.bot.colour,
                 )
             )
             await self.bot.db.execute(
