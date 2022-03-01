@@ -28,12 +28,13 @@ class PlaceButton(Button):
         view: discord.ui.View = discord.ui.View,
     ):
         super().__init__(
-            style=style, label=label, disabled=disabled, custom_id=custom_id, url=url, emoji=emoji, row=row
+            style=discord.ButtonStyle.grey, label=label, disabled=disabled, custom_id=custom_id, url=url, emoji=emoji, row=row
         )
         self.__view = view
         self.ended = False
 
     async def callback(self, interaction: discord.Interaction):
+        self.style = discord.ButtonStyle.success
         for item in self.__view.children:
             item.disabled = True
         await interaction.response.edit_message(view=self.view)
