@@ -61,7 +61,7 @@ class PlaceButton(Button):
             embed=discord.Embed(
                 colour=self.__view.context.bot.colour,
                 title=f"Searched {self.label}",
-                description=f"You found {self.__view.context.bot.emoji_dict['emoji']}{money_given:,}...",
+                description=f"You found {self.__view.context.bot.emoji_dict['coin']}{money_given:,}...",
             )
         )
 
