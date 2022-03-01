@@ -70,7 +70,7 @@ class SearchView(View):
         for i in range(len(self.robbable_places)):
             place = random.choice(self.robbable_places)
             self.robbable_places.remove(place)
-            self.add_item(PlaceButton(label=place))
+            self.add_item(PlaceButton(label=place, view=self))
 
 
 class NotInDB(Exception):
