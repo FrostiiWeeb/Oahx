@@ -81,7 +81,8 @@ class CoolContext(commands.Context):
     ):
         if embed:
             embed.colour = self.bot.colour
-            embed.set_footer(text="Requested by {.author}".format(self), icon_url=self.author.avatar.url)
+            if embed.footer is discord.Embed.Empty:
+                embed.set_footer(text="Requested by {.author}".format(self), icon_url=self.author.avatar.url)
         advertised = False
         if content is not None:
             if advert:

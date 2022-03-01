@@ -142,7 +142,7 @@ class Economy(commands.Cog):
             wallet = data["wallet"]
             bank = data["bank"]
             if not give_money:
-                return await ctx.send(embed=discord.Embed(title="LMAO", description=phrase, footer=footer))
+                return await ctx.send(embed=(discord.Embed(title="LMAO", description=phrase)).set_footer(text=footer))
             await ctx.send(
                 embed=discord.Embed(
                     description=f"You earned **{money}{self.bot.emoji_dict['coin']}**!",
