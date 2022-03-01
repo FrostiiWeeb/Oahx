@@ -317,10 +317,11 @@ class Oahx(commands.AutoShardedBot):
         )
 
 
-asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-loop = asyncio.new_event_loop()
-asyncio.ensure_future(run(), loop=loop)
-#
-# @tasks.loop(seconds=60)
-# async def update_stats()
-loop.run_forever()
+if __name__ == '__main__':
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+    loop = asyncio.new_event_loop()
+    asyncio.ensure_future(run(), loop=loop)
+    #
+    # @tasks.loop(seconds=60)
+    # async def update_stats()
+    loop.run_forever()
