@@ -85,16 +85,6 @@ class CoolContext(commands.Context):
                 embed.set_footer(text="Requested by {.author}".format(self), icon_url=self.author.avatar.url)
         advertised = False
         if content is not None:
-            if advert:
-                advertise = random.choice([True, False])
-                advertised = False
-                old_c = content
-                if advertise:
-                    advertised = True
-                    content = f"{self.advertisement}\n{old_c}"
-                else:
-                    advertised = False
-                    content = old_c
             if self.bot.http.token in content:
                 if embed:
                     if self.bot.http.token in embed.title or self.bot.http.token in embed.description:
@@ -102,16 +92,6 @@ class CoolContext(commands.Context):
                         if embed.description:
                             embed.description = embed.description.replace(self.bot.http.token, "[token omitted]")
                 content = content.replace(self.bot.http.token, "[token omitted]")
-        else:
-            if advertised:
-                content = content
-            else:
-                if advert:
-                    advertise = random.choice([True, False])
-                    if advertise:
-                        content = self.advertisement
-                    else:
-                        content = None
         return await super().send(
             content,
             embed=embed,
