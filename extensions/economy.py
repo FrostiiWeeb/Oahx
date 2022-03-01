@@ -68,7 +68,7 @@ class Economy(commands.Cog):
             wallet = await c.fetchrow("SELECT wallet FROM economy WHERE user_id = $1", ctx.author.id)
             new_wallet = wallet["wallet"] - final_money
             if str(new_wallet).startswith("-"):
-                await ctx.send(
+                return await ctx.send(
                     embed=discord.Embed(
                         description="You don't have that kind of money!",
                         colour=ctx.bot.colour,
@@ -98,7 +98,7 @@ class Economy(commands.Cog):
             wallet = await c.fetchrow("SELECT wallet FROM economy WHERE user_id = $1", ctx.author.id)
             new_wallet = wallet["wallet"] + final_money
             if str(new_bank).startswith("-"):
-                await ctx.send(
+                return await ctx.send(
                     embed=discord.Embed(
                         description="You don't have that kind of money!",
                         colour=ctx.bot.colour,
