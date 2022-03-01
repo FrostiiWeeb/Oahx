@@ -28,7 +28,7 @@ class PlaceButton(Button):
         view: discord.ui.View = discord.ui.View,
     ):
         super().__init__(
-            style=style, label=label, disbaled=disabled, custom_id=custom_id, url=url, emoji=emoji, row=row
+            style=style, label=label, disabled=disabled, custom_id=custom_id, url=url, emoji=emoji, row=row
         )
         self.view = view
         self.ended = False
