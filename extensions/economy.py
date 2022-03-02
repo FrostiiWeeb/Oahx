@@ -71,8 +71,8 @@ class SearchView(View):
         self.end_after = 20
         self.bank_record = bank_record
         self.context = context
-        self.robbable_places = ["bedroom", "closet", "school"]
-        for i in range(len(self.robbable_places)):
+        self.robbable_places = ["bedroom", "closet", "school", "area51", "source code"]
+        for i in range(3):
             place = random.choice(self.robbable_places)
             self.robbable_places.remove(place)
             self.add_item(PlaceButton(label=place, view=self))
@@ -137,7 +137,7 @@ class Economy(commands.Cog):
 
     @commands.command(aliases=["dep"])
     async def deposit(self, ctx, money: str):
-        deposited_money = money.strip(",")
+        deposited_money = money.replace(",", "")
         final_money = int(deposited_money)
         async with self.bot.db.acquire() as c:
             bank = await c.fetchrow("SELECT bank FROM economy WHERE user_id = $1", ctx.author.id)
