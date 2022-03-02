@@ -269,6 +269,7 @@ class Economy(commands.Cog):
         return await ctx.send(f"You got away with {self.bot.emoji_dict['coin']}{money_to_rob}...")
 
     @commands.command(name="search")
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def search(self, ctx: commands.Context):
         return await ctx.send("**`Where do you wanna search?`**", view=SearchView(context=ctx))
 
