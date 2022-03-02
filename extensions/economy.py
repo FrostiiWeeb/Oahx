@@ -273,7 +273,7 @@ class Economy(commands.Cog):
     async def search(self, ctx: commands.Context):
         return await ctx.send("**`Where do you wanna search?`**", view=SearchView(context=ctx))
 
-    @commands.coooldown()
+    @commands.command()
     async def give(self, ctx: commands.Context, money: str, user: Union[discord.Member, str]):
         given_money = money.replace(",", "")
         final_money = int(given_money)
