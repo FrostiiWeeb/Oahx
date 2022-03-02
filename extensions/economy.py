@@ -273,6 +273,27 @@ class Economy(commands.Cog):
     async def search(self, ctx: commands.Context):
         return await ctx.send("**`Where do you wanna search?`**", view=SearchView(context=ctx))
 
+    @commands.coooldown()
+    async def give(self, ctx: commands.Context, money: str, user: Union[discord.Member, str]):
+        given_money = money.replace(",", "")
+        final_money = int(given_money)
+        async with self.bot.db.acquire() as c:
+            try:
+                author_record = await c.fetchrow("SELECT bank FROM economy WHERE user_id = $1", ctx.author.id)
+                user_record = await c.fetchrow("SELECT * FROM economy WHERE user_id = $1", user.id)
+                author_data = (author_record['wallet'], author_record['bank'])
+                user_data = (user_record['wallet'], user_record['bank'])
+                author_after_wallet = author_data[0] - final_money
+                user_after_wallet = user_data[0] + final_money
+                if str(author_after_wallet).startswith("-"):
+                    return await ctx.send("Do you really have enough? We all know you don't.")
+                await c.execute("UPDATE economy SET wallet = $1 WHERE user_id = $2", author_after_wallet, ctx.author.id)
+                await c.execute("UPDATE economy SET wallet = $1 WHERE user_id = $2", user_after_wallet, user.id)
+
+                return await ctx.send(embed=discord.Embed(title="nice", description=f"You gave {user.metion} {self.bot.emoji_dict['coin']}{money}"))
+            except:
+                raise NotInDB("You or the user has not created a bank account yet.")
+
 
 def setup(bot):
     bot.add_cog(Economy(bot))
