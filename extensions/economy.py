@@ -58,6 +58,7 @@ class PlaceButton(Button):
         )
         self.__view.stop()
         return await interaction.response.send_message(
+            view=self.__view,
             embed=discord.Embed(
                 colour=self.__view.context.bot.colour,
                 title=f"Searched {self.label}",
