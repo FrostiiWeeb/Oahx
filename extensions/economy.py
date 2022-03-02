@@ -290,7 +290,7 @@ class Economy(commands.Cog):
                 await c.execute("UPDATE economy SET wallet = $1 WHERE user_id = $2", author_after_wallet, ctx.author.id)
                 await c.execute("UPDATE economy SET wallet = $1 WHERE user_id = $2", user_after_wallet, user.id)
 
-                return await ctx.send(embed=discord.Embed(title="nice", description=f"You gave {user.metion} {self.bot.emoji_dict['coin']}{money}"))
+                return await ctx.send(embed=discord.Embed(title="nice", description=f"You gave {user.mention} {self.bot.emoji_dict['coin']}{money}"))
             except:
                 raise NotInDB("You or the user has not created a bank account yet.")
 
