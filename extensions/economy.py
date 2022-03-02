@@ -57,7 +57,7 @@ class PlaceButton(Button):
             "UPDATE economy SET wallet = $1 WHERE user_id = $2", record["wallet"] + money_given, user.id
         )
         self.__view.stop()
-        return await interaction.response.send_message(
+        return await interaction.response.edit_message(
             view=self.__view,
             embed=discord.Embed(
                 colour=self.__view.context.bot.colour,
