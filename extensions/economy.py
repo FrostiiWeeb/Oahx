@@ -279,7 +279,7 @@ class Economy(commands.Cog):
         final_money = int(given_money)
         async with self.bot.db.acquire() as c:
             try:
-                author_record = await c.fetchrow("SELECT bank FROM economy WHERE user_id = $1", ctx.author.id)
+                author_record = await c.fetchrow("SELECT * FROM economy WHERE user_id = $1", ctx.author.id)
                 user_record = await c.fetchrow("SELECT * FROM economy WHERE user_id = $1", user.id)
                 author_data = (author_record['wallet'], author_record['bank'])
                 user_data = (user_record['wallet'], user_record['bank'])
