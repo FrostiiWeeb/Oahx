@@ -167,7 +167,7 @@ class Economy(commands.Cog):
 
     @commands.command(aliases=["with"])
     async def withdraw(self, ctx, money: str):
-        withdrawed_money = money.strip(",")
+        withdrawed_money = money.replace(",", "")
         final_money = int(withdrawed_money)
         async with self.bot.db.acquire() as c:
             bank = await c.fetchrow("SELECT bank FROM economy WHERE user_id = $1", ctx.author.id)
@@ -205,8 +205,9 @@ class Economy(commands.Cog):
             "Imagine begging lmao get a job kid",
             '"I only give money to my developers"\n - Oahx 2022',
             "Give me your phone first",
+            "i dont have cash on me sorry",
         ]
-        footers = ["he needs to beg too lol", "he's right", "why", "is this a robbery?"]
+        footers = ["he needs to beg too lol", "he's right", "why", "is this a robbery?", "is he sure?"]
         zipped = zip(phrases, footers)
         things = []
         for phrase, footer in zipped:
@@ -217,7 +218,6 @@ class Economy(commands.Cog):
             data = await self.bot.db.fetchrow("SELECT * FROM economy WHERE user_id = $1", ctx.author.id)
 
             wallet = data["wallet"]
-            bank = data["bank"]
             if not give_money:
                 return await ctx.send(embed=(discord.Embed(title="LMAO", description=phrase)).set_footer(text=footer))
             await ctx.send(
