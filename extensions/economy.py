@@ -290,11 +290,12 @@ class Economy(commands.Cog):
         money_to_rob = random.randrange(int(user_record["wallet"]))
         robbed = random.choice([True, False, True, False])
         if not robbed:
+            give_money = random.randrange(author_record['wallet'])
             await self.bot.db.execute(
-                "UPDATE economy SET wallet = $1 WHERE user_id = $2", user_record["wallet"] + 250, user.id
+                "UPDATE economy SET wallet = $1 WHERE user_id = $2", user_record["wallet"] + give_money, user.id
             )
             await self.bot.db.execute(
-                "UPDATE economy SET wallet = $1 WHERE user_id = $2", author_record["wallet"] - 250, ctx.author.id
+                "UPDATE economy SET wallet = $1 WHERE user_id = $2", author_record["wallet"] - give_money, ctx.author.id
             )
             return await ctx.reply(
                 f"Your robbery failed, and got caught by the police.. you paid the user {self.bot.emoji_dict['coin']}250."
