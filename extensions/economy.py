@@ -14,20 +14,30 @@ import datetime
 from typing import *
 from pydantic import BaseModel
 
+
 class Item(BaseModel):
     name: str
     price: int
     description: str
     icon: str = None
-    
+
+
 class Inventory(BaseModel):
     items: List[Item]
+
 
 class Shop(BaseModel):
     items: List[Item]
 
+
 class Transaction:
-    def __init__(self, payer: Union[discord.Member, discord.User], payee: Union[discord.Member, discord.User], amount: int, id: str) -> None:
+    def __init__(
+        self,
+        payer: Union[discord.Member, discord.User],
+        payee: Union[discord.Member, discord.User],
+        amount: int,
+        id: str,
+    ) -> None:
         self.payer = payer
         self.payee = payee
         self.amount = amount
@@ -38,15 +48,20 @@ class Transaction:
             try:
                 author_record = await c.fetchrow("SELECT * FROM economy WHERE user_id = $1", self.payer.id)
                 user_record = await c.fetchrow("SELECT * FROM economy WHERE user_id = $1", self.payee.id)
-                author_data = (author_record['wallet'], author_record['bank'])
-                user_data = (user_record['wallet'], user_record['bank'])
+                author_data = (author_record["wallet"], author_record["bank"])
+                user_data = (user_record["wallet"], user_record["bank"])
                 author_after_wallet = author_data[0] - self.amount
                 user_after_wallet = user_data[0] + self.amount
                 if str(author_after_wallet).startswith("-"):
                     return await ctx.send("Do you really have enough? We all know you don't.")
                 await c.execute("UPDATE economy SET wallet = $1 WHERE user_id = $2", author_after_wallet, self.payer.id)
                 await c.execute("UPDATE economy SET wallet = $1 WHERE user_id = $2", user_after_wallet, self.payee.id)
-                return await ctx.send(embed=discord.Embed(title="Transaction Completed.", description=f"{self.payee.mention}: Received {ctx.bot.emoji_dict['coin']}{self.amount:,}\n\nTransaction ID: {self.id}"))
+                return await ctx.send(
+                    embed=discord.Embed(
+                        title="Transaction Completed.",
+                        description=f"{self.payee.mention}: Received {ctx.bot.emoji_dict['coin']}{self.amount:,}\n\nTransaction ID: {self.id}",
+                    )
+                )
             except:
                 raise NotInDB("You or the user has not created an account. Create one with oahx account")
 
@@ -155,7 +170,7 @@ class Economy(commands.Cog):
                 return await emb.send(ctx.channel)
 
     @commands.command(aliases=["bal"], brief="Get the balance of a user!")
-    async def balance(self, ctx, user: Union[discord.Member, int] = None):
+    async def balance(self, ctx, user: Union[int, discord.Member] = None):
         user = user or ctx.author
 
         try:
@@ -290,7 +305,7 @@ class Economy(commands.Cog):
         money_to_rob = random.randrange(int(user_record["wallet"]))
         robbed = random.choice([True, False, True, False])
         if not robbed:
-            give_money = random.randrange(author_record['wallet'])
+            give_money = random.randrange(author_record["wallet"])
             await self.bot.db.execute(
                 "UPDATE economy SET wallet = $1 WHERE user_id = $2", user_record["wallet"] + give_money, user.id
             )
