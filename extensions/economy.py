@@ -21,6 +21,24 @@ class Transaction:
         self.amount = amount
         self.id = id
 
+    async def commit(self, ctx: commands.Context):
+        async with ctx.bot.db.acquire() as c:
+            try:
+                author_record = await c.fetchrow("SELECT * FROM economy WHERE user_id = $1", self.payer.id)
+                user_record = await c.fetchrow("SELECT * FROM economy WHERE user_id = $1", self.payee.id)
+                author_data = (author_record['wallet'], author_record['bank'])
+                user_data = (user_record['wallet'], user_record['bank'])
+                author_after_wallet = author_data[0] - self.amount
+                user_after_wallet = user_data[0] + self.amount
+                if str(author_after_wallet).startswith("-"):
+                    return await ctx.ssend("Do you really have enough? We all know you don't.")
+                await c.execute("UPDATE economy SET wallet = $1 WHERE user_id = $2", author_after_wallet, self.payer.id)
+                await c.execute("UPDATE economy SET wallet = $1 WHERE user_id = $2", user_after_wallet, self.payee.id)
+                return True
+            except:
+                raise NotInDB("You or the user has not created an account. Create one with oahx account")
+
+
 class PlaceButton(Button):
     def __init__(
         self,
@@ -286,23 +304,9 @@ class Economy(commands.Cog):
     async def give(self, ctx: commands.Context, money: str, user: Union[discord.Member, str]):
         given_money = money.replace(",", "")
         final_money = int(given_money)
-        async with self.bot.db.acquire() as c:
-            try:
-                author_record = await c.fetchrow("SELECT * FROM economy WHERE user_id = $1", ctx.author.id)
-                user_record = await c.fetchrow("SELECT * FROM economy WHERE user_id = $1", user.id)
-                author_data = (author_record['wallet'], author_record['bank'])
-                user_data = (user_record['wallet'], user_record['bank'])
-                author_after_wallet = author_data[0] - final_money
-                user_after_wallet = user_data[0] + final_money
-                if str(author_after_wallet).startswith("-"):
-                    return await ctx.ssend("Do you really have enough? We all know you don't.")
-                transaction = Transaction(ctx.author, user, final_money, str((__import__("uuid")).uuid4()))
-                await c.execute("UPDATE economy SET wallet = $1 WHERE user_id = $2", author_after_wallet, ctx.author.id)
-                await c.execute("UPDATE economy SET wallet = $1 WHERE user_id = $2", user_after_wallet, user.id)
-
-                return await ctx.send(embed=discord.Embed(title="Transaction Completed.", description=f"{transaction.payee.mention}: Received {self.bot.emoji_dict['coin']}{transaction.amount:,}\n\nTransaction ID: {transaction.id}"))
-            except:
-                raise NotInDB("You or the user has not created a bank account yet.")
+        transaction = Transaction(ctx.author, user, final_money, str((__import__("uuid")).uuid4()))
+        await transaction.commit(ctx)
+        return await ctx.send(embed=discord.Embed(title="Transaction Completed.", description=f"{transaction.payee.mention}: Received {self.bot.emoji_dict['coin']}{transaction.amount:,}\n\nTransaction ID: {transaction.id}"))
 
 
 def setup(bot):
