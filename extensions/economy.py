@@ -18,7 +18,7 @@ class Item(BaseModel):
     name: str
     price: int
     description: str
-    icon: Union[str, discord.Emoji, discord.PartialEmoji] = None
+    icon: str = None
     
 class Inventory(BaseModel):
     items: List[Item]
