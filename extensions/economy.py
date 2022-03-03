@@ -31,7 +31,7 @@ class Transaction:
                 author_after_wallet = author_data[0] - self.amount
                 user_after_wallet = user_data[0] + self.amount
                 if str(author_after_wallet).startswith("-"):
-                    return await ctx.ssend("Do you really have enough? We all know you don't.")
+                    return await ctx.send("Do you really have enough? We all know you don't.")
                 await c.execute("UPDATE economy SET wallet = $1 WHERE user_id = $2", author_after_wallet, self.payer.id)
                 await c.execute("UPDATE economy SET wallet = $1 WHERE user_id = $2", user_after_wallet, self.payee.id)
                 return True
