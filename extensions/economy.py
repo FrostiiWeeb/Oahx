@@ -12,7 +12,19 @@ from discord.ui import Button, View
 from datetime import datetime
 import datetime
 from typing import *
+from pydantic import BaseModel
 
+class Item(BaseModel):
+    name: str
+    price: int
+    description: str
+    icon: Union[str, discord.Emoji, discord.PartialEmoji] = None
+    
+class Inventory(BaseModel):
+    items: List[Item]
+
+class Shop(BaseModel):
+    items: List[Item]
 
 class Transaction:
     def __init__(self, payer: Union[discord.Member, discord.User], payee: Union[discord.Member, discord.User], amount: int, id: str) -> None:
@@ -34,7 +46,7 @@ class Transaction:
                     return await ctx.send("Do you really have enough? We all know you don't.")
                 await c.execute("UPDATE economy SET wallet = $1 WHERE user_id = $2", author_after_wallet, self.payer.id)
                 await c.execute("UPDATE economy SET wallet = $1 WHERE user_id = $2", user_after_wallet, self.payee.id)
-                return True
+                return await ctx.send(embed=discord.Embed(title="Transaction Completed.", description=f"{self.payee.mention}: Received {ctx.bot.emoji_dict['coin']}{self.amount:,}\n\nTransaction ID: {self.id}"))
             except:
                 raise NotInDB("You or the user has not created an account. Create one with oahx account")
 
@@ -305,8 +317,7 @@ class Economy(commands.Cog):
         given_money = money.replace(",", "")
         final_money = int(given_money)
         transaction = Transaction(ctx.author, user, final_money, str((__import__("uuid")).uuid4()))
-        await transaction.commit(ctx)
-        return await ctx.send(embed=discord.Embed(title="Transaction Completed.", description=f"{transaction.payee.mention}: Received {self.bot.emoji_dict['coin']}{transaction.amount:,}\n\nTransaction ID: {transaction.id}"))
+        return await transaction.commit(ctx)
 
 
 def setup(bot):
