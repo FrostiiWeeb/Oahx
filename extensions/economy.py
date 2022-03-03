@@ -14,6 +14,13 @@ import datetime
 from typing import *
 
 
+class Transaction:
+    def __init__(self, payer: Union[discord.Member, discord.User], payee: Union[discord.Member, discord.User], amount: int, id: str) -> None:
+        self.payer = payer
+        self.payee = payee
+        self.amount = amount
+        self.id = id
+
 class PlaceButton(Button):
     def __init__(
         self,
@@ -288,11 +295,12 @@ class Economy(commands.Cog):
                 author_after_wallet = author_data[0] - final_money
                 user_after_wallet = user_data[0] + final_money
                 if str(author_after_wallet).startswith("-"):
-                    return await ctx.send("Do you really have enough? We all know you don't.")
+                    return await ctx.ssend("Do you really have enough? We all know you don't.")
+                transaction = Transaction(ctx.author, user, final_money, str((__import__("uuid")).uuid4()))
                 await c.execute("UPDATE economy SET wallet = $1 WHERE user_id = $2", author_after_wallet, ctx.author.id)
                 await c.execute("UPDATE economy SET wallet = $1 WHERE user_id = $2", user_after_wallet, user.id)
 
-                return await ctx.send(embed=discord.Embed(title="nice", description=f"You gave {user.mention} {self.bot.emoji_dict['coin']}{money}"))
+                return await ctx.send(embed=discord.Embed(title="Transaction Completed.", description=f"{transaction.payee.mention}: Received {self.bot.emoji_dict['coin']}{transaction.amount:,}\n\nTransaction ID: {transaction.id}"))
             except:
                 raise NotInDB("You or the user has not created a bank account yet.")
 
