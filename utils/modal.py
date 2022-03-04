@@ -49,6 +49,7 @@ class Modal:
         self.custom_id = str(uuid.uuid4())
         self.data = {"type": 9, "title": title, "custom_id": self.custom_id, "components": []}
         self.payload = []
+        self.sender = discord.webhook.async_.async_context.get()
         self.responded = False
 
     def add_input(
@@ -82,8 +83,7 @@ class Modal:
 
     async def send(self, interaction: discord.Interaction):
         self.responded = True
-        route = Route("POST", f"/interactions/{interaction.id}/{interaction.token}/callback")
-        await self.bot.http.request(route, headers={"Content-Type": "application/json"}, json=self.data)
+        await self.sender.create_interaction_response(interaction.id, interaction.token, session=interaction._session, data=self.json)
 
     @property
     def sent(self):
