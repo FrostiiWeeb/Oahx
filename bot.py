@@ -1,23 +1,36 @@
-import discord, asyncpg, asyncio, datetime, os, time, copy, re
-from discord.ext import commands
-
-from utils.CustomContext import CoolContext
-from utils.subclasses import Processing, CustomEmbed, Cache
-from discord.ext import cli, ipc
-import aiohttp, uvloop
-from utils.useful import get_prefix
-from utils import tasks
-import asyncrd
-import topgg
-import slash_util
-import databases
-import orm
-import sqlalchemy
+# Import standard librarys
+import typing
+import os
 import asyncio
-import pomice
-from utils.mounting import Mount
+import copy
 
-database = databases.Database("postgresql://root:my_password@localhost/oahx")
+# 3rd party imports
+import discord
+import orm
+import databases
+import uvloop
+import asyncpg
+import asyncrd
+import aiohttp
+
+from discord.ext import commands
+from discord.ext import ipc
+
+# internal imports
+from utils.CustomContext import CoolContext
+from utils.useful import get_prefix
+from utils.mounting import Mount
+from utils.subclasses import CustomEmbed, Cache, Processing
+from utils.useful import tasks
+
+URI = typing.NewType("URI", str)
+
+OCTX = typing.TypeVar("OCTX", bound="CoolContext")
+
+os.environ["DB_URL"] = URI("postgresql://root:my_password@localhost/oahx")
+
+
+database = databases.Database(os.environ.get("DB_URL"))
 metadata = orm.ModelRegistry(database=database)
 
 
@@ -56,11 +69,6 @@ class WhichBot(orm.Model):
     fields = {"user_id": orm.BigInteger(primary_key=True), "bot": orm.Integer()}
 
 
-os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
-os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
-os.environ["JISHAKU_HIDE"] = "True"
-
-
 from alone import Alone
 
 
@@ -73,8 +81,6 @@ async def run():
         help_command=commands.MinimalHelpCommand(),
         intents=discord.Intents(members=True, presences=True),
     )
-    import orm
-
     subbot.http = discord.http.HTTPClient()
     await subbot.http.static_login("ODQ0MjEzOTkyOTU1NzA3NDUy.YKPJjA.n_Ha1X5zMlz-QOCOHYx5WkEDnkc")
     await metadata.create_all()
@@ -189,12 +195,8 @@ class Oahx(commands.AutoShardedBot):
             *args,
             **kwargs,
         )
-        import wavelink
-
         self.__users = {}
         self.mounter = Mount(self)
-        self.wavelink = wavelink.NodePool()
-        self.pomice = pomice.NodePool()
         self.__extensions = [f"extensions.{item[:-3]}" for item in os.listdir("./extensions")]
         self.owner_cogs = self.__extensions
         self.help_command = None
@@ -209,7 +211,6 @@ class Oahx(commands.AutoShardedBot):
         self.mounter = Mount(self)
         self.tasks = tasks()
         self.embed = CustomEmbed
-        self.pomice = pomice.NodePool()
         self.owner_ids = {
             746807014658801704,
             733370212199694467,
@@ -266,7 +267,7 @@ class Oahx(commands.AutoShardedBot):
     async def try_user(self, user_id: int):
         user = super().get_user(user_id)
         if not user:
-            channel = await super().fetch_user(user_id)
+            user = await super().fetch_user(user_id)
         return user
 
     async def on_message(self, message: discord.Message):

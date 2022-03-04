@@ -95,7 +95,6 @@ class Logging(commands.Cog):
                 return
         except KeyError:
 
-
             row = await self.bot.db.fetchrow("SELECT * FROM logging WHERE guild_id = $1", guild_id)
             if not row:
                 return
