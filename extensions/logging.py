@@ -90,30 +90,33 @@ class Logging(commands.Cog):
         guild: discord.Guild = member.guild
         user_name = str(member)
         guild_id = guild.id
-        if self.bans[user_name]:
-            return
-
-        row = await self.bot.db.fetchrow("SELECT * FROM logging WHERE guild_id = $1", guild_id)
-        if not row:
-            return
-        """
-		on_member_remove
-		on_member_unban"""
-        channel = await self.bot.try_channel(row["channel_id"])
-
-        def predicate(event: discord.AuditLogEntry):
-            return event.action is discord.AuditLogAction.kick and str(event.target) == user_name
-
         try:
-            event: discord.AuditLogEntry = await guild.audit_logs(limit=self.limit).find(predicate)
-            async with self.bot.embed(
-                title="Member Kicked.",
-                description=f"User: {user_name} `<@{member.id}>`\nReason: {event.reason}\nAction: Member Kick\nModerator: {event.user}",
-            ) as emb:
-                emb.embed.set_author(name=user_name, icon_url=member.avatar.url)
-                return await emb.send(channel)
-        except:
-            traceback.print_exc(file=sys.stderr)
+            if self.bans[user_name]:
+                return
+        except KeyError:
+
+
+            row = await self.bot.db.fetchrow("SELECT * FROM logging WHERE guild_id = $1", guild_id)
+            if not row:
+                return
+            """
+            on_member_remove
+            on_member_unban"""
+            channel = await self.bot.try_channel(row["channel_id"])
+
+            def predicate(event: discord.AuditLogEntry):
+                return event.action is discord.AuditLogAction.kick and str(event.target) == user_name
+
+            try:
+                event: discord.AuditLogEntry = await guild.audit_logs(limit=self.limit).find(predicate)
+                async with self.bot.embed(
+                    title="Member Kicked.",
+                    description=f"User: {user_name} `<@{member.id}>`\nReason: {event.reason}\nAction: Member Kick\nModerator: {event.user}",
+                ) as emb:
+                    emb.embed.set_author(name=user_name, icon_url=member.avatar.url)
+                    return await emb.send(channel)
+            except:
+                traceback.print_exc(file=sys.stderr)
 
 
 def setup(bot):
