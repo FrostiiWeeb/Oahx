@@ -122,7 +122,7 @@ class Moderation(discord.ext.commands.Cog):
             return await ctx.send(f"You didn't mention a channel properly.")
         channel = await self.bot.fetch_channel(c_id)
 
-        time = await TimeConverter().convert(str(answers[1]))
+        time = TimeConverter().convert(str(answers[1]))
         prize = answers[2]
         await ctx.send(f"The Giveaway will be in {channel.mention} and will last {answers[1]}!")
         embed = discord.Embed(title="Giveaway!", description=f"{prize}", color=ctx.bot.color)
@@ -130,7 +130,7 @@ class Moderation(discord.ext.commands.Cog):
         embed.set_footer(text=f"Ends {answers[1]} from now!")
         my_msg = await channel.send(embed=embed)
         await my_msg.add_reaction("🎉")
-        await asyncio.sleep(time)
+        await asyncio.sleep(time.to_seconds())
         new_msg = await channel.fetch_message(my_msg.id)
         users = await new_msg.reactions[0].users().flatten()
         users.pop(users.index(self.bot.user))

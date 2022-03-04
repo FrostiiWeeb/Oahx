@@ -30,7 +30,6 @@ class Application(commands.Cog):
             )
             if i == "Mention a channel where the `application apply` command will be executed.":
                 try:
-                    print("i")
                     yes = int(answer.content[2:-1])
                     answers.append(yes)
                     execute = False
