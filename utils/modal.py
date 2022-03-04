@@ -83,7 +83,7 @@ class Modal:
 
     async def send(self, interaction: discord.Interaction):
         self.responded = True
-        await self.sender.create_interaction_response(interaction.id, interaction.token, session=interaction._session, data=self.json)
+        await self.sender.create_interaction_response(interaction.id, interaction.token, session=interaction._session, data=self.data)
 
     @property
     def sent(self):
