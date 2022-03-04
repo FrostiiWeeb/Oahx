@@ -13,7 +13,6 @@ class Misc(commands.Cog):
     @commands.Cog.listener()
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
         await database.connect()
-        print(before, after)
         self.last_snipe = SnipedMessage(after.author, before, snipe_before=before.content, snipe_after=after.content)
         await self.bot.editsnipes.objects.create(
             message_id=before.id,
