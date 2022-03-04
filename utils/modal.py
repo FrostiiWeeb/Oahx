@@ -23,7 +23,7 @@ class InputValue:
         self.value = value
 
 
-class Style(Enum):
+class Style:
     singleline = 1
     multiline = 2
 
