@@ -78,11 +78,15 @@ class Misc(commands.Cog):
         shard = self.bot.get_shard(shard_id)
         shard_ping = round(shard.latency * 1000)
         shard_servers = len([guild for guild in self.bot.guilds if guild.shard_id == shard_id])
+        db_1 = time.perf_counter()
+        await ctx.bot.db.fetch("SELECT * FROM economy")
+        db_2 = time.perf_counter()
+        db_ping = db_2 - db_1
         msg = await ctx.send(f":ping_pong:...")
         embed = discord.Embed(
             colour=discord.Colour.blurple(),
             title="Pong!",
-            description=f"Websocket latency: {round(self.bot.latency * 1000)}\nTyping latency: {ping}\nShard latency [{shard_id}]: {shard_ping}",
+            description=f"Websocket latency: {round(self.bot.latency * 1000)}\nTyping latency: {ping}\nShard latency [{shard_id}]: {shard_ping}\nDB latency: {db_ping}",
         )
         await asyncio.sleep(1)
         await msg.edit(embed=embed)
