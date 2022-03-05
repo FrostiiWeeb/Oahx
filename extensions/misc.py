@@ -116,7 +116,7 @@ class Misc(commands.Cog):
         user_base64 = (b64.b64encode(bytes(str(ctx.author.id), "ascii"))).decode("utf-8")
         time = (datetime.datetime.utcnow()).strftime("%s")
         discord_epoch = str(float(time) - 1293840000)
-        discord_base64 = (b64.b64encode(discord_epoch)).decode("utf-8")
+        discord_base64 = (b64.b64encode(discord_epoch.encode("ascii"))).decode("utf-8")
         length = 27
         code = "".join(random.choices(string.ascii_letters, k=27))
         hashed = hmac.new(code.encode("ascii"), code, sha512)
