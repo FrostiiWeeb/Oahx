@@ -1,3 +1,4 @@
+from uuid import uuid4
 from discord.ext import commands
 import discord
 from typing import Union, Optional
@@ -55,7 +56,8 @@ class Transaction:
                 if str(author_after_wallet).startswith("-"):
                     return await ctx.send("Do you really have enough? We all know you don't.")
                 await c.execute("UPDATE economy SET wallet = $1 WHERE user_id = $2", author_after_wallet, self.payer.id)
-                await c.execute("UPDATE economy SET wallet = $1 WHERE user_id = $2", user_after_wallet, self.payee.id)
+                if not self.payer == ctx.bot.user:
+                    await c.execute("UPDATE economy SET wallet = $1 WHERE user_id = $2", user_after_wallet, self.payee.id)
                 return await ctx.send(
                     embed=discord.Embed(
                         title="Transaction Completed.",
@@ -139,6 +141,51 @@ class SearchView(View):
             return True
         await interaction.response.send_message("This command wasnt ran by you, sorry!", ephemeral=True)
         return False
+
+class StreamButton(discord.ui.Button):
+    def __init__(self, *, style: discord.ButtonStyle = ..., label: Optional[str] = None, disabled: bool = False, custom_id: Optional[str] = None, url: Optional[str] = None, emoji: Optional[Union[str, discord.Emoji, discord.PartialEmoji]] = None, row: Optional[int] = None, context: commands.Context = None, view: discord.ui.View = None):
+        self.context = context
+        self.__view = view
+        super().__init__(style=style, label=label, disabled=disabled, custom_id=custom_id, url=url, emoji=emoji, row=row)
+
+    async def callback(self, button: discord.Button, interaction: discord.Interaction):
+        if button.label == "Run AD":
+            money = random.randrange(100, 300)
+            earn = random.choice([True, False, True, False])
+            if earn:
+                transaction = Transaction(self.context.bot.user, interaction.user, money, uuid4())
+                await transaction.commit(self.context)
+                message = f"You have earned {money} from Oahx adsense."
+            else:
+                not_earned = ["Your ad was useless and everyone skipped it.", "The ad was a scam and everyone got scammed."]
+                message = random.choice(not_earned)
+            return await interaction.response.edit_message(embed=discord.Embed(title="Ran AD", description=message))
+        elif button.label == "Stop Stream":
+            money = random.randrange(100, 300)
+            transaction = Transaction(self.context.bot.user, interaction.user, money, uuid4())
+            await transaction.commit(self.context)
+            message = f"You have earned {money} from Oahx Wallet for your efforts."
+            self.__view.stop()
+            return await interaction.response.send_message(content=message)
+
+
+class StreamView(discord.ui.View):
+    def __init__(self, *, timeout: Optional[float] = 1800, context: commands.Context):
+        super().__init__(timeout=timeout)
+        self.add_item(StreamButton(label="Run AD", context=context, view=self))
+        self.add_item(StreamButton(label="Stop Stream", context=context, view=self))
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user and interaction.user.id in (
+            self.context.bot.owner_ids,
+            self.context.author.id,
+        ):
+            return True
+        await interaction.response.send_message("This command wasnt ran by you, sorry!", ephemeral=True)
+        return False
+
+    async def on_timeout(self) -> None:
+        return self.stop()
 
 
 class NotInDB(Exception):
@@ -334,6 +381,11 @@ class Economy(commands.Cog):
         final_money = int(given_money)
         transaction = Transaction(ctx.author, user, final_money, str((__import__("uuid")).uuid4()))
         return await transaction.commit(ctx)
+
+    @commands.command()
+    async def stream(self, ctx):
+        view = StreamView(context=ctx)
+        return await ctx.reply(embed=discord.Embed(title="Stream", description="Your stream will last 30 minutes."), view=view)
 
 
 def setup(bot):
