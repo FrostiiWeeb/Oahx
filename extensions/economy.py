@@ -170,7 +170,7 @@ class StreamButton(discord.ui.Button):
 
 
 class StreamView(discord.ui.View):
-    def __init__(self, *, timeout: Optional[float] = 1800, context: commands.Context):
+    def __init__(self, *, timeout: Optional[float] = 1800, context: commands.Context = None):
         super().__init__(timeout=timeout)
         self.add_item(StreamButton(label="Run AD", context=context, view=self))
         self.add_item(StreamButton(label="Stop Stream", context=context, view=self))
