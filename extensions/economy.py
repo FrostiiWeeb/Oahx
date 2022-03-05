@@ -148,8 +148,8 @@ class StreamButton(discord.ui.Button):
         self.__view = view
         super().__init__(style=style, label=label, disabled=disabled, custom_id=custom_id, url=url, emoji=emoji, row=row)
 
-    async def callback(self, button: discord.Button, interaction: discord.Interaction):
-        if button.label == "Run AD":
+    async def callback(self, interaction: discord.Interaction):
+        if self.label == "Run AD":
             money = random.randrange(100, 300)
             earn = random.choice([True, False, True, False])
             if earn:
@@ -160,7 +160,7 @@ class StreamButton(discord.ui.Button):
                 not_earned = ["Your ad was useless and everyone skipped it.", "The ad was a scam and everyone got scammed."]
                 message = random.choice(not_earned)
             return await interaction.response.edit_message(embed=discord.Embed(title="Ran AD", description=message))
-        elif button.label == "Stop Stream":
+        elif self.label == "Stop Stream":
             money = random.randrange(100, 300)
             transaction = Transaction(self.context.bot.user, interaction.user, money, uuid4())
             await transaction.commit(self.context)
