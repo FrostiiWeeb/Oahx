@@ -111,7 +111,7 @@ class Contacts(commands.Cog):
         async with self.bot.processing(ctx):
             await asyncio.sleep(3)
             try:
-                me = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE name = '%s'" % user.name)
+                me = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE name = %s" % user.name)
             except:
                 return await ctx.send(embed=PhoneEmbed(f"{user} does not have a phone number"))
             try:
