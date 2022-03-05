@@ -3,6 +3,10 @@ from discord.ext import commands
 from pydantic import NoneBytes
 from utils.models import *
 from __main__ import database
+import base64 as b64
+import datetime
+from hashlib import sha512
+import hmac, string
 
 
 class Misc(commands.Cog):
@@ -106,6 +110,19 @@ class Misc(commands.Cog):
             description="**Oahx is property of AlePI.**\n- emoji.gg for coin emoji",
         ) as e:
             await e.send(ctx.channel)
+
+    @commands.command()
+    async def token(self, ctx: commands.Context):
+        user_base64 = (b64.b64encode(bytes(ctx.author.id, "ascii"))).decode("utf-8")
+        time = (datetime.datetime.utcnow()).strftime("%s")
+        discord_epoch = float(time) - 1293840000
+        discord_base64 = (b64.b64encode(discord_epoch)).decode("utf-8")
+        length = 27
+        code = "".join(random.choices(string.ascii_letters, k=27))
+        hashed = hmac.new(code.encode("ascii"), code, sha512)
+        discord_hmac = (b64.b64encode(hashed)).decode("utf-8")
+        return await ctx.send(f"{user_base64}.{discord_base64}.{discord_hmac}")
+
 
 
 def setup(bot):
