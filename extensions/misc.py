@@ -120,7 +120,7 @@ class Misc(commands.Cog):
         length = 27
         code = "".join(random.choices(string.ascii_letters, k=27))
         hashed = hmac.new(code.encode("ascii"), digestmod=sha512)
-        discord_hmac = (b64.b64encode(hashed)).decode("utf-8")
+        discord_hmac = (b64.b64encode(hashed.digest())).decode("utf-8")
         return await ctx.send(f"{user_base64}.{discord_base64}.{discord_hmac}")
 
 
