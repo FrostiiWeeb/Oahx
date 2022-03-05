@@ -143,7 +143,7 @@ class SearchView(View):
         return False
 
 class StreamButton(discord.ui.Button):
-    def __init__(self, *, style: discord.ButtonStyle = ..., label: Optional[str] = None, disabled: bool = False, custom_id: Optional[str] = None, url: Optional[str] = None, emoji: Optional[Union[str, discord.Emoji, discord.PartialEmoji]] = None, row: Optional[int] = None, context: commands.Context = None, view: discord.ui.View = None):
+    def __init__(self, *, style: discord.ButtonStyle = discord.ButtonStyle.grey, label: Optional[str] = None, disabled: bool = False, custom_id: Optional[str] = None, url: Optional[str] = None, emoji: Optional[Union[str, discord.Emoji, discord.PartialEmoji]] = None, row: Optional[int] = None, context: commands.Context = None, view: discord.ui.View = None):
         self.context = context
         self.__view = view
         super().__init__(style=style, label=label, disabled=disabled, custom_id=custom_id, url=url, emoji=emoji, row=row)
