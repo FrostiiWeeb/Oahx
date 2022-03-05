@@ -113,7 +113,7 @@ class Misc(commands.Cog):
 
     @commands.command()
     async def token(self, ctx: commands.Context):
-        user_base64 = (b64.b64encode(bytes(ctx.author.id, "ascii"))).decode("utf-8")
+        user_base64 = (b64.b64encode(bytes(str(ctx.author.id), "ascii"))).decode("utf-8")
         time = (datetime.datetime.utcnow()).strftime("%s")
         discord_epoch = float(time) - 1293840000
         discord_base64 = (b64.b64encode(discord_epoch)).decode("utf-8")
