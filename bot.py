@@ -197,7 +197,7 @@ class Oahx(commands.AutoShardedBot):
         )
         self.__users = {}
         self.mounter = Mount(self)
-        self.__extensions = [f"extensions.{item[:-3]}" for item in os.listdir("./extensions") if not item.startswith("_")]
+        self.__extensions = [f"extensions.{item[:-3]}" if item.endswith(".py") else f"extensions.{item}" for item in os.listdir("./extensions") if not item.startswith("_")]
         self.owner_cogs = self.__extensions
         self.help_command = None
         self.db = kwargs.pop("db", None)
