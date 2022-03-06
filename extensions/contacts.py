@@ -314,7 +314,7 @@ class Contacts(commands.Cog):
                 return await self.call_support(ctx, channel)
             try:
                 author = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE id = $1", ctx.author.id)
-                talking_to = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE number = $1", int(number))
+                talking_to = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE number = $1", (number))
             except Exception as e:
                 self.bot.dispatch("command_error", ctx=ctx, error=NotInDB(e))
                 return await ctx.send(
