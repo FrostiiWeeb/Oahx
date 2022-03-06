@@ -8,6 +8,8 @@ from discord.ext.commands.cooldowns import BucketType
 from typing import Union, List
 import datetime
 
+from extensions.economy import NotInDB
+
 
 class Call:
     def __init__(
@@ -313,7 +315,8 @@ class Contacts(commands.Cog):
             try:
                 author = await self.db.fetchrow("SELECT * FROM numbers WHERE id = $1", ctx.author.id)
                 talking_to = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE number = $1", int(number))
-            except:
+            except Exception as e:
+                self.bot.dispatch("command_error", ctx=ctx, error=NotInDB(e))
                 return await ctx.send(
                     embed=PhoneEmbed(
                         'The number you provided was not found or you dont have a number. create a number using "oahx phone create"'
