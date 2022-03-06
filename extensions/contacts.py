@@ -361,12 +361,11 @@ class Contacts(commands.Cog):
                         )
 
                     while True:
-                        message = await self.bot.wait_for("message", check=check)
                         done, pending = await asyncio.wait(
                             [
-                                self.bot.wait_for("message", check=check),
-                                self.bot.wait_for("message", check=author_check),
-                            ]
+                                self.bot.loop.create_task(self.bot.wait_for("message", check=check)),
+                                self.bot.loop.create_task(self.bot.wait_for("message", check=author_check)),
+                            ], return_when=asyncio.FIRST_COMPLETED
                         )
 
                         message = done.pop().result()
