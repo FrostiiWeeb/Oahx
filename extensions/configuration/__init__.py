@@ -1,4 +1,4 @@
-from .information import Information
+from ._information import Information
 from discord.ext import commands
 
 class Configuration(Information):
