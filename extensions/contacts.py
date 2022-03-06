@@ -369,6 +369,11 @@ class Contacts(commands.Cog):
                         )
 
                         message = done.pop().result()
+                        if message.content == "oahx hangup":
+                            await call.respond(ctx, message="Call ended.")
+                            for future in pending:
+                                future.cancel()
+                            return await call.respond(ctx, user="e", message="Call ended.")
                         if message.author.id == author["id"]:
                             await call.respond(ctx, user="e", message=f"{message.content}")
                         else:
