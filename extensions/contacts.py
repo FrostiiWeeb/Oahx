@@ -312,7 +312,7 @@ class Contacts(commands.Cog):
                 return await self.call_support(ctx, channel)
             try:
                 author = await self.db.fetchrow("SELECT * FROM numbers WHERE id = $1", ctx.author.id)
-                talking_to = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE number = '%s'" % number)
+                talking_to = await self.bot.db.fetchrow("SELECT * FROM numbers WHERE number = $1", number)
             except:
                 return await ctx.send(
                     embed=PhoneEmbed(
