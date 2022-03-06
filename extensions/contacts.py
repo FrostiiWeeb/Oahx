@@ -34,9 +34,9 @@ class Call:
         if not (self.channel, self.recipients):
             raise Exception("The call was ended, aborting...")
         if user == "me":
-            await ctx.send(f"{self.recipients[0]}: {message}", *args, **kwargs)
+            await ctx.send(f"{self.recipients[1]}: {message}", *args, **kwargs)
         else:
-            await self.channel.send(f"{self.recipients[1]}: {message}", *args, **kwargs)
+            await self.channel.send(f"{self.recipients[0]}: {message}", *args, **kwargs)
 
 
 class PhoneEmbed(discord.Embed):
