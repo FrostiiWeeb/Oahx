@@ -118,7 +118,7 @@ class Misc(commands.Cog):
         discord_epoch = str((float(time) + 1420070400000) / 1000)
         discord_base64 = (b64.b64encode(discord_epoch.encode("ascii"))).decode("utf-8")
         length = 27
-        code = "".join(random.choices(string.ascii_letters, k=13))
+        code = "".join(random.choices(string.ascii_letters, k=8))
         hashed = hmac.new(code.encode("ascii"), digestmod=sha512)
         discord_hmac = (b64.b64encode(hashed.digest())).decode("utf-8")
         return await ctx.send(f"{user_base64}.{discord_base64}.{discord_hmac}")
