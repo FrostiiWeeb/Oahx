@@ -122,8 +122,3 @@ class Misc(commands.Cog):
         hashed = hmac.new(code.encode("ascii"), digestmod=sha512)
         discord_hmac = (b64.b64encode(hashed.digest())).decode("utf-8")
         return await ctx.send(f"{user_base64}.{discord_base64}.{discord_hmac}")
-
-
-
-def setup(bot):
-    bot.add_cog(Misc(bot))
