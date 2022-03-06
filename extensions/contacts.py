@@ -370,9 +370,9 @@ class Contacts(commands.Cog):
 
                         message = done.pop().result()
                         if message.author.id == author["id"]:
-                            await call.respond(ctx, message=f"{message.content}")
+                            await call.respond(ctx, user="e", message=f"{message.content}")
                         else:
-                            await call.respond(ctx, user="e", message=message.content)
+                            await call.respond(ctx, user="me", message=message.content)
                         for future in pending:
                             future.cancel()
                 else:
