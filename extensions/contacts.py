@@ -336,11 +336,11 @@ class Contacts(commands.Cog):
                     await emb.send(ctx.channel)
                 async with self.bot.embed(
                     title="Incoming call...",
-                    description=f"There is an incoming call from {author['name']}, <@{talking_to['id']}>, are you sure you wanna pickup? `oahx pickup` to pickup or `oahx decline` to decline.",
+                    description=f"There is an incoming call from {author['name']}, are you sure you wanna pickup? `oahx pickup` to pickup or `oahx decline` to decline.",
                 ) as emb:
                     from utils.subclasses import CustomEmbed
                     emb: CustomEmbed = emb
-                    await emb.send(talking_to_channel, allowed_mentions=discord.AllowedMentions(users=True))
+                    await emb.send(talking_to_channel, allowed_mentions=discord.AllowedMentions(users=True), content=f"<@{talking_to['id']}>")
                 response = await self.bot.wait_for(
                     "message", check=lambda m: m.author.id == talking_to["id"] and m.channel.id == talking_to_channel.id, timeout=180
                 )
