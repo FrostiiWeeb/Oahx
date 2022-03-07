@@ -329,18 +329,18 @@ class Contacts(commands.Cog):
                 recipients=[ctx.author, await self.bot.try_user(talking_to["id"])],
             )
             call: Call = self.calls[ctx.channel.id]
-            talking_to_channel = await self.try_channel(talking_to["channel_id"])
-            author_channel = await self.try_channel(author["channel_id"])
+            talking_to_channel: discord.TextChannel = await self.try_channel(talking_to["channel_id"])
+            author_channel: discord.TextChannel = await self.try_channel(author["channel_id"])
             while True:
                 async with self.bot.embed(title="Calling...", description=f"Calling {number}...") as emb:
                     await emb.send(ctx.channel)
                 async with self.bot.embed(
                     title="Incoming call...",
-                    description=f"There is an incoming call from {author['name']}, are you sure you wanna pickup? `oahx pickup` to pickup or `oahx decline` to decline.",
+                    description=f"There is an incoming call from {author['name']}, <@{talking_to['id']}>, are you sure you wanna pickup? `oahx pickup` to pickup or `oahx decline` to decline.",
                 ) as emb:
                     await emb.send(talking_to_channel)
                 response = await self.bot.wait_for(
-                    "message", check=lambda m: m.author.id == talking_to["id"] and m.channel.id == talking_to_channel.id
+                    "message", check=lambda m: m.author.id == talking_to["id"] and m.channel.id == talking_to_channel.id, timeout=180
                 )
                 if response.content == "oahx pickup":
                     await call.respond(ctx, message=f"You will be talking with `{str(call.recipients[1])}` today.")
@@ -370,12 +370,13 @@ class Contacts(commands.Cog):
 
                         message = done.pop().result()
                         if message.content == "oahx hangup":
-                            await call.respond(ctx, message="Call ended.")
                             for future in pending:
                                 future.cancel()
-                            return await call.respond(ctx, user="e", message="Call ended.")
+                            embed = discord.Embed(description="Call ended.")
+                            await author_channel.send(embed=discord.Embed(description="Call ended."))
+                            return await talking_to_channel.send(embed=embed)
                         if message.author.id == author["id"]:
-                            await call.respond(ctx, user="e", message=f"{message.content}")
+                            await call.respond(ctx, user="user", message=f"{message.content}")
                         else:
                             await call.respond(ctx, user="me", message=message.content)
                         for future in pending:
