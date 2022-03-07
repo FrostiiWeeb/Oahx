@@ -340,7 +340,7 @@ class Contacts(commands.Cog):
                 ) as emb:
                     from utils.subclasses import CustomEmbed
                     emb: CustomEmbed = emb
-                    await emb.send(talking_to_channel, allowed_mentions=discord.AllowedMentions(users=True), content=f"<@{talking_to['id']}>")
+                    await emb.send(talking_to_channel, allowed_mentions=discord.AllowedMentions(users=True, everyone=False), content=f"<@{talking_to['id']}>")
                 response = await self.bot.wait_for(
                     "message", check=lambda m: m.author.id == talking_to["id"] and m.channel.id == talking_to_channel.id, timeout=180
                 )
