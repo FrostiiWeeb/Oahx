@@ -338,14 +338,15 @@ class Contacts(commands.Cog):
                     title="Incoming call...",
                     description=f"There is an incoming call from {author['name']}, <@{talking_to['id']}>, are you sure you wanna pickup? `oahx pickup` to pickup or `oahx decline` to decline.",
                 ) as emb:
-                    await emb.send(talking_to_channel)
+                    from utils.subclasses import CustomEmbed
+                    emb: CustomEmbed = emb
+                    await emb.send(talking_to_channel, allowed_mentions=discord.AllowedMentions(users=True))
                 response = await self.bot.wait_for(
                     "message", check=lambda m: m.author.id == talking_to["id"] and m.channel.id == talking_to_channel.id, timeout=180
                 )
                 if response.content == "oahx pickup":
-                    await call.respond(ctx, message=f"You will be talking with `{str(call.recipients[1])}` today.")
-                    await call.respond(
-                        ctx, user="e", message=f"You will be talking with `{str(call.recipients[0])}` today."
+                    await ctx.send(f"You will be talking with `{str(call.recipients[1])}` today.")
+                    await talking_to_channel.send(f"You will be talking with `{str(call.recipients[0])}` today."
                     )
 
                     def check(message: discord.Message):
