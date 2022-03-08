@@ -39,7 +39,7 @@ class CustomDebugCog(*STANDARD_FEATURES, *OPTIONAL_FEATURES):
         _bot = ctx.bot._bot
         ctx.bot = _bot
         summary = [
-            f"Jishaku v{package_version('jishaku')}, discord.py `{package_version('discord.py')}`, `Python {sys.version}`",
+            f"Oahx-Jishaku 2.0.0, discord.py `{package_version('discord.py')}`, `Python {sys.version}`",
         ]
 
         # detect if [procinfo] feature is installed

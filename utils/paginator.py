@@ -18,14 +18,14 @@ class PaginatorButton(discord.ui.View):
     # stop the View from listening to more input.
     # We also send the user an ephemeral message that we're confirming their choice.
     @discord.ui.button(style=discord.ButtonStyle.green, emoji="<:oahx_left:859143802005356615>")
-    async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def lef(self, button: discord.ui.Button, interaction: discord.Interaction):
         await interaction.response.edit_message("Confirming", ephemeral=True)
         self.value = True
         self.stop()
 
     # This one is similar to the confirmation button except sets the inner value to `False`
     @discord.ui.button(style=discord.ButtonStyle.grey, emoji="<:oahx_stop:859143862089023528>")
-    async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def right(self, button: discord.ui.Button, interaction: discord.Interaction):
         await interaction.response.send_message("Cancelling", ephemeral=True)
         self.value = False
         self.stop()
