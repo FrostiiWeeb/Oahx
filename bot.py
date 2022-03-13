@@ -197,9 +197,7 @@ class Oahx(commands.AutoShardedBot):
         )
         self.__users = {}
         self.mounter = Mount(self)
-        self.__extensions = [f"extensions.{item[:-3]}" if item.endswith(".py") else f"extensions.{item}" if os.path.isdir(item) else ... for item in os.listdir("./extensions")]
-        self.owner_cogs = self.__extensions
-        self.help_command = None
+        self._extensions = [f"extensions.{item[:-3]}" if item.endswith(".py") else f"extensions.{item}" for item in os.listdir("./extensions")]        self.help_command = None
         self.db = kwargs.pop("db", None)
         os.environ["IPC_KEY"] = "oahx_ipc"
         self.ipc = ipc.Server(self, secret_key="oahx_ipc", port=7870)
@@ -236,7 +234,7 @@ class Oahx(commands.AutoShardedBot):
         self.exts = set()
         self.mounts = {}
         self.processing = Processing
-        [self.load_extension(cog) for cog in self.__extensions if cog != "extensions.__pycach"]
+        [self.load_extension(cog) for cog in self._extensions if cog != "extensions.__pycach"]
         self.cache = Cache(self.loop)
         self.cache.insert("prefixes", {})
         self.bot_id = 844213992955707452
