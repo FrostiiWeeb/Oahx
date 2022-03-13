@@ -1,6 +1,6 @@
-from ._emoji import *
-from ._errors import *
-from ._command import *
+from .emoji import *
+from .errors import *
+from .command import *
 
 class Events(Emoji, Completion, Error):
 	def __init__(self, bot):

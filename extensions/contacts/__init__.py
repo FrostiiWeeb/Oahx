@@ -1,4 +1,4 @@
-from ._contacts import *
+from .contacts import *
 from discord.ext import commands
 
 class Phone(Contacts):

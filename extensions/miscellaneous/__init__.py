@@ -1,4 +1,4 @@
-from ._misc import *
+from .misc import *
 
 class Miscellaneous(Misc):
 	def __init__(self, bot):
